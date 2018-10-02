@@ -39,5 +39,11 @@
 #######################################
 # PROJECT-SPECIFIC
 #######################################
-
+!kaldi/
 kaldi/*
+!kaldi/egs/
+kaldi/egs/*
+!kaldi/egs/gp-xvectors
+
+venv/*
+src/logs/

@@ -1,0 +1,1 @@
+# Paul's and Sam's X-vector implementation recipe for the GlobalPhones corpus

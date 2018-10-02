@@ -10,7 +10,7 @@ X-vectors applied to SRE, playing with data augmentation. Has corresponding [Kal
 X-vectors applied to SV; scoring **pairs** of speakers. Embeddings from 2 different DNN layers.
 
 ## [<abbr title="Language Identification">LID</abbr> Using Deep Convolutional <abbr title="Recurrent Neural Networks">RNNs</abbr> (Bartz et al., 2017)](papers/Bartz_et_al_2017.pdf)
-**TO-READ** Convolutional RNNs applied to LID, operating on spectrograms. No comparison to existing systems.
+CNN->RNN architevture applied to LID, operating on spectrograms. No comparison to existing systems.
 
 ## [A <abbr title="time delay neural network">TDNN</abbr> architecture for efficient modeling of <abbr title="long temporal contexts">LTCs</abbr> (Peddinti et al., 2015)](papers/Peddinti_et_al_2015.pdf)
 Using TDNNs with subsampling improves speech recognition performance.
