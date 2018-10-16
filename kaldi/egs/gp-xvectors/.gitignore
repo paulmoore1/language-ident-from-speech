@@ -8,3 +8,6 @@
 *.raw
 *.wav
 
+# Preprocessed data
+**data/
+

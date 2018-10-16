@@ -43,11 +43,14 @@ that you run the commands one by one by copying and pasting into the shell."
 local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
-exit
 
+# Moved to path.sh
 # Set the locations of the GlobalPhone corpus and language models
-GP_CORPUS=/idiap/resource/database/GLOBALPHONE
-GP_LM=$PWD/language_models
+# GP_CORPUS=/idiap/resource/database/GLOBALPHONE
+
+# Don't need language models for LID.
+# GP_LM=$PWD/language_models
+
 
 # Set the languages that will actually be processed
 export GP_LANGUAGES="FR GE RU"
@@ -55,7 +58,9 @@ export GP_LANGUAGES="FR GE RU"
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
 local/gp_data_prep.sh --config-dir=$PWD/conf --corpus-dir=$GP_CORPUS --languages="$GP_LANGUAGES" || exit 1;
+exit
 local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
+
 
 for L in $GP_LANGUAGES; do
  utils/prepare_lang.sh --position-dependent-phones true \
