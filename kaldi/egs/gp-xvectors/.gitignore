@@ -1,0 +1,9 @@
+# Compiled tools
+**shorten-3.6.1/
+**sox-14.3.2/
+
+# Audio files
+*.shn
+*.raw
+*.wav
+
