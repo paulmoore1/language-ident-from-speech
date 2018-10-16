@@ -56,10 +56,10 @@ if $install_shorten; then
     mkdir -p tools
     cd tools
     ( 
-      rm -f shorten-3.6.1.tar.gz
-
-      wget http://shnutils.freeshell.org/shorten/dist/src/shorten-3.6.1.tar.gz \
-	      || errexit "Download failed for shorten-3.6.1.";
+      if [ ! -f shorten-3.6.1.tar.gz ]; then
+        wget http://shnutils.freeshell.org/shorten/dist/src/shorten-3.6.1.tar.gz \
+  	      || errexit "Download failed for shorten-3.6.1.";
+      fi
 
       set -e
       tar -zxf shorten-3.6.1.tar.gz;
@@ -90,10 +90,11 @@ if $install_sox; then
     mkdir -p tools
     cd tools
     ( 
-      rm -f sox-14.3.2.tar.bz2
-
-      wget http://sourceforge.net/projects/sox/files/sox/14.3.2/sox-14.3.2.tar.bz2 || errexit "Download failed for sox-14.3.2.";
-
+      if [ ! -f sox-14.3.2.tar.bz2 ]; then
+        wget http://sourceforge.net/projects/sox/files/sox/14.3.2/sox-14.3.2.tar.bz2 \
+          || errexit "Download failed for sox-14.3.2.";
+      fi
+      
       set -e
       tar -jxf sox-14.3.2.tar.bz2;
       cd sox-14.3.2
