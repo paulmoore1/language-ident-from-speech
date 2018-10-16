@@ -1,9 +1,15 @@
 # This contains the locations of the tools and data required for running
 # the GlobalPhone experiments.
+source ./helper_functions.sh
 
 export LC_ALL=C  # For expected sorting and joining behaviour
 
-KALDI_ROOT=/homes/eva/q/qghoshal/src/kaldi/trunk
+if [[ $(whichMachine) = "sam" ]]; then
+	KALDI_ROOT=/home/samo/edi/hp/project/kaldi
+else
+	echo "NOT IMPLEMENTED: setting KALDI root."
+fi
+
 [ -f $KALDI_ROOT/tools/env.sh ] && . $KALDI_ROOT/tools/env.sh
 
 KALDISRC=$KALDI_ROOT/src
@@ -27,7 +33,9 @@ export PATH=$PATH:$KALDIBIN:$FSTBIN:$LMBIN:$SCRIPTS
 
 # If the correct version of shorten and sox are not on the path,
 # the following will be set by local/gp_check_tools.sh
-SHORTEN_BIN=
+SHORTEN_BIN=/home/samo/edi/hp/project/kaldi/egs/gp-xvectors/gp_s5/tools/shorten-3.6.1/bin
 # e.g. $PWD/tools/shorten-3.6.1/bin
-SOX_BIN=
+SOX_BIN=/home/samo/edi/hp/project/kaldi/egs/gp-xvectors/gp_s5/tools/sox-14.3.2/bin
 # e.g. $PWD/tools/sox-14.3.2/bin
+export PATH=$PATH:$SHORTEN_BIN
+export PATH=$PATH:$SOX_BIN

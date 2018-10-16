@@ -1,9 +1,15 @@
 # This contains the locations of the tools and data required for running
 # the GlobalPhone experiments.
+source ./helper_functions.sh
 
 export LC_ALL=C  # For expected sorting and joining behaviour
 
-KALDI_ROOT=/homes/eva/q/qghoshal/src/kaldi/trunk
+if [[ $(whichMachine) = "sam" ]]; then
+	KALDI_ROOT=/home/samo/edi/hp/project/kaldi
+else
+	echo "NOT IMPLEMENTED: setting KALDI root."
+fi
+
 [ -f $KALDI_ROOT/tools/env.sh ] && . $KALDI_ROOT/tools/env.sh
 
 KALDISRC=$KALDI_ROOT/src

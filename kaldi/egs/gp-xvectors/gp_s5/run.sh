@@ -32,14 +32,18 @@ echo "This shell script may run as-is on your system, but it is recommended
 that you run the commands one by one by copying and pasting into the shell."
 #exit 1;
 
+[ -f helper_functions.sh ] && source ./helper_functions.sh \
+  || echo "helper_functions.sh not found. Won't be able to set environment variables and similar."
+
 [ -f cmd.sh ] && source ./cmd.sh || echo "cmd.sh not found. Jobs may not execute properly."
 
 # CHECKING FOR AND INSTALLING REQUIRED TOOLS:
 #  This recipe requires shorten (3.6.1) and sox (14.3.2).
 #  If they are not found, the local/gp_install.sh script will install them.
-#local/gp_check_tools.sh $PWD path.sh || exit 1;
+local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
+exit
 
 # Set the locations of the GlobalPhone corpus and language models
 GP_CORPUS=/idiap/resource/database/GLOBALPHONE

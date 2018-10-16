@@ -19,7 +19,7 @@
 # export highmem_cmd="queue.pl -P inf_hcrc_cstr_general -pe memory-2G 2"
 
 # To run locally, use:
-if [[ `echo ~` = "/home/samo" ]]; then
+if isSamsPC $1; then
 	echo "Running locally (on Sam's machine)."
 	export train_cmd=run.pl
 	export decode_cmd=run.pl

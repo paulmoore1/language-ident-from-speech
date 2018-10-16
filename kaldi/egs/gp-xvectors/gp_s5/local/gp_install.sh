@@ -59,7 +59,7 @@ if $install_shorten; then
       rm -f shorten-3.6.1.tar.gz
 
       wget http://shnutils.freeshell.org/shorten/dist/src/shorten-3.6.1.tar.gz \
-	|| errexit "Download failed for shorten-3.6.1.";
+	      || errexit "Download failed for shorten-3.6.1.";
 
       set -e
       tar -zxf shorten-3.6.1.tar.gz;
