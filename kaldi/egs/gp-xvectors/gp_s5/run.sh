@@ -53,7 +53,7 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 
 # Set the languages that will actually be processed
-export GP_LANGUAGES="FR GE RU"
+export GP_LANGUAGES="FR"
 
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
