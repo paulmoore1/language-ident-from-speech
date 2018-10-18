@@ -58,10 +58,9 @@ export GP_LANGUAGES="FR"
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
 local/gp_data_prep.sh --config-dir=$PWD/conf --corpus-dir=$GP_CORPUS --languages="$GP_LANGUAGES" || exit 1;
-exit
 local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
 
-
+:<<'END'
 for L in $GP_LANGUAGES; do
  utils/prepare_lang.sh --position-dependent-phones true \
    data/$L/local/dict "<unk>" data/$L/local/lang_tmp data/$L/lang \
@@ -74,6 +73,7 @@ for L in $GP_LANGUAGES; do
    local/gp_format_lm.sh --filter-vocab-sri true $GP_LM $L &
 done
 wait
+END
 
 # Now make MFCC features.
 for L in $GP_LANGUAGES; do
@@ -88,7 +88,10 @@ for L in $GP_LANGUAGES; do
 done
 wait;
 
+exit
 
+
+:<<'END'
 for L in $GP_LANGUAGES; do
   mkdir -p exp/$L/mono;
   steps/train_mono.sh --nj 10 --cmd "$train_cmd" \
@@ -385,6 +388,4 @@ for L in $GP_LANGUAGES; do
     done  # loop over LMs
   done    # loop over model with and without speaker vecs
 done      # loop over languages
-
-
-
+END

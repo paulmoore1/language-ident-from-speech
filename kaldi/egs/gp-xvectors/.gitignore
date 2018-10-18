@@ -10,4 +10,13 @@
 
 # Preprocessed data
 **data/
+**exp/
+**mfcc/
 
+# Train/dev/eval splits changed for development purposes
+dev_spk.list
+eval_spk.list
+train_spk.list
+
+# Helper files
+**path-old.sh

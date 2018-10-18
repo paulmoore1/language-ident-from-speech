@@ -37,11 +37,11 @@ SHORTEN_BIN=/home/samo/edi/hp/project/kaldi/egs/gp-xvectors/gp_s5/tools/shorten-
 # e.g. $PWD/tools/shorten-3.6.1/bin
 SOX_BIN=/home/samo/edi/hp/project/kaldi/egs/gp-xvectors/gp_s5/tools/sox-14.3.2/bin
 # e.g. $PWD/tools/sox-14.3.2/bin
-export PATH=$PATH:$SHORTEN_BIN
-export PATH=$PATH:$SOX_BIN
+export PATH=$SHORTEN_BIN:$PATH
+export PATH=$SOX_BIN:$PATH
 
 if [[ $(whichMachine) = "sam" ]]; then
-	GP_CORPUS=/afs/inf.ed.ac.uk/user/s15/s1513472/global_phone
+	GP_CORPUS=/afs/inf.ed.ac.uk/user/s15/s1513472/global_phone/
 else
 	echo "NOT IMPLEMENTED: setting GlobalPhone directory."
 fi

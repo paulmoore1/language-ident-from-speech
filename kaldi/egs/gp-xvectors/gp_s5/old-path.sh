@@ -41,7 +41,7 @@ export PATH=$PATH:$SHORTEN_BIN
 export PATH=$PATH:$SOX_BIN
 
 if [[ $(whichMachine) = "sam" ]]; then
-	GP_CORPUS=/afs/inf.ed.ac.uk/user/s15/s1513472/global_phone
+	GP_CORPUS=/afs/inf.ed.ac.uk/user/s15/s1513472/global_phone/
 else
 	echo "NOT IMPLEMENTED: setting GlobalPhone directory."
 fi

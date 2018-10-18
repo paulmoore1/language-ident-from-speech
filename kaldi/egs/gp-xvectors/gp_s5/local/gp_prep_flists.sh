@@ -85,8 +85,19 @@ egrep 'XXX|TBA' $tmpdir/eval_spk \
 full_name=`awk '/'$LCODE'/ {print $2}' $LANGMAP`;
 ls "$GPDIR/$full_name/adc" | sed -e "s?^?$LCODE?" -e 's?$?_?' \
   > $tmpdir/all_spk
+
 grep -v -f $tmpdir/dev_spk -f $tmpdir/eval_spk $tmpdir/all_spk \
-  > $tmpdir/train_spk
+  > $tmpdir/train_spk || echo "Could not find any training set speakers; \
+  are you trying to use all of them for evaluation and testing?";
+
+echo "All speakers"
+cat $tmpdir/all_spk
+echo "Dev speakers"
+cat $tmpdir/dev_spk
+echo "Eval speakers"
+cat $tmpdir/eval_spk
+echo "Train speakers"
+cat $tmpdir/train_spk
 
 use_romanized=true
 trans=$tmpdir/trans_rmn.list
@@ -116,6 +127,10 @@ mkdir -p $ODIR $WDIR/$LCODE/wav  # Directory for WAV files
 for x in dev eval train; do
   find $GPDIR/$full_name/adc -name "${LCODE}*\.adc\.shn" \
     | grep -f $tmpdir/${x}_spk > $ODIR/${x}_${LCODE}.flist
+  
+  echo "SHN files for ${x} set:"
+  cat $ODIR/${x}_${LCODE}.flist | sed "s/.*\///g" | sed "s/^/\t/g"
+
   # The audio conversion is done here since some files cannot be converted,
   # and those need to be removed from the file lists.
   # Unfortunately this needs to be done here, since sox doesn't play nice when

@@ -72,13 +72,14 @@ for L in $LANGUAGES; do
   mkdir -p data/$L/local/data
   local/gp_prep_flists.sh --corpus-dir=$GPDIR --dev-spk=$CONFDIR/dev_spk.list \
     --eval-spk=$CONFDIR/eval_spk.list --lang-map=$CONFDIR/lang_codes.txt \
-    --work-dir=data $L >& data/$L/prep_flists.log & 
+    --work-dir=data $L >& data/$L/prep_flists.log &
   # Running these in parallel since this does audio conversion (to figure out
   # which files cannot be processed) and takes some time to run. 
 done
 wait;
 echo "Done"
 
+:<<'END'
 # (3) Normalize the transcripts.
 for L in $LANGUAGES; do
   printf "Language - ${L}: normalizing transcripts ... "
@@ -88,6 +89,7 @@ for L in $LANGUAGES; do
   done
   echo "Done"
 done
+END
 
 # (4) Create a directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
@@ -95,7 +97,7 @@ for L in $LANGUAGES; do
   for x in train dev eval; do
     mkdir -p data/$L/$x
     cp data/$L/local/data/${x}_${L}_wav.scp data/$L/$x/wav.scp
-    cp data/$L/local/data/${x}_${L}.txt data/$L/$x/text
+    # cp data/$L/local/data/${x}_${L}.txt data/$L/$x/text
     cp data/$L/local/data/${x}_${L}.spk2utt data/$L/$x/spk2utt
     cp data/$L/local/data/${x}_${L}.utt2spk data/$L/$x/utt2spk
   done
