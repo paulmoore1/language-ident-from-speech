@@ -6,6 +6,8 @@ export LC_ALL=C  # For expected sorting and joining behaviour
 
 if [[ $(whichMachine) = "sam" ]]; then
 	KALDI_ROOT=/home/samo/edi/hp/project/kaldi
+elif [[ $(whichMachine) = "dice" ]]; then
+	KALDI_ROOT=/afs/inf.ed.ac.uk/group/teaching/asr/tools/kaldi
 else
 	echo "NOT IMPLEMENTED: setting KALDI root."
 fi
@@ -41,6 +43,8 @@ export PATH=$SHORTEN_BIN:$PATH
 export PATH=$SOX_BIN:$PATH
 
 if [[ $(whichMachine) = "sam" ]]; then
+	GP_CORPUS=/afs/inf.ed.ac.uk/user/s15/s1513472/global_phone/
+elif [[ $(whichMachine) = "dice" ]]; then
 	GP_CORPUS=/afs/inf.ed.ac.uk/user/s15/s1513472/global_phone/
 else
 	echo "NOT IMPLEMENTED: setting GlobalPhone directory."
