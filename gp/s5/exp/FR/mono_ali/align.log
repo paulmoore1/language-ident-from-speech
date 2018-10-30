@@ -1,0 +1,2 @@
+steps/align_si.sh --nj 10 --cmd run.pl data/FR/train data/FR/lang exp/FR/mono exp/FR/mono_ali
+steps/align_si.sh: expected file data/FR/train/text to exist

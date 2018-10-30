@@ -1,0 +1,12 @@
+prefix=/afs/inf.ed.ac.uk/user/s15/s1531206/minfkaldi/gp/s5/tools/sox-14.3.2
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: SoX
+Description: Audio file format and effects library
+Version: 14.3.2
+URL: http://sox.sourceforge.net
+Libs: -L${libdir} -lsox
+Libs.private: -lm 
+Cflags: -I${includedir}

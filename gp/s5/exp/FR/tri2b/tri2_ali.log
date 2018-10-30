@@ -1,0 +1,2 @@
+steps/train_lda_mllt.sh --cmd run.pl --splice-opts --left-context=3 --right-context=3 3100 50000 data/FR/train data/FR/lang exp/FR/tri1_ali exp/FR/tri2b
+train_lda_mllt.sh: no such file exp/FR/tri1_ali/final.mdl

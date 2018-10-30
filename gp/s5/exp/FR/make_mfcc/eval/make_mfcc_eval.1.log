@@ -1,0 +1,159 @@
+# compute-mfcc-feats --verbose=2 --config=conf/mfcc.conf scp,p:exp/FR/make_mfcc/eval/wav_eval.1.scp ark:- | copy-feats --compress=true ark:- ark,scp:/afs/inf.ed.ac.uk/user/s15/s1531206/minfkaldi/gp/s5/mfcc/FR/raw_mfcc_eval.1.ark,/afs/inf.ed.ac.uk/user/s15/s1531206/minfkaldi/gp/s5/mfcc/FR/raw_mfcc_eval.1.scp 
+# Started at Wed Oct 17 14:11:33 BST 2018
+#
+copy-feats --compress=true ark:- ark,scp:/afs/inf.ed.ac.uk/user/s15/s1531206/minfkaldi/gp/s5/mfcc/FR/raw_mfcc_eval.1.ark,/afs/inf.ed.ac.uk/user/s15/s1531206/minfkaldi/gp/s5/mfcc/FR/raw_mfcc_eval.1.scp 
+compute-mfcc-feats --verbose=2 --config=conf/mfcc.conf scp,p:exp/FR/make_mfcc/eval/wav_eval.1.scp ark:- 
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_1
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_10
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_100
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_101
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_102
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_11
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_12
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_13
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_14
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 10 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_15
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_16
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_17
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_18
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_19
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_2
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_20
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_21
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_22
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_23
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 20 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_24
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_25
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_26
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_27
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_28
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_29
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_3
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_30
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_31
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_32
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 30 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_33
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_34
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_35
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_36
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_37
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_38
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_39
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_4
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_40
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_41
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 40 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_42
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_43
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_44
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_45
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_46
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_47
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_48
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_49
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_5
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_50
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 50 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_51
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_52
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_53
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_54
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_55
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_56
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_57
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_58
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_59
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_6
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 60 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_60
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_61
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_62
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_63
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_64
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_65
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_66
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_67
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_68
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_69
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 70 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_7
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_70
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_71
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_72
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_73
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_74
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_75
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_76
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_77
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_78
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 80 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_79
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_8
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_80
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_81
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_82
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_83
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_84
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_85
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_86
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_87
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 90 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_88
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_89
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_9
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_90
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_91
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_92
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_93
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_94
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_95
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_96
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 100 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_97
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_98
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR091_99
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_1
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_10
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_100
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_101
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_102
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_11
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_12
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 110 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_13
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_14
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_15
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_16
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_17
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_18
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_19
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_2
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_20
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_21
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 120 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_22
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_23
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_24
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_25
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_26
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_27
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_28
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_29
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_3
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_30
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:177) Processed 130 utterances
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_31
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_32
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_33
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_34
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_35
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_36
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_37
+VLOG[2] (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:178) Processed features for key FR092_38
+LOG (compute-mfcc-feats[5.0.30~1-61510]:main():compute-mfcc-feats.cc:181)  Done 137 out of 137 utterances.
+LOG (copy-feats[5.0.30~1-61510]:main():copy-feats.cc:120) Copied 137 feature matrices.
+# Accounting: time=33 threads=1
+# Ended (code 0) at Wed Oct 17 14:12:06 BST 2018, elapsed time 33 seconds

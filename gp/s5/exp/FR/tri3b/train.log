@@ -1,0 +1,2 @@
+steps/train_sat.sh --cmd run.pl --cluster-thresh 100 3100 50000 data/FR/train data/FR/lang exp/FR/tri2b_ali exp/FR/tri3b
+train_sat.sh: no such file data/FR/train/feats.scp

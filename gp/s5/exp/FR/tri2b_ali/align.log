@@ -1,0 +1,2 @@
+steps/align_si.sh --nj 10 --cmd run.pl --use-graphs true data/FR/train data/FR/lang exp/FR/tri2b exp/FR/tri2b_ali
+steps/align_si.sh: expected file data/FR/train/text to exist

@@ -1,0 +1,6 @@
+# utils/mkgraph.sh data/FR/lang_test_tgpr_sri exp/FR/sgmm2b exp/FR/sgmm2b/graph_tgpr_sri 
+# Started at Wed Oct 17 12:31:25 BST 2018
+#
+mkgraph.sh: expected data/FR/lang_test_tgpr_sri/L.fst to exist
+# Accounting: time=0 threads=1
+# Ended (code 1) at Wed Oct 17 12:31:25 BST 2018, elapsed time 0 seconds
