@@ -1,9 +1,11 @@
 whichMachine() {
 	if [[ `echo ~` = "/home/samo" ]]; then
 		echo "sam"
+	elif [[ `echo ~` = /afs/inf.ed.ac.uk/user/s15/s1513472* ]]; then
+		echo "dice_sam"
 	elif [[ `echo ~` = /afs/inf.ed.ac.uk/user/* ]]; then
-		echo "dice"
+		echo "dice_other"
 	else
-		echo "paul"
+		echo "unrecognised_machine"
 	fi
 }
