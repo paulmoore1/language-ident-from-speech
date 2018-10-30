@@ -12,16 +12,13 @@ else
 	echo "NOT IMPLEMENTED: setting KALDI root."
 fi
 
-[ -f $KALDI_ROOT/tools/env.sh ] && . $KALDI_ROOT/tools/env.sh
-
-KALDISRC=$KALDI_ROOT/src
-KALDIBIN=$KALDISRC/bin:$KALDISRC/featbin:$KALDISRC/fgmmbin:$KALDISRC/fstbin
-KALDIBIN=$KALDIBIN:$KALDISRC/gmmbin:$KALDISRC/latbin:$KALDISRC/nnetbin
-KALDIBIN=$KALDIBIN:$KALDISRC/sgmm2bin:$KALDISRC/lmbin
-
-FSTBIN=$KALDI_ROOT/tools/openfst/bin
-LMBIN=$KALDI_ROOT/tools/irstlm/bin
-
+# [ -f $KALDI_ROOT/tools/env.sh ] && . $KALDI_ROOT/tools/env.sh
+# KALDISRC=$KALDI_ROOT/src
+# KALDIBIN=$KALDISRC/bin:$KALDISRC/featbin:$KALDISRC/fgmmbin:$KALDISRC/fstbin
+# KALDIBIN=$KALDIBIN:$KALDISRC/gmmbin:$KALDISRC/latbin:$KALDISRC/nnetbin
+# KALDIBIN=$KALDIBIN:$KALDISRC/sgmm2bin:$KALDISRC/lmbin
+# FSTBIN=$KALDI_ROOT/tools/openfst/bin
+# LMBIN=$KALDI_ROOT/tools/irstlm/bin
 [ -d $PWD/local ] || { echo "Error: 'local' subdirectory not found."; }
 [ -d $PWD/utils ] || { echo "Error: 'utils' subdirectory not found."; }
 [ -d $PWD/steps ] || { echo "Error: 'steps' subdirectory not found."; }
@@ -29,15 +26,16 @@ LMBIN=$KALDI_ROOT/tools/irstlm/bin
 export kaldi_local=$PWD/local
 export kaldi_utils=$PWD/utils
 export kaldi_steps=$PWD/steps
-SCRIPTS=$kaldi_local:$kaldi_utils:$kaldi_steps
 
-export PATH=$PATH:$KALDIBIN:$FSTBIN:$LMBIN:$SCRIPTS
+SCRIPTS=$kaldi_local:$kaldi_utils:$kaldi_steps
+# export PATH=$PATH:$KALDIBIN:$FSTBIN:$LMBIN:$SCRIPTS
+export PATH=$PATH:$SCRIPTS
 
 # If the correct version of shorten and sox are not on the path,
 # the following will be set by local/gp_check_tools.sh
-SHORTEN_BIN=/home/samo/edi/hp/project/kaldi/egs/gp-xvectors/gp_s5/tools/shorten-3.6.1/bin
+SHORTEN_BIN=/home/samo/edi/hp/project/gp-xvectors-recipe/gp_s5/tools/shorten-3.6.1/bin
 # e.g. $PWD/tools/shorten-3.6.1/bin
-SOX_BIN=/home/samo/edi/hp/project/kaldi/egs/gp-xvectors/gp_s5/tools/sox-14.3.2/bin
+SOX_BIN=/home/samo/edi/hp/project/gp-xvectors-recipe/gp_s5/tools/sox-14.3.2/bin
 # e.g. $PWD/tools/sox-14.3.2/bin
 export PATH=$SHORTEN_BIN:$PATH
 export PATH=$SOX_BIN:$PATH
@@ -49,3 +47,4 @@ elif [[ $(whichMachine) = "dice" ]]; then
 else
 	echo "NOT IMPLEMENTED: setting GlobalPhone directory."
 fi
+export PATH=$SHORTEN_BIN:$PATH
