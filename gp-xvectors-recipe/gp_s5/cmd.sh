@@ -21,7 +21,11 @@
 source ./helper_functions.sh
 
 # To run locally, use:
+<<<<<<< HEAD
 if [[ $(whichMachine) = "sam" ]] || [[ $(whichMachine) = "dice" ]]; then
+=======
+if [[ $(whichMachine) = "sam" ]] || [[ $(whichMachine) = "dice"* ]]; then
+>>>>>>> 865b1195e742a386eec7c5d366f413349319936e
 	echo "Running locally."
 	export train_cmd=run.pl
 	export decode_cmd=run.pl

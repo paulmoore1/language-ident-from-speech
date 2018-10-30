@@ -74,7 +74,7 @@ for L in $LANGUAGES; do
     --eval-spk=$CONFDIR/eval_spk.list --lang-map=$CONFDIR/lang_codes.txt \
     --work-dir=data $L >& data/$L/prep_flists.log &
   # Running these in parallel since this does audio conversion (to figure out
-  # which files cannot be processed) and takes some time to run. 
+  # which files cannot be processed) and takes some time to run.
 done
 wait;
 echo "Done"
