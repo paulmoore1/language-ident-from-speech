@@ -1,4 +1,16 @@
 #######################################
+# PROJECT-SPECIFIC
+#######################################
+!kaldi/
+kaldi/*
+!kaldi/egs/
+kaldi/egs/*
+!kaldi/egs/gp-xvectors
+
+venv/*
+src/logs/
+
+#######################################
 # C++ GITIGNORE
 #######################################
 
@@ -35,15 +47,3 @@
 *.out
 *.app
 
-
-#######################################
-# PROJECT-SPECIFIC
-#######################################
-!kaldi/
-kaldi/*
-!kaldi/egs/
-kaldi/egs/*
-!kaldi/egs/gp-xvectors
-
-venv/*
-src/logs/
