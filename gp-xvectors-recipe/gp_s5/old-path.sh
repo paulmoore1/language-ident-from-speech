@@ -34,7 +34,8 @@ export PATH=$SOX_BIN:$PATH
 if [[ $(whichMachine) = "sam" ]]; then
 	GP_CORPUS=/afs/inf.ed.ac.uk/user/s15/s1513472/global_phone/
 elif [[ $(whichMachine) = "dice_sam" ]]; then
-	GP_CORPUS=~/global_phone/
+	# GP_CORPUS=~/global_phone/
+	GP_CORPUS=/group/corpora/public/global_phone
 elif [[ $(whichMachine) = "dice_other" ]]; then
 	GP_CORPUS=/group/corpora/public/global_phone
 else

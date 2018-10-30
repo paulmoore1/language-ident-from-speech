@@ -79,7 +79,6 @@ done
 wait;
 echo "Done"
 
-:<<'END'
 # (3) Normalize the transcripts.
 for L in $LANGUAGES; do
   printf "Language - ${L}: normalizing transcripts ... "
@@ -89,7 +88,6 @@ for L in $LANGUAGES; do
   done
   echo "Done"
 done
-END
 
 # (4) Create a directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
