@@ -4,8 +4,8 @@
 !kaldi/
 kaldi/*
 !kaldi/egs/
-kaldi/egs/*
-!kaldi/egs/gp-xvectors
+!kaldi/egs/**/*
+# !kaldi/egs/gp-xvectors
 
 venv/*
 src/logs/
