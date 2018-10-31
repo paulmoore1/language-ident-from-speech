@@ -14,7 +14,6 @@
 # MERCHANTABLITY OR NON-INFRINGEMENT.
 # See the Apache 2 License for the specific language governing permissions and
 # limitations under the License.
-
 set -o errexit
 
 function error_exit () {
@@ -33,9 +32,10 @@ usage="Usage: $PROG <arguments>\n
 Prepare train, dev, eval file lists for a language.\n
 e.g.: $PROG --config-dir=conf --corpus-dir=corpus --languages=\"GE PO SP\"\n\n
 Required arguments:\n
-  --config-dir=DIR\tDirecory containing the necessary config files\n
+  --config-dir=DIR\tDirectory containing the necessary config files\n
   --corpus-dir=DIR\tDirectory for the GlobalPhone corpus\n
   --languages=STR\tSpace separated list of two letter language codes\n
+  --data-dir=DIR\tDirectory for storing the data created.
 ";
 
 if [ $# -lt 4 ]; then
@@ -54,7 +54,6 @@ do
   LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --data-dir=*)
   DATADIR=`read_dirname $1`; shift ;;
-  *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
 
@@ -64,28 +63,28 @@ pushd $CONFDIR > /dev/null
 [ -f lang_codes.txt ] || error_exit "$PROG: Mapping for language name to 2-letter code not found.";
 
 popd > /dev/null
-[ -f path.sh ] && . ./path.sh  # Sets the PATH to contain necessary executables
+[ -f path.sh ] && . path.sh  # Sets the PATH to contain necessary executables
 
 # Make data folders to contain all the language files.
 for x in eval train; do
   mkdir -p $DATADIR/${x}
 done
 
+:<<'TEMP'
 # (2) get the various file lists (for audio, transcription, etc.) for the
-# specified language.
+# specified language
 printf "Preparing file lists ... "
 for L in $LANGUAGES; do
   mkdir -p $DATADIR/$L/local/data
-  local/gp_prep_flists.sh \
-  	--corpus-dir=$GPDIR \
-    --eval-spk=$CONFDIR/eval_spk.list \
-    --lang-map=$CONFDIR/lang_codes.txt \
+  local/gp_prep_flists_new.sh --corpus-dir=$GPDIR  \
+    --eval-spk=$CONFDIR/eval_spk.list --lang-map=$CONFDIR/lang_codes.txt \
     --work-dir=$DATADIR $L >& $DATADIR/$L/prep_flists.log &
   # Running these in parallel since this does audio conversion (to figure out
   # which files cannot be processed) and takes some time to run.
 done
 wait;
 echo "Done"
+TEMP
 
 # (3) Create directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
@@ -95,24 +94,22 @@ for L in $LANGUAGES; do
     cp $DATADIR/$L/local/data/${x}_${L}_wav.scp $DATADIR/$L/$x/wav.scp
     cp $DATADIR/$L/local/data/${x}_${L}.spk2utt $DATADIR/$L/$x/spk2utt
     cp $DATADIR/$L/local/data/${x}_${L}.utt2spk $DATADIR/$L/$x/utt2spk
+    #cat data/$x/sample.txt
   done
   echo "Done"
 done
 
 # (4) Combine data from all languages into one big pile
-train_dirs=()
+training_dirs=()
 eval_dirs=()
 for L in $LANGUAGES; do
-  train_dirs+=($DATADIR/$L/train)
+  echo $L
+  training_dirs+=($DATADIR/$L/train)
   eval_dirs+=($DATADIR/$L/eval)
 done
-echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${DATADIR}||g")"
-echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${DATADIR}||g")"
-utils/combine_data.sh $DATADIR/train ${train_dirs[@]}
+echo "Combining training directories: $training_dirs"
+echo "Combining evaluation directories: $eval_dirs"
+utils/combine_data.sh $DATADIR/train ${training_dirs[@]}
 utils/combine_data.sh $DATADIR/eval ${eval_dirs[@]}
-
-for L in $LANGUAGES; do
-  rm -r $DATADIR/$L
-done
 
 echo "Finished data preparation."

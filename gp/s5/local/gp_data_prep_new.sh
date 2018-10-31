@@ -33,12 +33,13 @@ usage="Usage: $PROG <arguments>\n
 Prepare train, dev, eval file lists for a language.\n
 e.g.: $PROG --config-dir=conf --corpus-dir=corpus --languages=\"GE PO SP\"\n\n
 Required arguments:\n
-  --config-dir=DIR\tDirecory containing the necessary config files\n
+  --config-dir=DIR\tDirectory containing the necessary config files\n
   --corpus-dir=DIR\tDirectory for the GlobalPhone corpus\n
   --languages=STR\tSpace separated list of two letter language codes\n
+  --data-dir=DIR\tDirectory for storing the data created.
 ";
 
-if [ $# -lt 3 ]; then
+if [ $# -lt 4 ]; then
   error_exit $usage;
 fi
 
@@ -53,6 +54,8 @@ do
   --languages=*)
   LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
+  --data-dir=*)
+  DATADIR=`read_dirname $1`; shift ;;
   esac
 done
 
@@ -66,7 +69,7 @@ popd > /dev/null
 
 # Make data folders to contain all the language files.
 for x in eval train; do
-  mkdir -p data/${x}
+  mkdir -p $DATADIR/${x}
 done
 
 <<'TEMP'
@@ -74,10 +77,10 @@ done
 # specified language
 printf "Preparing file lists ... "
 for L in $LANGUAGES; do
-  mkdir -p data/$L/local/data
+  mkdir -p $DATADIR/$L/local/data
   local/gp_prep_flists_new.sh --corpus-dir=$GPDIR  \
     --eval-spk=$CONFDIR/eval_spk.list --lang-map=$CONFDIR/lang_codes.txt \
-    --work-dir=data $L >& data/$L/prep_flists.log &
+    --work-dir=$DATADIR $L >& $DATADIR/$L/prep_flists.log &
   # Running these in parallel since this does audio conversion (to figure out
   # which files cannot be processed) and takes some time to run.
 done
@@ -91,41 +94,36 @@ TEMP
 for L in $LANGUAGES; do
   printf "Language - ${L}: normalizing transcripts ... "
   for x in train dev eval; do
-    local/gp_norm_trans_${L}.pl -i data/$L/local/data/${x}_${L}.trans1 \
-      > data/$L/local/data/${x}_${L}.txt;
+    local/gp_norm_trans_${L}.pl -i $DATADIR/$L/local/data/${x}_${L}.trans1 \
+      > $DATADIR/$L/local/data/${x}_${L}.txt;
   done
   echo "Done"
 done
 END
-mkdir -p data/nonCR/train
-mkdir -p data/nonCR/eval
-mkdir -p data/CR/train
-mkdir -p data/CR/eval
 
 # (4) Create a directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
   printf "Language - ${L}: formatting train/test data ... "
-  for x in train; do
-    if [ $L == "CR" ]; then
-      cp data/$L/local/data/${x}_${L}_wav.scp data/CR/$x/wav.scp
-      #cp data/$L/local/data/${x}_${L}.txt data/$L/$x/text
-      cp data/$L/local/data/${x}_${L}.spk2utt data/CR/$x/spk2utt
-      cp data/$L/local/data/${x}_${L}.utt2spk data/CR/$x/utt2spk
-      #cat data/$x/sample.txt
-    fi
-    if [ $L != "CR" ]; then
-    # Add to the big data folder
-      cp data/$L/local/data/${x}_${L}_wav.scp data/nonCR/$x/wav.scp
-      #cp data/$L/local/data/${x}_${L}.txt data/$L/$x/text
-      cp data/$L/local/data/${x}_${L}.spk2utt data/nonCR/$x/spk2utt
-      cp data/$L/local/data/${x}_${L}.utt2spk data/nonCR/$x/utt2spk
-      utils/combine_data.sh data/${x} \
-        data/nonCR/$x/ data/CR/$x
-
-    fi
+  for x in train eval; do
+    mkdir -p $DATADIR/$L/$x
+    cp $DATADIR/$L/local/data/${x}_${L}_wav.scp $DATADIR/$L/$x/wav.scp
+    cp $DATADIR/$L/local/data/${x}_${L}.spk2utt $DATADIR/$L/$x/spk2utt
+    cp $DATADIR/$L/local/data/${x}_${L}.utt2spk $DATADIR/$L/$x/utt2spk
+    #cat data/$x/sample.txt
   done
   echo "Done"
 done
+
+training_dirs=()
+eval_dirs=()
+for L in $LANGUAGES; do
+  training_dirs+=($DATADIR/$L/train)
+  eval_dirs+=($DATADIR/$L/eval)
+done
+
+
+utils/combine_data.sh $DATADIR/train training_dirs
+utils/combine_data.sh $DATADIR/eval eval_dirs
 
 
 echo "Finished data preparation."
