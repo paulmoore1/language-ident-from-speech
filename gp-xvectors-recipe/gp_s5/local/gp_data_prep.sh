@@ -108,11 +108,7 @@ for L in $LANGUAGES; do
 done
 echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${DATADIR}||g")"
 echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${DATADIR}||g")"
-utils/combine_data.sh $DATADIR/train ${train_dirs[@]}
+utils/combine_data.sh $DATADIR/train --extra-files "utt2num_frames" ${train_dirs[@]}
 utils/combine_data.sh $DATADIR/eval ${eval_dirs[@]}
-
-for L in $LANGUAGES; do
-  rm -r $DATADIR/$L
-done
 
 echo "Finished data preparation."
