@@ -14,7 +14,6 @@
 # MERCHANTABLITY OR NON-INFRINGEMENT.
 # See the Apache 2 License for the specific language governing permissions and
 # limitations under the License.
-
 set -o errexit
 
 function error_exit () {
@@ -53,7 +52,6 @@ do
   GPDIR=`read_dirname $1`; shift ;;
   --languages=*)
   LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
-  *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   --data-dir=*)
   DATADIR=`read_dirname $1`; shift ;;
   esac
@@ -72,7 +70,7 @@ for x in eval train; do
   mkdir -p $DATADIR/${x}
 done
 
-<<'TEMP'
+:<<'TEMP'
 # (2) get the various file lists (for audio, transcription, etc.) for the
 # specified language
 printf "Preparing file lists ... "
@@ -87,21 +85,7 @@ done
 wait;
 echo "Done"
 TEMP
-<<'END'
-#commenting out the normalisation
-
-# (3) Normalize the transcripts.
-for L in $LANGUAGES; do
-  printf "Language - ${L}: normalizing transcripts ... "
-  for x in train dev eval; do
-    local/gp_norm_trans_${L}.pl -i $DATADIR/$L/local/data/${x}_${L}.trans1 \
-      > $DATADIR/$L/local/data/${x}_${L}.txt;
-  done
-  echo "Done"
-done
-END
-
-# (4) Create a directories to contain files needed in training and testing:
+# (3) Create directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
   printf "Language - ${L}: formatting train/test data ... "
   for x in train eval; do
@@ -117,13 +101,13 @@ done
 training_dirs=()
 eval_dirs=()
 for L in $LANGUAGES; do
+  echo $L
   training_dirs+=($DATADIR/$L/train)
   eval_dirs+=($DATADIR/$L/eval)
 done
 
-
-utils/combine_data.sh $DATADIR/train training_dirs
-utils/combine_data.sh $DATADIR/eval eval_dirs
+utils/combine_data.sh $DATADIR/train ${training_dirs[@]}
+utils/combine_data.sh $DATADIR/eval ${eval_dirs[@]}
 
 
 echo "Finished data preparation."
