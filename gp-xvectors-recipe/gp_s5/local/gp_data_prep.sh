@@ -111,8 +111,4 @@ echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${DAT
 utils/combine_data.sh $DATADIR/train ${train_dirs[@]}
 utils/combine_data.sh $DATADIR/eval ${eval_dirs[@]}
 
-for L in $LANGUAGES; do
-  rm -r $DATADIR/$L
-done
-
 echo "Finished data preparation."
