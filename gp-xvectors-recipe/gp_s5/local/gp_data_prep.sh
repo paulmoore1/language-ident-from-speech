@@ -38,7 +38,7 @@ Required arguments:\n
   --languages=STR\tSpace separated list of two letter language codes\n
 ";
 
-if [ $# -lt 3 ]; then
+if [ $# -lt 4 ]; then
   error_exit $usage;
 fi
 
@@ -52,57 +52,67 @@ do
   GPDIR=`read_dirname $1`; shift ;;
   --languages=*)
   LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --data-dir=*)
+  DATADIR=`read_dirname $1`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
 
 # (1) check if the config files are in place:
 pushd $CONFDIR > /dev/null
-[ -f dev_spk.list ] || error_exit "$PROG: Dev-set speaker list not found.";
 [ -f eval_spk.list ] || error_exit "$PROG: Eval-set speaker list not found.";
 [ -f lang_codes.txt ] || error_exit "$PROG: Mapping for language name to 2-letter code not found.";
 
 popd > /dev/null
 [ -f path.sh ] && . ./path.sh  # Sets the PATH to contain necessary executables
 
+# Make data folders to contain all the language files.
+for x in eval train; do
+  mkdir -p $DATADIR/${x}
+done
+
 # (2) get the various file lists (for audio, transcription, etc.) for the
 # specified language.
 printf "Preparing file lists ... "
 for L in $LANGUAGES; do
-  mkdir -p data/$L/local/data
-  local/gp_prep_flists.sh --corpus-dir=$GPDIR --dev-spk=$CONFDIR/dev_spk.list \
-    --eval-spk=$CONFDIR/eval_spk.list --lang-map=$CONFDIR/lang_codes.txt \
-    --work-dir=data $L >& data/$L/prep_flists.log &
+  mkdir -p $DATADIR/$L/local/data
+  local/gp_prep_flists.sh \
+  	--corpus-dir=$GPDIR \
+    --eval-spk=$CONFDIR/eval_spk.list \
+    --lang-map=$CONFDIR/lang_codes.txt \
+    --work-dir=$DATADIR $L >& $DATADIR/$L/prep_flists.log &
   # Running these in parallel since this does audio conversion (to figure out
   # which files cannot be processed) and takes some time to run.
 done
 wait;
 echo "Done"
 
-:<<'END'
-# (3) Normalize the transcripts.
-for L in $LANGUAGES; do
-  printf "Language - ${L}: normalizing transcripts ... "
-  for x in train dev eval; do
-    local/gp_norm_trans_${L}.pl -i data/$L/local/data/${x}_${L}.trans1 \
-      > data/$L/local/data/${x}_${L}.txt;
-  done
-  echo "Done"
-done
-END
-
-# (4) Create a directories to contain files needed in training and testing:
+# (3) Create directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
   printf "Language - ${L}: formatting train/test data ... "
-  for x in train dev eval; do
-    mkdir -p data/$L/$x
-    cp data/$L/local/data/${x}_${L}_wav.scp data/$L/$x/wav.scp
-    # cp data/$L/local/data/${x}_${L}.txt data/$L/$x/text
-    cp data/$L/local/data/${x}_${L}.spk2utt data/$L/$x/spk2utt
-    cp data/$L/local/data/${x}_${L}.utt2spk data/$L/$x/utt2spk
+  for x in train eval; do
+    mkdir -p $DATADIR/$L/$x
+    cp $DATADIR/$L/local/data/${x}_${L}_wav.scp $DATADIR/$L/$x/wav.scp
+    cp $DATADIR/$L/local/data/${x}_${L}.spk2utt $DATADIR/$L/$x/spk2utt
+    cp $DATADIR/$L/local/data/${x}_${L}.utt2spk $DATADIR/$L/$x/utt2spk
   done
   echo "Done"
 done
 
+# (4) Combine data from all languages into one big pile
+train_dirs=()
+eval_dirs=()
+for L in $LANGUAGES; do
+  train_dirs+=($DATADIR/$L/train)
+  eval_dirs+=($DATADIR/$L/eval)
+done
+echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${DATADIR}||g")"
+echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${DATADIR}||g")"
+utils/combine_data.sh $DATADIR/train ${train_dirs[@]}
+utils/combine_data.sh $DATADIR/eval ${eval_dirs[@]}
+
+for L in $LANGUAGES; do
+  rm -r $DATADIR/$L
+done
 
 echo "Finished data preparation."

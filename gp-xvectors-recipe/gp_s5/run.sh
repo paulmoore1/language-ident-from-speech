@@ -32,6 +32,13 @@ echo "This shell script may run as-is on your system, but it is recommended
 that you run the commands one by one by copying and pasting into the shell."
 #exit 1;
 
+if [[ "$CONDA_DEFAULT_ENV" == "" ]]; then
+	echo "Seems like your conda environment is not activated. Use: source activate ENVNAME."
+	exit
+else
+	echo "Conda environment '$CONDA_DEFAULT_ENV' active."
+fi
+
 [ -f helper_functions.sh ] && source ./helper_functions.sh \
   || echo "helper_functions.sh not found. Won't be able to set environment variables and similar."
 
@@ -56,31 +63,36 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 export GP_LANGUAGES="CR TU"
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
-local/gp_data_prep_new.sh --config-dir=$PWD/conf --corpus-dir=$GP_CORPUS --languages="$GP_LANGUAGES" --data-dir=/afs/inf.ed.ac.uk/user/s15/s1531206/gp_data/data || exit 1;
+local/gp_data_prep.sh \
+	--config-dir=$PWD/conf \
+	--corpus-dir=$GP_CORPUS \
+	--languages="$GP_LANGUAGES" \
+	--data-dir=/afs/inf.ed.ac.uk/user/s15/s1513472/gp-data \
+	|| exit 1;
 #local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
 
-:<<'TEMP'
+exit
+
 # Now make MFCC features.
 for L in $GP_LANGUAGES; do
   mfccdir=mfcc/$L
+  echo "computing MFCCs for language: $L"
   for x in train dev eval; do
     (
       steps/make_mfcc.sh --nj 6 --cmd "$train_cmd" data/$L/$x \
         exp/$L/make_mfcc/$x $mfccdir;
+      echo " made MFCCs"
       steps/compute_cmvn_stats.sh data/$L/$x exp/$L/make_mfcc/$x $mfccdir;
+      echo " computed CMVN stats"
     ) &
   done
 done
 wait;
-
 exit
-TEMP
 
-:<<'END'
 for L in $GP_LANGUAGES; do
   mkdir -p exp/$L/mono;
   steps/train_mono.sh --nj 10 --cmd "$train_cmd" \
     data/$L/train data/$L/lang exp/$L/mono >& exp/$L/mono/train.log &
 done
 wait;
-END

@@ -85,6 +85,7 @@ done
 wait;
 echo "Done"
 TEMP
+
 # (3) Create directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
   printf "Language - ${L}: formatting train/test data ... "
@@ -98,6 +99,7 @@ for L in $LANGUAGES; do
   echo "Done"
 done
 
+# (4) Combine data from all languages into one big pile
 training_dirs=()
 eval_dirs=()
 for L in $LANGUAGES; do
@@ -105,9 +107,9 @@ for L in $LANGUAGES; do
   training_dirs+=($DATADIR/$L/train)
   eval_dirs+=($DATADIR/$L/eval)
 done
-
+echo "Combining training directories: $training_dirs"
+echo "Combining evaluation directories: $eval_dirs"
 utils/combine_data.sh $DATADIR/train ${training_dirs[@]}
 utils/combine_data.sh $DATADIR/eval ${eval_dirs[@]}
-
 
 echo "Finished data preparation."
