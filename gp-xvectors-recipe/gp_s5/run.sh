@@ -32,6 +32,13 @@ echo "This shell script may run as-is on your system, but it is recommended
 that you run the commands one by one by copying and pasting into the shell."
 #exit 1;
 
+if [[ "$CONDA_DEFAULT_ENV" == "" ]]; then
+	echo "Seems like your conda environment is not activated. Use: source activate ENVNAME."
+	exit
+else
+	echo "Conda environment '$CONDA_DEFAULT_ENV' active."
+fi
+
 [ -f helper_functions.sh ] && source ./helper_functions.sh \
   || echo "helper_functions.sh not found. Won't be able to set environment variables and similar."
 
@@ -58,10 +65,11 @@ export GP_LANGUAGES="FR"
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
 local/gp_data_prep.sh --config-dir=$PWD/conf --corpus-dir=$GP_CORPUS --languages="$GP_LANGUAGES" || exit 1;
-local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
+#local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
 
 :<<'END'
 for L in $GP_LANGUAGES; do
+	echo "preparing language: $L"
  utils/prepare_lang.sh --position-dependent-phones true \
    data/$L/local/dict "<unk>" data/$L/local/lang_tmp data/$L/lang \
    >& data/$L/prepare_lang.log || exit 1;
@@ -70,6 +78,7 @@ done
 # Convert the different available language models to FSTs, and create separate
 # decoding configurations for each.
 for L in $GP_LANGUAGES; do
+   echo "preparing FST for language: $L"
    local/gp_format_lm.sh --filter-vocab-sri true $GP_LM $L &
 done
 wait
@@ -78,20 +87,20 @@ END
 # Now make MFCC features.
 for L in $GP_LANGUAGES; do
   mfccdir=mfcc/$L
+  echo "computing MFCCs for language: $L"
   for x in train dev eval; do
     (
       steps/make_mfcc.sh --nj 6 --cmd "$train_cmd" data/$L/$x \
         exp/$L/make_mfcc/$x $mfccdir;
+      echo " made MFCCs"
       steps/compute_cmvn_stats.sh data/$L/$x exp/$L/make_mfcc/$x $mfccdir;
+      echo " computed CMVN stats"
     ) &
   done
 done
 wait;
-
 exit
 
-
-:<<'END'
 for L in $GP_LANGUAGES; do
   mkdir -p exp/$L/mono;
   steps/train_mono.sh --nj 10 --cmd "$train_cmd" \
@@ -100,6 +109,7 @@ done
 wait;
 
 
+:<<'END'
 for L in $GP_LANGUAGES; do
   for lm_suffix in tgpr_sri; do
     (

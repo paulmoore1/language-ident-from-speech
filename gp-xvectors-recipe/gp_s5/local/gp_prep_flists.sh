@@ -128,8 +128,8 @@ for x in dev eval train; do
   find $GPDIR/$full_name/adc -name "${LCODE}*\.adc\.shn" \
     | grep -f $tmpdir/${x}_spk > $ODIR/${x}_${LCODE}.flist
   
-  echo "SHN files for ${x} set:"
-  cat $ODIR/${x}_${LCODE}.flist | sed "s/.*\///g" | sed "s/^/\t/g"
+  #echo "SHN files for ${x} set:"
+  #cat $ODIR/${x}_${LCODE}.flist | sed "s/.*\///g" | sed "s/^/\t/g"
 
   # The audio conversion is done here since some files cannot be converted,
   # and those need to be removed from the file lists.
@@ -164,6 +164,8 @@ for x in dev eval train; do
   sed -e 's?_.*$??' $tmpdir/${x}_basenames \
     | paste -d' ' $tmpdir/${x}_basenames - \
     > $ODIR/${x}_${LCODE}.utt2spk
+  echo "$(sort -u $ODIR/${x}_${LCODE}.utt2spk)" > $ODIR/${x}_${LCODE}.utt2spk
+
   utt2spk_to_spk2utt.pl $ODIR/${x}_${LCODE}.utt2spk \
     > $ODIR/${x}_${LCODE}.spk2utt || exit 1;
 done
