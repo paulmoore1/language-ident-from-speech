@@ -46,18 +46,18 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 # Moved to path.sh
 # Set the locations of the GlobalPhone corpus and language models
-# GP_CORPUS=/idiap/resource/database/GLOBALPHONE
+#GP_CORPUS=/afs/inf.ed.ac.uk/group/corpora/public/global_phone
 
 # Don't need language models for LID.
 # GP_LM=$PWD/language_models
 
 
 # Set the languages that will actually be processed
-export GP_LANGUAGES="FR"
+export GP_LANGUAGES="CR TU"
 
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
-local/gp_data_prep.sh --config-dir=$PWD/conf --corpus-dir=$GP_CORPUS --languages="$GP_LANGUAGES" || exit 1;
+local/gp_data_prep_new.sh --config-dir=$PWD/conf --corpus-dir=$GP_CORPUS --languages="$GP_LANGUAGES" --data-dir=/afs/inf.ed.ac.uk/user/s15/s1531206/gp_data/data | exit 1;
 local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
 
 :<<'END'
