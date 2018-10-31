@@ -59,20 +59,6 @@ export GP_LANGUAGES="CR TU"
 local/gp_data_prep_new.sh --config-dir=$PWD/conf --corpus-dir=$GP_CORPUS --languages="$GP_LANGUAGES" --data-dir=/afs/inf.ed.ac.uk/user/s15/s1531206/gp_data/data || exit 1;
 #local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
 
-:<<'END'
-for L in $GP_LANGUAGES; do
- utils/prepare_lang.sh --position-dependent-phones true \
-   data/$L/local/dict "<unk>" data/$L/local/lang_tmp data/$L/lang \
-   >& data/$L/prepare_lang.log || exit 1;
-done
-
-# Convert the different available language models to FSTs, and create separate
-# decoding configurations for each.
-for L in $GP_LANGUAGES; do
-   local/gp_format_lm.sh --filter-vocab-sri true $GP_LM $L &
-done
-wait
-END
 :<<'TEMP'
 # Now make MFCC features.
 for L in $GP_LANGUAGES; do
