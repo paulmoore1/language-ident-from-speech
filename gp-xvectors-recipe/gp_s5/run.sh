@@ -30,7 +30,6 @@
 # !!! NOTE: The current recipe assumes that you have pre-built LMs.
 echo "This shell script may run as-is on your system, but it is recommended
 that you run the commands one by one by copying and pasting into the shell."
-#exit 1;
 
 if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
 	echo "Seems like your conda environment is not activated. Use: source activate ENVNAME."
@@ -38,6 +37,9 @@ if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
 else
 	echo "Conda environment '$CONDA_DEFAULT_ENV' active."
 fi
+
+[ -f conf/user_specific_config.sh ] && source ./conf/general_config.sh \
+	|| echo "conf/general_config.sh not found or contains errors!"
 
 [ -f conf/user_specific_config.sh ] && source ./conf/user_specific_config.sh \
 	|| echo "conf/user_specific_config.sh not found, create it by cloning " + \
@@ -58,8 +60,11 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 # Don't need language models for LID.
 # GP_LM=$PWD/language_models
 
+<<<<<<< HEAD
 #!!!TODO!!! - change before running each time atm
 DATADIR=/afs/inf.ed.ac.uk/user/s15/s1531206/gp-data
+=======
+>>>>>>> 7552d160c2843565fc8c4d6365736a4d532a6d78
 TRAINDIR=$DATADIR/train
 mfccdir=$DATADIR/mfcc
 vaddir=$DATADIR/mfcc
@@ -83,7 +88,26 @@ TEMP
 
 
 # Now make MFCC features.
+<<<<<<< HEAD
 #:<<'TEMP'
+=======
+:<<'END'
+for x in train eval; do
+(
+  steps/make_mfcc.sh \
+  	--nj $MAXNUMJOBS \
+  	--cmd "$train_cmd" \
+  	$DATADIR/$x \
+    $DATADIR/logs/make_mfcc/$x \
+    $mfccdir;
+
+  steps/compute_cmvn_stats.sh $DATADIR/$x $DATADIR/logs/make_mfcc/$x $mfccdir;
+) &
+done
+wait;
+END
+:<<'TEMP'
+>>>>>>> 7552d160c2843565fc8c4d6365736a4d532a6d78
 if [ $stage -le 1 ]; then
   # Make MFCCs and compute the energy-based VAD for each dataset
   #TODO is this doing anything important?
@@ -95,7 +119,11 @@ if [ $stage -le 1 ]; then
     steps/make_mfcc.sh \
       --write-utt2num-frames true \
       --mfcc-config conf/mfcc.conf \
+<<<<<<< HEAD
       --nj 6 \
+=======
+      --nj $MAXNUMJOBS \
+>>>>>>> 7552d160c2843565fc8c4d6365736a4d532a6d78
       --cmd "$train_cmd" \
       $DATADIR/${name} \
       exp/make_mfcc \
@@ -104,7 +132,11 @@ if [ $stage -le 1 ]; then
     utils/fix_data_dir.sh $DATADIR/${name}
 
     sid/compute_vad_decision.sh \
+<<<<<<< HEAD
       --nj 6 \
+=======
+      --nj $MAXNUMJOBS \
+>>>>>>> 7552d160c2843565fc8c4d6365736a4d532a6d78
       --cmd "$train_cmd" \
       $DATADIR/${name} \
       exp/make_vad \
@@ -183,7 +215,7 @@ if [ $stage -le 2 ]; then
   # Make MFCCs for the augmented data.  Note that we do not compute a new
   # vad.scp file here.  Instead, we use the vad.scp from the clean version of
   # the list.
-  steps/make_mfcc.sh --mfcc-config conf/mfcc.conf --nj 40 --cmd "$train_cmd" \
+  steps/make_mfcc.sh --mfcc-config conf/mfcc.conf --nj $MAXNUMJOBS --cmd "$train_cmd" \
     $TRAINDIR/aug_128k exp/make_mfcc $mfccdir
 
   # Combine the clean and augmented SWBD+SRE list.  This is now roughly
@@ -205,7 +237,11 @@ if [ $stage -le 3 ]; then
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
+<<<<<<< HEAD
   local/nnet3/xvector/prepare_feats_for_egs.sh --nj 6 --cmd "$train_cmd" \
+=======
+  local/nnet3/xvector/prepare_feats_for_egs.sh --nj $MAXNUMJOBS --cmd "$train_cmd" \
+>>>>>>> 7552d160c2843565fc8c4d6365736a4d532a6d78
     $TRAINDIR $TRAINDIR/combined_no_sil exp/train_combined_no_sil
 		# !!!TODO change to $TRAINDIR/combined when data augmentation works
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
