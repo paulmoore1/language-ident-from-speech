@@ -62,8 +62,8 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 TRAINDIR=$DATADIR/train
 export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
-stage=1
-
+stage=0
+:<<'TEMP'
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
 if [ $stage -le 0 ]; then
@@ -75,7 +75,7 @@ if [ $stage -le 0 ]; then
 		|| exit 1;
 	#local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
 fi
-
+TEMP
 mfccdir=$DATADIR/mfcc
 vaddir=$DATADIR/mfcc
 nnetdir=exp/xvector_nnet_1a
@@ -96,7 +96,7 @@ for x in train eval; do
 done
 wait;
 END
-
+:<<'TEMP'
 if [ $stage -le 1 ]; then
   # Make MFCCs and compute the energy-based VAD for each dataset
   #TODO is this doing anything important?
@@ -125,11 +125,10 @@ if [ $stage -le 1 ]; then
 
     utils/fix_data_dir.sh $DATADIR/${name}
   done
-  #TODO put this in the data prep
-  #utils/combine_data.sh --extra-files "utt2num_frames" data/swbd_sre data/swbd data/sre
+
   utils/fix_data_dir.sh $TRAINDIR
 fi
-exit
+TEMP
 
 :<<'TEMP'
 #In order to fix this, we need the MUSAN corpus - currently skipping augmentation
@@ -219,29 +218,33 @@ if [ $stage -le 3 ]; then
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
   local/nnet3/xvector/prepare_feats_for_egs.sh --nj $MAXNUMJOBS --cmd "$train_cmd" \
-    $TRAINDIR/combined $TRAINDIR/combined_no_sil exp/train_combined_no_sil
+    $TRAINDIR $TRAINDIR/combined_no_sil exp/train_combined_no_sil
+		# !!!TODO change to $TRAINDIR/combined when data augmentation works
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
 
   # Now, we need to remove features that are too short after removing silence
   # frames.  We want atleast 5s (500 frames) per utterance.
+	echo "Removing silence frames..."
   min_len=500
   mv $TRAINDIR/combined_no_sil/utt2num_frames $TRAINDIR/combined_no_sil/utt2num_frames.bak
   awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $TRAINDIR/combined_no_sil/utt2num_frames.bak > $TRAINDIR/combined_no_sil/utt2num_frames
   utils/filter_scp.pl $TRAINDIR/combined_no_sil/utt2num_frames $TRAINDIR/combined_no_sil/utt2spk > $TRAINDIR/combined_no_sil/utt2spk.new
   mv $TRAINDIR/combined_no_sil/utt2spk.new $TRAINDIR/combined_no_sil/utt2spk
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
-
+	echo "Done"
   # We also want several utterances per speaker. Now we'll throw out speakers
   # with fewer than 8 utterances.
+	echo "Removing speakers with < 8 utterances..."
   min_num_utts=8
   awk '{print $1, NF-1}' $TRAINDIR/combined_no_sil/spk2utt > $TRAINDIR/combined_no_sil/spk2num
   awk -v min_num_utts=${min_num_utts} '$2 >= min_num_utts {print $1, $2}' $TRAINDIR/combined_no_sil/spk2num | utils/filter_scp.pl - $TRAINDIR/combined_no_sil/spk2utt > $TRAINDIR/combined_no_sil/spk2utt.new
   mv $TRAINDIR/combined_no_sil/spk2utt.new $TRAINDIR/combined_no_sil/spk2utt
   utils/spk2utt_to_utt2spk.pl $TRAINDIR/combined_no_sil/spk2utt > $TRAINDIR/combined_no_sil/utt2spk
-
+	echo "Done"
   utils/filter_scp.pl $TRAINDIR/combined_no_sil/utt2spk $TRAINDIR/combined_no_sil/utt2num_frames > $TRAINDIR/combined_no_sil/utt2num_frames.new
   mv $TRAINDIR/combined_no_sil/utt2num_frames.new $TRAINDIR/combined_no_sil/utt2num_frames
 
   # Now we're ready to create training examples.
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
 fi
+exit
