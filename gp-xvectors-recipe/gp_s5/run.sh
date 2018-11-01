@@ -32,12 +32,16 @@ echo "This shell script may run as-is on your system, but it is recommended
 that you run the commands one by one by copying and pasting into the shell."
 #exit 1;
 
-if [[ "$CONDA_DEFAULT_ENV" == "" ]]; then
+if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
 	echo "Seems like your conda environment is not activated. Use: source activate ENVNAME."
 	exit
 else
 	echo "Conda environment '$CONDA_DEFAULT_ENV' active."
 fi
+
+[ -f conf/user_specific_config.sh ] && source ./conf/user_specific_config.sh \
+	|| echo "conf/user_specific_config.sh not found, create it by cloning " + \
+					"conf/user_specific_config-example.sh"
 
 [ -f helper_functions.sh ] && source ./helper_functions.sh \
   || echo "helper_functions.sh not found. Won't be able to set environment variables and similar."
@@ -51,19 +55,16 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
-# Moved to path.sh
-# Set the locations of the GlobalPhone corpus and language models
-#GP_CORPUS=/afs/inf.ed.ac.uk/group/corpora/public/global_phone
-
 # Don't need language models for LID.
 # GP_LM=$PWD/language_models
 
+<<<<<<< HEAD
 #!!!TODO!!! - change before running each time atm
 DATADIR=/afs/inf.ed.ac.uk/user/s15/s1531206/gp-data
+=======
+>>>>>>> 9cacea3f35dc60c8116799906a2e28f2733adde4
 TRAINDIR=$DATADIR/train
-
-# Set the languages that will actually be processed
-export GP_LANGUAGES="CR TU"
+export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
 stage=0
 :<<'TEMP'
 # The following data preparation step actually converts the audio files from

@@ -13,10 +13,13 @@
 **exp/
 **mfcc/
 
-# Train/dev/eval splits changed for development purposes
+# Helper files
+path-old.sh
+
+# User-specific files
+## Train/dev/eval splits changed for development purposes
 dev_spk.list
 eval_spk.list
 train_spk.list
-
-# Helper files
-**path-old.sh
+## Other user-specific configs
+user_specific_config.sh
