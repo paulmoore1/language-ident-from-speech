@@ -64,7 +64,8 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 TRAINDIR=$DATADIR/train
 mfccdir=$DATADIR/mfcc
 vaddir=$DATADIR/mfcc
-nnetdir=exp/xvector_nnet_1a
+nnet_dir=$DATADIR/exp/xvector_nnet_1a
+
 
 export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
 stage=0
@@ -203,6 +204,7 @@ if [ $stage -le 2 ]; then
 fi
 TEMP
 
+:<<'TEMP'
 # Now we prepare the features to generate examples for xvector training.
 if [ $stage -le 3 ]; then
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
@@ -239,3 +241,8 @@ if [ $stage -le 3 ]; then
   # Now we're ready to create training examples.
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
 fi
+TEMP
+
+local/nnet3/xvector/run_xvector.sh --stage $stage --train-stage -1 \
+  --data $TRAINDIR/combined_no_sil --nnet-dir $nnet_dir \
+  --egs-dir $nnet_dir/egs
