@@ -25,11 +25,19 @@
 # See the Apache 2 License for the specific language governing permissions and
 # limitations under the License.
 
-# This script shows the steps needed to build a recognizer for certain languages
-# of the GlobalPhone corpus.
-# !!! NOTE: The current recipe assumes that you have pre-built LMs.
-echo "This shell script may run as-is on your system, but it is recommended
-that you run the commands one by one by copying and pasting into the shell."
+echo $'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+       This shell script runs the GlobalPhone+X-vectors recipe.
+       Use like this: ./run.sh stagenumber
+       or don\'t provide stage number to run the whole recipe.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+
+if [ $# -lt 1 ]; then
+	echo "No stage specified; assuming stage 0 and running the recipe from the beginning."
+  stage=0
+else
+	echo "Continuing from stage $1"
+	stage=$1
+fi
 
 if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
 	echo "Seems like your conda environment is not activated. Use: source activate ENVNAME."
@@ -68,7 +76,7 @@ nnet_dir=$DATADIR/exp/xvector_nnet_1a
 
 
 export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
-stage=0
+
 :<<'TEMP'
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.

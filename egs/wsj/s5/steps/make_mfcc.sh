@@ -86,6 +86,8 @@ done
 
 if $write_utt2num_frames; then
   write_num_frames_opt="--write-num-frames=ark,t:$logdir/utt2num_frames.JOB"
+  echo "write_num_frames_opt is: "
+  echo $write_num_frames_opt
 else
   write_num_frames_opt=
 fi
@@ -144,6 +146,8 @@ done > $data/feats.scp || exit 1
 
 if $write_utt2num_frames; then
   echo "Writing number of frames"
+  cat $logdir/utt2num_frames.1
+  exit
   for n in $(seq $nj); do
     cat $logdir/utt2num_frames.$n || exit 1;
   done > $data/utt2num_frames || exit 1

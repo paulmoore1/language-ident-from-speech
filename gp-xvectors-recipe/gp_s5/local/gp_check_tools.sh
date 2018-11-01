@@ -31,6 +31,7 @@ install_sox=false
 
 shorten=`which shorten 2>/dev/null` \
   || { echo "shorten not found on PATH: installing"; install_shorten=true; }
+
 sox=`which sox 2>/dev/null` \
   || { echo "sox not found on PATH: installing"; install_sox=true; }
 
@@ -41,7 +42,7 @@ if [ ! -z "$shorten" ]; then
     echo "Unsupported shorten version $shorten_version found on path. Installing 3.6.1"
     install_shorten=true
   else
-    echo "Using shorten (v$shorten_version) from $shorten"
+    echo "Using shorten (v$shorten_version) from $(echo $shorten | sed "s|$HOME|~|g")"
   fi
 fi
 
@@ -52,7 +53,7 @@ if [ ! -z "$sox" ]; then
     echo "Unsupported sox version $sox_version found on path. Installing 14.3.2"
     install_sox=true
   else
-    echo "Using sox ($sox_version) from $sox"
+    echo "Using sox ($sox_version) from $(echo $sox | sed "s|$HOME|~|g")"
   fi
 fi
 
@@ -66,7 +67,7 @@ if $install_shorten; then
   cp $path_file $d/old-${b}.sh
   sed -e "s?^SHORTEN_BIN=.*?SHORTEN_BIN=$WDIR/tools/shorten-3.6.1/bin?" \
     $d/old-${b}.sh > $tmp_file
-  echo 'export PATH=$SHORTEN_BIN:$PATH' >> $tmp_file
+  # echo 'export PATH=$SHORTEN_BIN:$PATH' >> $tmp_file
 else
   cp $path_file $tmp_file
 fi
@@ -75,5 +76,5 @@ if $install_sox; then
   local/gp_install.sh --install-sox $install_sox $WDIR || exit 1
   cp $path_file $d/old-${b}.sh
   sed -e "s?^SOX_BIN=.*?SOX_BIN=$WDIR/tools/sox-14.3.2/bin?" $tmp_file > $path_file
-  echo 'export PATH=$SOX_BIN:$PATH' >> $tmp_file
+  # echo 'export PATH=$SOX_BIN:$PATH' >> $tmp_file
 fi

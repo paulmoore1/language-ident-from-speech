@@ -16,7 +16,7 @@ if [ $# -ne 1 ]; then
   echo "number of frames in each utterance as measured based on the "
   echo "duration of the utterances (in utt2dur) and the specified "
   echo "frame_shift and frame_overlap."
-  echo "Usage: $0 <data>" 
+  echo "Usage: $0 <data>"
   exit 1
 fi
 
@@ -35,7 +35,7 @@ if [ ! -f $data/feats.scp ]; then
 fi
 
 utils/split_data.sh --per-utt $data $nj || exit 1
-$cmd JOB=1:$nj $data/log/get_utt2num_frames.JOB.log \
+$cmd JOB=1:$nj $data/log/utt2num_frames/get_utt2num_frames.JOB.log \
   feat-to-len scp:$data/split${nj}utt/JOB/feats.scp ark,t:$data/split${nj}utt/JOB/utt2num_frames || exit 1
 
 for n in `seq $nj`; do
