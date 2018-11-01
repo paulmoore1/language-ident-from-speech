@@ -67,8 +67,11 @@ $cmd JOB=1:$nj $dir/log/create_xvector_feats_${name}.JOB.log \
   apply-cmvn-sliding --norm-vars=false --center=true --cmn-window=$cmn_window \
   scp:${sdata_in}/JOB/feats.scp ark:- \| \
   select-voiced-frames ark:- scp,s,cs:${sdata_in}/JOB/vad.scp ark:- \| \
-  copy-feats --compress=$compress $write_num_frames_opt ark:- \
+  copy-feats --compress=$compress ark:- \
   ark,scp:$featdir/xvector_feats_${name}.JOB.ark,$featdir/xvector_feats_${name}.JOB.scp || exit 1;
+
+# Replaced line 70 - originally was:
+# copy-feats --compress=$compress $write_num_frames_opt ark:- \
 
 for n in $(seq $nj); do
   cat $featdir/xvector_feats_${name}.$n.scp || exit 1;
