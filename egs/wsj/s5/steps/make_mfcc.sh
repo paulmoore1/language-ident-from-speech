@@ -143,6 +143,7 @@ for n in $(seq $nj); do
 done > $data/feats.scp || exit 1
 
 if $write_utt2num_frames; then
+  echo "Writing number of frames"
   for n in $(seq $nj); do
     cat $logdir/utt2num_frames.$n || exit 1;
   done > $data/utt2num_frames || exit 1

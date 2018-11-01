@@ -58,12 +58,13 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 # Don't need language models for LID.
 # GP_LM=$PWD/language_models
 
-<<<<<<< HEAD
 #!!!TODO!!! - change before running each time atm
 DATADIR=/afs/inf.ed.ac.uk/user/s15/s1531206/gp-data
-=======
->>>>>>> 9cacea3f35dc60c8116799906a2e28f2733adde4
 TRAINDIR=$DATADIR/train
+mfccdir=$DATADIR/mfcc
+vaddir=$DATADIR/mfcc
+nnetdir=exp/xvector_nnet_1a
+
 export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
 stage=0
 :<<'TEMP'
@@ -79,27 +80,10 @@ if [ $stage -le 0 ]; then
 	#local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
 fi
 TEMP
-mfccdir=$DATADIR/mfcc
-vaddir=$DATADIR/mfcc
-nnetdir=exp/xvector_nnet_1a
+
 
 # Now make MFCC features.
-:<<'END'
-for x in train eval; do
-(
-  steps/make_mfcc.sh \
-  	--nj 6 \
-  	--cmd "$train_cmd" \
-  	$DATADIR/$x \
-    $DATADIR/logs/make_mfcc/$x \
-    $mfccdir;
-
-  steps/compute_cmvn_stats.sh $DATADIR/$x $DATADIR/logs/make_mfcc/$x $mfccdir;
-) &
-done
-wait;
-END
-:<<'TEMP'
+#:<<'TEMP'
 if [ $stage -le 1 ]; then
   # Make MFCCs and compute the energy-based VAD for each dataset
   #TODO is this doing anything important?
@@ -111,7 +95,7 @@ if [ $stage -le 1 ]; then
     steps/make_mfcc.sh \
       --write-utt2num-frames true \
       --mfcc-config conf/mfcc.conf \
-      --nj 40 \
+      --nj 6 \
       --cmd "$train_cmd" \
       $DATADIR/${name} \
       exp/make_mfcc \
@@ -120,7 +104,7 @@ if [ $stage -le 1 ]; then
     utils/fix_data_dir.sh $DATADIR/${name}
 
     sid/compute_vad_decision.sh \
-      --nj 40 \
+      --nj 6 \
       --cmd "$train_cmd" \
       $DATADIR/${name} \
       exp/make_vad \
@@ -128,10 +112,11 @@ if [ $stage -le 1 ]; then
 
     utils/fix_data_dir.sh $DATADIR/${name}
   done
-
+	#utils/combine_data.sh --extra-files 'utt2num_frames' $DATADIR/
   utils/fix_data_dir.sh $TRAINDIR
 fi
-TEMP
+exit
+#TEMP
 
 :<<'TEMP'
 #In order to fix this, we need the MUSAN corpus - currently skipping augmentation
@@ -220,11 +205,11 @@ if [ $stage -le 3 ]; then
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
-  local/nnet3/xvector/prepare_feats_for_egs.sh --nj 40 --cmd "$train_cmd" \
+  local/nnet3/xvector/prepare_feats_for_egs.sh --nj 6 --cmd "$train_cmd" \
     $TRAINDIR $TRAINDIR/combined_no_sil exp/train_combined_no_sil
 		# !!!TODO change to $TRAINDIR/combined when data augmentation works
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
-
+	exit
   # Now, we need to remove features that are too short after removing silence
   # frames.  We want atleast 5s (500 frames) per utterance.
 	echo "Removing silence frames..."
