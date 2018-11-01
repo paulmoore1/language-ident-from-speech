@@ -38,7 +38,7 @@ else
 	echo "Conda environment '$CONDA_DEFAULT_ENV' active."
 fi
 
-[ -f conf/user_specific_config.sh ] && source ./conf/general_config.sh \
+[ -f conf/general_config.sh ] && source ./conf/general_config.sh \
 	|| echo "conf/general_config.sh not found or contains errors!"
 
 [ -f conf/user_specific_config.sh ] && source ./conf/user_specific_config.sh \
@@ -61,9 +61,6 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 # Don't need language models for LID.
 # GP_LM=$PWD/language_models
 
-#!!!TODO!!! - change before running each time atm
-DATADIR=/afs/inf.ed.ac.uk/user/s15/s1531206/gp-data
-
 TRAINDIR=$DATADIR/train
 mfccdir=$DATADIR/mfcc
 vaddir=$DATADIR/mfcc
@@ -84,13 +81,10 @@ if [ $stage -le 0 ]; then
 	#local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
 fi
 TEMP
-echo $MAXNUMJOBS
-exit
-
 
 # Now make MFCC features.
 
-#:<<'TEMP'
+:<<'TEMP'
 if [ $stage -le 1 ]; then
   # Make MFCCs and compute the energy-based VAD for each dataset
   #TODO is this doing anything important?
@@ -98,16 +92,18 @@ if [ $stage -le 1 ]; then
   #  utils/create_split_dir.pl \
   #    /export/b{14,15,16,17}/$USER/kaldi-data/egs/sre16/v2/xvector-$(date +'%m_%d_%H_%M')/mfccs/storage $mfccdir/storage
   #fi
+	# temporarily set to false, isn't doing it right
   for name in train eval; do
     steps/make_mfcc.sh \
-      --write-utt2num-frames true \
+      --write-utt2num-frames false \
       --mfcc-config conf/mfcc.conf \
       --nj $MAXNUMJOBS \
       --cmd "$train_cmd" \
       $DATADIR/${name} \
-      exp/make_mfcc \
+      $DATADIR/log/make_mfcc \
       $mfccdir
-
+			# Have to calculate this separately, since make_mfcc.sh isn't writing properly
+		utils/data/get_utt2num_frames.sh $DATADIR/${name}
     utils/fix_data_dir.sh $DATADIR/${name}
 
     sid/compute_vad_decision.sh \
@@ -123,7 +119,7 @@ if [ $stage -le 1 ]; then
   utils/fix_data_dir.sh $TRAINDIR
 fi
 exit
-#TEMP
+TEMP
 
 :<<'TEMP'
 #In order to fix this, we need the MUSAN corpus - currently skipping augmentation
@@ -213,10 +209,11 @@ if [ $stage -le 3 ]; then
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
   local/nnet3/xvector/prepare_feats_for_egs.sh --nj $MAXNUMJOBS --cmd "$train_cmd" \
-    $TRAINDIR $TRAINDIR/combined_no_sil exp/train_combined_no_sil
+    $TRAINDIR $TRAINDIR/combined_no_sil $DATADIR/log/train_combined_no_sil
 		# !!!TODO change to $TRAINDIR/combined when data augmentation works
+	utils/data/get_utt2num_frames.sh $TRAINDIR/combined_no_sil
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
-	exit
+
   # Now, we need to remove features that are too short after removing silence
   # frames.  We want atleast 5s (500 frames) per utterance.
 	echo "Removing silence frames..."
@@ -242,4 +239,3 @@ if [ $stage -le 3 ]; then
   # Now we're ready to create training examples.
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
 fi
-exit
