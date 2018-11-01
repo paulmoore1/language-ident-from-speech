@@ -14,7 +14,7 @@
 **mfcc/
 
 # Helper files
-path-old.sh
+old-path.sh
 
 # User-specific files
 ## Train/dev/eval splits changed for development purposes

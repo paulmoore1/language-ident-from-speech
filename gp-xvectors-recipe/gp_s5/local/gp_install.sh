@@ -27,7 +27,7 @@ install_sox=false
 # end configuration sections
 
 help_message="Usage: "`basename $0`" [options] <target-dir>
-options: 
+options:
   --help                            # print this message and exit
   --install-shorten (true|false)    # default: false
   --install-sox (true|false)        # default: false
@@ -50,12 +50,12 @@ DIR=$1
 cd $DIR
 if $install_shorten; then
   if [ -d tools/shorten-3.6.1 ]; then
-    echo "$DIR/tools/shorten-3.6.1 already exists. Remove before continuing."
+    echo "$(echo $DIR/tools/shorten-3.6.1 | sed "s|$HOME|~|g") already exists. Not installing again."
   else
     echo -n "Installing shorten ... "
     mkdir -p tools
     cd tools
-    ( 
+    (
       if [ ! -f shorten-3.6.1.tar.gz ]; then
         wget http://shnutils.freeshell.org/shorten/dist/src/shorten-3.6.1.tar.gz \
   	      || errexit "Download failed for shorten-3.6.1.";
@@ -84,17 +84,17 @@ fi
 cd $DIR
 if $install_sox; then
   if [ -d tools/sox-14.3.2 ]; then
-    echo "$DIR/tools/sox-14.3.2 already exists. Remove before continuing."
+    echo "$(echo $DIR/tools/sox-14.3.2 | sed "s|$HOME|~|g") already exists. Not installing again."
   else
     echo -n "Installing sox ... "
     mkdir -p tools
     cd tools
-    ( 
+    (
       if [ ! -f sox-14.3.2.tar.bz2 ]; then
         wget http://sourceforge.net/projects/sox/files/sox/14.3.2/sox-14.3.2.tar.bz2 \
           || errexit "Download failed for sox-14.3.2.";
       fi
-      
+
       set -e
       tar -jxf sox-14.3.2.tar.bz2;
       cd sox-14.3.2
@@ -102,7 +102,7 @@ if $install_sox; then
       make -j 4
       make install
       set +e
-#      cd ..
+  #      cd ..
     ) >> install.log 2>&1
     if [ $? -ne 0 ]; then
       echo "sox installation failed (see tools/install.log)."
