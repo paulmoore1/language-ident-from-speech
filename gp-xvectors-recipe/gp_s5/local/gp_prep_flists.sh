@@ -123,13 +123,6 @@ for x in eval train; do
     > $ODIR/${x}_${LCODE}.spk2utt || exit 1;
 done
 
-exit
-
-
-
-
-
-
 for x in dev eval train; do
   find $GPDIR/$full_name/adc -name "${LCODE}*\.adc\.shn" \
     | grep -f $tmpdir/${x}_spk > $ODIR/${x}_${LCODE}.flist

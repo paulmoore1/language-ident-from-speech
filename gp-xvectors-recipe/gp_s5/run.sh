@@ -74,10 +74,9 @@ mfccdir=$DATADIR/mfcc
 vaddir=$DATADIR/mfcc
 nnet_dir=$DATADIR/exp/xvector_nnet_1a
 
-
 export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
 
-:<<'TEMP'
+# :<<'TEMP'
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
 if [ $stage -le 0 ]; then
@@ -89,11 +88,11 @@ if [ $stage -le 0 ]; then
 		|| exit 1;
 	#local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
 fi
-TEMP
+# TEMP
 
 # Now make MFCC features.
 
-:<<'TEMP'
+# :<<'TEMP'
 if [ $stage -le 1 ]; then
   # Make MFCCs and compute the energy-based VAD for each dataset
   #TODO is this doing anything important?
@@ -128,7 +127,7 @@ if [ $stage -le 1 ]; then
   utils/fix_data_dir.sh $TRAINDIR
 fi
 exit
-TEMP
+# TEMP
 
 :<<'TEMP'
 #In order to fix this, we need the MUSAN corpus - currently skipping augmentation
