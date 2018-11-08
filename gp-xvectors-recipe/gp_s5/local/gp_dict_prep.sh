@@ -50,6 +50,7 @@ if [ $# -lt 2 ]; then
 fi
 
 GPDIR=`read_dirname $1`; shift;
+DATADIR=`read_dirname $1`; shift;
 LANGUAGES=
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -70,7 +71,7 @@ popd > /dev/null
 # (1) Normalize the dictionary
 for L in $LANGUAGES; do
   printf "Language - ${L}: preparing pronunciation lexicon ... "
-  mkdir -p data/$L/local/dict
+  mkdir -p $DATADIR/$L/local/dict
   full_name=`awk '/'$L'/ {print $2}' $config_dir/lang_codes.txt`;
   pron_lex=$GPDIR/Dictionaries/${L}/${full_name}-GPDict.txt
   if [ ! -f "$pron_lex" ]; then
@@ -81,33 +82,33 @@ for L in $LANGUAGES; do
   if [ ! -z "$map_dir" ]; then  # map the phones to a different phoneset
     if [ -f "$map_dir/$full_name" ]; then  # found the mapping file
       local/gp_norm_dict_${L}.pl -i "$pron_lex" -m "$map_dir/$full_name" \
-	| sort -u > data/$L/local/dict/lexicon_nosil.txt
+	| sort -u > $DATADIR/$L/local/dict/lexicon_nosil.txt
     else
       echo "No phone mapping '$map_dir/$full_name': keeping original phoneset";
       local/gp_norm_dict_${L}.pl -i "$pron_lex" | sort -u \
-	> data/$L/local/dict/lexicon_nosil.txt
+	> $DATADIR/$L/local/dict/lexicon_nosil.txt
     fi
   else
     local/gp_norm_dict_${L}.pl -i "$pron_lex" | sort -u \
-      > data/$L/local/dict/lexicon_nosil.txt
+      > $DATADIR/$L/local/dict/lexicon_nosil.txt
   fi
 
   (printf '!SIL\tsil\n<unk>\tspn\n';) \
-    | cat - data/$L/local/dict/lexicon_nosil.txt \
-    > data/$L/local/dict/lexicon.txt;
+    | cat - $DATADIR/$L/local/dict/lexicon_nosil.txt \
+    > $DATADIR/$L/local/dict/lexicon.txt;
   echo "Done"
 
   printf "Language - ${L}: extracting phone lists ... "
   # silence phones, one per line.
-  { echo sil; echo spn; } > data/$L/local/dict/silence_phones.txt
-  echo sil > data/$L/local/dict/optional_silence.txt
-  cut -f2- data/$L/local/dict/lexicon_nosil.txt | tr ' ' '\n' | sort -u \
-    > data/$L/local/dict/nonsilence_phones.txt
+  { echo sil; echo spn; } > $DATADIR/$L/local/dict/silence_phones.txt
+  echo sil > $DATADIR/$L/local/dict/optional_silence.txt
+  cut -f2- $DATADIR/$L/local/dict/lexicon_nosil.txt | tr ' ' '\n' | sort -u \
+    > $DATADIR/$L/local/dict/nonsilence_phones.txt
   # Ask questions about the entire set of 'silence' and 'non-silence' phones. 
   # These augment the questions obtained automatically by clustering. 
-  ( tr '\n' ' ' < data/$L/local/dict/silence_phones.txt; echo;
-    tr '\n' ' ' < data/$L/local/dict/nonsilence_phones.txt; echo;
-    ) > data/$L/local/dict/extra_questions.txt
+  ( tr '\n' ' ' < $DATADIR/$L/local/dict/silence_phones.txt; echo;
+    tr '\n' ' ' < $DATADIR/$L/local/dict/nonsilence_phones.txt; echo;
+    ) > $DATADIR/$L/local/dict/extra_questions.txt
   echo "Done"
 done
 
