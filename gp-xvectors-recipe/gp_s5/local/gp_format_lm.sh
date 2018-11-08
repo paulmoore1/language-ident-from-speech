@@ -39,7 +39,7 @@ options:
 if [ $# -lt 2 ]; then
   printf "$help_message\n"; exit 1;
 fi
-
+DATADIR=$1; shift;
 LMDIR=$1; shift;
 LANGUAGES=
 while [ $# -gt 0 ]; do
@@ -65,25 +65,25 @@ fi
 for L in $LANGUAGES; do
   lm=$LMDIR/${L}.3gram.lm.gz
   [ -f $lm ] || { echo "LM '$lm' not found"; exit 1; }
-  test=data/$L/lang_test_tg
+  test=$DATADIR/$L/lang_test_tg
   if $filter_vocab_sri; then  # use SRILM to change LM vocab
     utils/format_lm_sri.sh --srilm-opts "$srilm_opts" \
-      data/$L/lang $lm data/$L/local/dict/lexicon.txt "${test}_sri"
+      $DATADIR/$L/lang $lm $DATADIR/$L/local/dict/lexicon.txt "${test}_sri"
   else  # just remove out-of-lexicon words without renormalizing the LM
-    utils/format_lm.sh data/$L/lang $lm data/$L/local/dict/lexicon.txt "$test"
+    utils/format_lm.sh $DATADIR/$L/lang $lm $DATADIR/$L/local/dict/lexicon.txt "$test"
   fi
 
   # Create a pruned version of the LM for building the decoding graphs, using 
   # 'prune-lm' from IRSTLM:
-  mkdir -p data/$L/local/lm
+  mkdir -p $DATADIR/$L/local/lm
   prune-lm --threshold=1e-7 $lm /dev/stdout | gzip -c \
-    > data/$L/local/lm/${L}.tgpr.arpa.gz
-  lm=data/$L/local/lm/${L}.tgpr.arpa.gz
-  test=data/$L/lang_test_tgpr
+    > $DATADIR/$L/local/lm/${L}.tgpr.arpa.gz
+  lm=$DATADIR/$L/local/lm/${L}.tgpr.arpa.gz
+  test=$DATADIR/$L/lang_test_tgpr
   if $filter_vocab_sri; then  # use SRILM to change LM vocab
-    utils/format_lm_sri.sh data/$L/lang $lm data/$L/local/dict/lexicon.txt \
+    utils/format_lm_sri.sh $DATADIR/$L/lang $lm $DATADIR/$L/local/dict/lexicon.txt \
       "${test}_sri"
   else  # just remove out-of-lexicon words without renormalizing the LM
-    utils/format_lm.sh data/$L/lang $lm data/$L/local/dict/lexicon.txt "$test"
+    utils/format_lm.sh $DATADIR/$L/lang $lm $DATADIR/$L/local/dict/lexicon.txt "$test"
   fi
 done
