@@ -1,15 +1,15 @@
+#!/bin/bash
+
 # This contains the locations of the tools and data required for running
 # the GlobalPhone experiments.
 source ./helper_functions.sh
 
+[ -f conf/user_specific_config.sh ] && source ./conf/user_specific_config.sh \
+	|| echo "conf/user_specific_config.sh not found, create it by cloning " + \
+					"conf/user_specific_config-example.sh"
+
 export LC_ALL=C  # For expected sorting and joining behaviour
-# [ -f $KALDI_ROOT/tools/env.sh ] && . $KALDI_ROOT/tools/env.sh
-# KALDISRC=$KALDI_ROOT/src
-# KALDIBIN=$KALDISRC/bin:$KALDISRC/featbin:$KALDISRC/fgmmbin:$KALDISRC/fstbin
-# KALDIBIN=$KALDIBIN:$KALDISRC/gmmbin:$KALDISRC/latbin:$KALDISRC/nnetbin
-# KALDIBIN=$KALDIBIN:$KALDISRC/sgmm2bin:$KALDISRC/lmbin
-# FSTBIN=$KALDI_ROOT/tools/openfst/bin
-# LMBIN=$KALDI_ROOT/tools/irstlm/bin
+
 [ -d $PWD/local ] || { echo "Error: 'local' subdirectory not found."; }
 [ -d $PWD/utils ] || { echo "Error: 'utils' subdirectory not found."; }
 [ -d $PWD/steps ] || { echo "Error: 'steps' subdirectory not found."; }
@@ -19,7 +19,6 @@ export kaldi_utils=$PWD/utils
 export kaldi_steps=$PWD/steps
 
 SCRIPTS=$kaldi_local:$kaldi_utils:$kaldi_steps
-# export PATH=$PATH:$KALDIBIN:$FSTBIN:$LMBIN:$SCRIPTS
 export PATH=$PATH:$SCRIPTS
 
 # If the correct version of shorten and sox are not on the path,
@@ -41,3 +40,11 @@ elif [[ $(whichMachine) = "dice_other" ]]; then
 else
 	echo "NOT IMPLEMENTED: setting GlobalPhone directory."
 fi
+
+# TO-DO: Remember to make sure that env.sh has the right order of adding to PATH
+# (by default, it does $PATH:$TOOLPATH, which prefers existing binaries (not good!))
+# TO-DO: When installing SRILM, remember to store the downloaded tar.gz archive as
+# simply 'srilm.tgz'.
+[ -f $KALDI_ROOT/tools/env.sh ] && source $KALDI_ROOT/tools/env.sh \
+  || echo "env.sh not found or not working. Important tools won't be available."
+
