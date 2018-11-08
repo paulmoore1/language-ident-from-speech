@@ -80,6 +80,7 @@ export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
 if [ $stage -le 0 ]; then
+  echo "#### STAGE 0: Data preparation. ####"
 	local/gp_data_prep.sh \
 		--config-dir=$PWD/conf \
 		--corpus-dir=$GP_CORPUS \
@@ -94,6 +95,7 @@ fi
 
 # :<<'TEMP'
 if [ $stage -le 1 ]; then
+  echo "#### STAGE 1: MFCC and VAD. ####"
   # Make MFCCs and compute the energy-based VAD for each dataset
   #TODO is this doing anything important?
   #if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $mfccdir/storage ]; then
@@ -126,7 +128,7 @@ if [ $stage -le 1 ]; then
 	#utils/combine_data.sh --extra-files 'utt2num_frames' $DATADIR/
   utils/fix_data_dir.sh $TRAINDIR
 fi
-exit
+# exit
 # TEMP
 
 :<<'TEMP'
@@ -211,9 +213,10 @@ if [ $stage -le 2 ]; then
 fi
 TEMP
 
-:<<'TEMP'
+# :<<'TEMP'
 # Now we prepare the features to generate examples for xvector training.
 if [ $stage -le 3 ]; then
+  echo "#### STAGE 3: Preprocessing for X-vector training examples. ####"
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
@@ -248,7 +251,7 @@ if [ $stage -le 3 ]; then
   # Now we're ready to create training examples.
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
 fi
-TEMP
+# TEMP
 
 local/nnet3/xvector/run_xvector.sh --stage $stage --train-stage -1 \
   --data $TRAINDIR/combined_no_sil --nnet-dir $nnet_dir \
