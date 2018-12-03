@@ -1,0 +1,45 @@
+# How to use the MSc GPU cluster
+Original docs [here](http://computing.help.inf.ed.ac.uk/msc-teaching-cluster).
+
+
+## Basics
+SSH into one of the head nodes, i.e. `mlp`, `mlp1` or `mlp2`.
+Use `sinfo` to check available nodes.
+
+To change into a worker node, use `srun` like so:
+```
+srun --nodelist=landonia04 --pty bash
+```
+
+
+## Networking
+Only head nodes have internet access, worker nodes do not.
+
+
+## Moving files
+AFS home directories can be accessed from head nodes but **not** from worker nodes.
+
+Copy things from AFS homedir to cluster homedir first (whilst in a head node), then to worker nodes (scratch disks).
+
+
+## Scratch disk
+This is **not** shared across nodes and can be accessed as `/disk/scratch` on every machine.
+
+
+## Running jobs
+Use `sbatch` to submit a job to slurm _from a head node_. See [here](https://slurm.schedmd.com/sbatch.html) for complete docs.
+
+Simple example:
+```
+sbatch \
+	--nodelist=landonia[04-08] \
+	--gres=gpu:2 \
+	--job-name=LID \
+	--mail-type=END \
+	--mail-user=sucik.samo@gmail.com \
+	--open-mode=append \
+	--output=cluster-exploration.out \
+	explore.sh
+```
+
+To check the job queue use `squeue`.
