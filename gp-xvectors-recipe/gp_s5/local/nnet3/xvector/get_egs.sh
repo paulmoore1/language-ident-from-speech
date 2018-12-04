@@ -74,7 +74,6 @@ if [ $# != 2 ]; then
   echo "                                                   # {train_subset,valid}.*.egs"
   echo "  --stage <stage|0>                                # Used to run a partially-completed training process from somewhere in"
   echo "                                                   # the middle."
-
   exit 1;
 fi
 
@@ -99,6 +98,7 @@ cp $data/utt2num_frames $dir/temp/utt2num_frames
 
 if [ $stage -le 0 ]; then
   echo "$0: Preparing train and validation lists"
+  # NOTE - we need to change this to ensure that the validation list has some from each language
   # Pick a list of heldout utterances for validation egs
   awk '{print $1}' $data/utt2spk | utils/shuffle_list.pl | head -$num_heldout_utts > $temp/valid_uttlist || exit 1;
   # The remaining utterances are used for training egs
@@ -113,9 +113,17 @@ if [ $stage -le 0 ]; then
   utils/filter_scp.pl $temp/utt2num_frames.train $temp/utt2int > $temp/utt2int.train
   utils/filter_scp.pl $temp/utt2num_frames.valid $temp/utt2int > $temp/utt2int.valid
   utils/filter_scp.pl $temp/utt2num_frames.train_subset $temp/utt2int > $temp/utt2int.train_subset
+
+  # Create a mapping from language to speaker ID (an integer)
+  awk -v id=0 '{print $1, id++}' $data/lang2utt > $temp/lang2int
+  utils/sym2int.pl -f 2 $temp/lang2int $data/utt2lang > $temp/utt_lang2int
+  utils/filter_scp.pl $temp/utt2num_frames.train $temp/utt_lang2int > $temp/utt_lang2int.train
+  utils/filter_scp.pl $temp/utt2num_frames.valid $temp/utt_lang2int > $temp/utt_lang2int.valid
+  utils/filter_scp.pl $temp/utt2num_frames.train_subset $temp/utt_lang2int > $temp/utt_lang2int.train_subset
 fi
 
-num_pdfs=$(awk '{print $2}' $temp/utt2int | sort | uniq -c | wc -l)
+#num_pdfs=$(awk '{print $2}' $temp/utt2int | sort | uniq -c | wc -l)
+num_pdfs=$(awk '{print $2}' $temp/utt_lang2int | sort | uniq -c | wc -l)
 # The script assumes you've prepared the features ahead of time.
 feats="scp,s,cs:utils/filter_scp.pl $temp/ranges.JOB $data/feats.scp |"
 train_subset_feats="scp,s,cs:utils/filter_scp.pl $temp/train_subset_ranges.1 $data/feats.scp |"
@@ -145,7 +153,7 @@ if [ $stage -le 1 ]; then
     utils/create_data_link.pl $(for x in $(seq $num_train_archives); do echo $dir/egs_temp.$x.ark; done)
   fi
 fi
-
+#NOTE num_repeats has been manually edited to this dataset - should automate
 if [ $stage -le 2 ]; then
   echo "$0: Allocating training examples"
   $cmd $dir/log/allocate_examples_train.log \
@@ -156,33 +164,39 @@ if [ $stage -le 2 ]; then
       --frames-per-iter=$frames_per_iter \
       --num-archives=$num_train_archives --num-jobs=$nj \
       --utt2len-filename=$dir/temp/utt2num_frames.train \
-      --utt2int-filename=$dir/temp/utt2int.train --egs-dir=$dir  || exit 1
+      --utt2int-filename=$dir/temp/utt_lang2int.train --egs-dir=$dir  || exit 1
+      #--utt2int-filename=$dir/temp/utt2int.train --egs-dir=$dir  || exit 1
+
 
   echo "$0: Allocating training subset examples"
   $cmd $dir/log/allocate_examples_train_subset.log \
     local/nnet3/xvector/allocate_egs.py \
       --prefix train_subset \
-      --num-repeats=1 \
+      --num-repeats=2 \
       --min-frames-per-chunk=$min_frames_per_chunk \
       --max-frames-per-chunk=$max_frames_per_chunk \
       --randomize-chunk-length false \
       --frames-per-iter=$frames_per_iter_diagnostic \
       --num-archives=$num_diagnostic_archives --num-jobs=1 \
       --utt2len-filename=$dir/temp/utt2num_frames.train_subset \
-      --utt2int-filename=$dir/temp/utt2int.train_subset --egs-dir=$dir  || exit 1
+      --utt2int-filename=$dir/temp/utt_lang2int.train_subset --egs-dir=$dir  || exit 1
+      #--utt2int-filename=$dir/temp/utt_2int.train_subset --egs-dir=$dir  || exit 1
+
 
   echo "$0: Allocating validation examples"
   $cmd $dir/log/allocate_examples_valid.log \
     local/nnet3/xvector/allocate_egs.py \
       --prefix valid \
-      --num-repeats=1 \
+      --num-repeats=10 \
       --min-frames-per-chunk=$min_frames_per_chunk \
       --max-frames-per-chunk=$max_frames_per_chunk \
       --randomize-chunk-length false \
       --frames-per-iter=$frames_per_iter_diagnostic \
       --num-archives=$num_diagnostic_archives --num-jobs=1 \
       --utt2len-filename=$dir/temp/utt2num_frames.valid \
-      --utt2int-filename=$dir/temp/utt2int.valid --egs-dir=$dir  || exit 1
+      --utt2int-filename=$dir/temp/utt_lang2int.valid --egs-dir=$dir  || exit 1
+      #--utt2int-filename=$dir/temp/utt2int.valid --egs-dir=$dir  || exit 1
+
 fi
 
 # At this stage we'll have created the ranges files that define how many egs

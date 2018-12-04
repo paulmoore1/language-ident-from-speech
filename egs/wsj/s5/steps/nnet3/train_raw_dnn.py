@@ -278,14 +278,13 @@ def train(args, run_opts):
         egs_dir = default_egs_dir
     else:
         egs_dir = args.egs_dir
-
     [egs_left_context, egs_right_context,
      frames_per_eg_str, num_archives] = (
          common_train_lib.verify_egs_dir(egs_dir, feat_dim,
                                          ivector_dim, ivector_id,
                                          left_context, right_context))
     assert str(args.frames_per_eg) == frames_per_eg_str
-
+    print(num_archives)
     if args.num_jobs_final > num_archives:
         raise Exception('num_jobs_final cannot exceed the number of archives '
                         'in the egs directory')
@@ -314,9 +313,14 @@ def train(args, run_opts):
     num_archives_expanded = num_archives * args.frames_per_eg
     num_archives_to_process = int(args.num_epochs * num_archives_expanded)
     num_archives_processed = 0
-    num_iters = ((num_archives_to_process * 2)
-                 / (args.num_jobs_initial + args.num_jobs_final))
-
+    #Added to cope with different division operations in different python versions
+    if (sys.version_info <= (2, 7)):
+        num_iters = ((num_archives_to_process * 2)
+                     / (args.num_jobs_initial + args.num_jobs_final))
+    else:
+        num_iters = ((num_archives_to_process * 2)
+                     // (args.num_jobs_initial + args.num_jobs_final))
+                                                                                                                                                                                                 
     # If do_final_combination is True, compute the set of models_to_combine.
     # Otherwise, models_to_combine will be none.
     if args.do_final_combination:

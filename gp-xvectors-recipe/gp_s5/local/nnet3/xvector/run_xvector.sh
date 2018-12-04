@@ -50,6 +50,10 @@ num_pdfs=$(awk '{print $2}' $data/utt2spk | sort | uniq -c | wc -l)
 # the number of archives and increases the number of examples per archive.
 # Decreasing this value increases the number of archives, while decreasing the
 # number of examples per archive.
+
+echo "$data"
+echo $egs_dir
+
 if [ $stage -le 4 ]; then
   echo "$0: Getting neural network training egs";
   # dump egs.
@@ -57,10 +61,11 @@ if [ $stage -le 4 ]; then
     utils/create_split_dir.pl \
      /export/b{03,04,05,06}/$USER/kaldi-data/egs/sre16/v2/xvector-$(date +'%m_%d_%H_%M')/$egs_dir/storage $egs_dir/storage
   fi
+  # NOTE changed frames-per-iter so that there would be more archives
   local/nnet3/xvector/get_egs.sh --cmd "$train_cmd" \
     --nj 8 \
     --stage 0 \
-    --frames-per-iter 1000000000 \
+    --frames-per-iter 10000000 \
     --frames-per-iter-diagnostic 100000 \
     --min-frames-per-chunk 200 \
     --max-frames-per-chunk 400 \
@@ -68,7 +73,6 @@ if [ $stage -le 4 ]; then
     --num-repeats 35 \
     "$data" $egs_dir
 fi
-exit
 
 if [ $stage -le 5 ]; then
   echo "$0: creating neural net configs using the xconfig parser";
@@ -87,7 +91,7 @@ if [ $stage -le 5 ]; then
   # frame-level layers.
   min_chunk_size=25
   mkdir -p $nnet_dir/configs
-  cat > $nnet_dir/configs/network.xconfig
+  cat <<EOF > $nnet_dir/configs/network.xconfig
   # please note that it is important to have input layer with the name=input
 
   # The frame-level layers
@@ -112,6 +116,7 @@ if [ $stage -le 5 ]; then
   # from, but usually the previous one works better.
   relu-batchnorm-layer name=tdnn7 dim=512
   output-layer name=output include-log-softmax=true dim=${num_targets}
+EOF
 
 
   steps/nnet3/xconfig_to_configs.py \
@@ -125,15 +130,18 @@ if [ $stage -le 5 ]; then
   echo "$min_chunk_size" > $nnet_dir/min_chunk_size
 fi
 
+
+
 dropout_schedule='0,0@0.20,0.1@0.50,0'
 srand=123
+#NOTE use_gpu set to false on this DICE machine
 if [ $stage -le 6 ]; then
   steps/nnet3/train_raw_dnn.py --stage=$train_stage \
     --cmd="$train_cmd" \
     --trainer.optimization.proportional-shrink 10 \
     --trainer.optimization.momentum=0.5 \
     --trainer.optimization.num-jobs-initial=3 \
-    --trainer.optimization.num-jobs-final=8 \
+    --trainer.optimization.num-jobs-final=6 \
     --trainer.optimization.initial-effective-lrate=0.001 \
     --trainer.optimization.final-effective-lrate=0.0001 \
     --trainer.optimization.minibatch-size=64 \
@@ -146,7 +154,7 @@ if [ $stage -le 6 ]; then
     --egs.dir="$egs_dir" \
     --cleanup.remove-egs $remove_egs \
     --cleanup.preserve-model-interval=10 \
-    --use-gpu=true \
+    --use-gpu=false \
     --dir=$nnet_dir  || exit 1;
 fi
 

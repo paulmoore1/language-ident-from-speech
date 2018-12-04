@@ -66,14 +66,14 @@ trap 'rm -rf "$tmpdir"' EXIT
 grep "^$LCODE" $EVALSPK | cut -f2- | tr ' ' '\n' \
   | sed -e "s?^?$LCODE?" -e 's?$?_?' > $tmpdir/eval_spk
 
-# Currently the Dev/Eval info is missing for some languages and is marked 
+# Currently the Dev/Eval info is missing for some languages and is marked
 # by either TBA or XXX in the speaker list. We are currently not processing
 # such languages.
 egrep 'XXX|TBA' $tmpdir/eval_spk \
   && { echo "Eval speaker list not defined. File contents:"; \
     cat $tmpdir/eval_spk; exit 1; }
 
-# We are going to use the 2-letter codes throughout, but the top-level 
+# We are going to use the 2-letter codes throughout, but the top-level
 # directories of the GlobalPhone corpus use the full names of languages.
 full_name=`awk '/'$LCODE'/ {print $2}' $LANGMAP`;
 ls "$GPDIR/$full_name/adc" | sed -e "s?^?$LCODE?" -e 's?$?_?' \
@@ -119,14 +119,17 @@ for x in eval train; do
   sed -e 's?_.*$??' $tmpdir/${x}_basenames_wav \
     | paste -d' ' $tmpdir/${x}_basenames_wav - \
     > $ODIR/${x}_${LCODE}.utt2spk
+
   utt2spk_to_spk2utt.pl $ODIR/${x}_${LCODE}.utt2spk \
     > $ODIR/${x}_${LCODE}.spk2utt || exit 1;
 done
 
-for x in dev eval train; do
+# Either do this or the original (above, lines 99-124). Basically equivalent, so inefficient to do both
+:<<TRANSCRIPT
+for x in eval train; do
   find $GPDIR/$full_name/adc -name "${LCODE}*\.adc\.shn" \
     | grep -f $tmpdir/${x}_spk > $ODIR/${x}_${LCODE}.flist
-  
+
   #echo "SHN files for ${x} set:"
   #cat $ODIR/${x}_${LCODE}.flist | sed "s/.*\///g" | sed "s/^/\t/g"
 
@@ -145,7 +148,7 @@ for x in dev eval train; do
     > $tmpdir/${x}_${LCODE}_wav.scp
   cut -f1 $tmpdir/${x}_${LCODE}_wav.scp > $tmpdir/${x}_basenames_wav2
 
-  # Now, get the transcripts: each line of the output contains an utterance 
+  # Now, get the transcripts: each line of the output contains an utterance
   # ID followed by the transcript.
   sed -e 's?_$??' $tmpdir/${x}_spk | grep -f - $trans \
     | gp_extract_transcripts.pl | sort -k1,1 > $tmpdir/${x}_${LCODE}.trans
@@ -168,3 +171,4 @@ for x in dev eval train; do
   utt2spk_to_spk2utt.pl $ODIR/${x}_${LCODE}.utt2spk \
     > $ODIR/${x}_${LCODE}.spk2utt || exit 1;
 done
+TRANSCRIPT

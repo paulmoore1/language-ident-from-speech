@@ -249,7 +249,22 @@ def main():
         archive_chunk_lengths.append(length)
         this_num_egs = int((args.frames_per_iter / length) + 1)
         this_egs = [ ] # A 2-tuple of the form (utt-id, start-frame)
+        #print("spk2utt: ")
+        #print(spk2utt)
+
+        #print("length of 0: ")
+        #print(len(spk2utt[0]))
+
+        #print("length of 1: ")
+        #print(len(spk2utt[1]))
+
+        #print("spk2utt keys: ")
+        #print(spk2utt.keys())
+
+        #print("num_repeats : {}".format(args.num_repeats))
         spkrs = args.num_repeats * list(spk2utt.keys())
+
+        # NOTE we only have 2 "speakers" with 2 languages -> most validation data not used.
         random.shuffle(spkrs)
         for n in range(this_num_egs):
             if len(spkrs) == 0:
@@ -262,6 +277,7 @@ def main():
             this_egs.append( (utt, offset) )
         all_egs.append(this_egs)
     info_f.close()
+    #print("Total num egs: {}".format(len(all_egs)))
 
     # work out how many archives we assign to each job in an equitable way.
     num_archives_per_job = [ 0 ] * args.num_jobs
@@ -270,6 +286,9 @@ def main():
 
     pdf2num = {}
     cur_archive = 0
+    print("number of archives per job: ")
+    print(num_archives_per_job)
+    print("number of jobs: {}".format(args.num_jobs))
     for job in range(args.num_jobs):
         this_ranges = []
         this_archives_for_job = []
@@ -280,6 +299,9 @@ def main():
             for (utterance_index, offset) in all_egs[cur_archive]:
                 this_ranges.append( (utterance_index, i, offset) )
             cur_archive = cur_archive + 1
+        print("this_archives_for_job: ")
+        print(this_archives_for_job)
+
 
         f = open(args.egs_dir + "/temp/" + prefix + "ranges." + str(job + 1), "w")
         if f is None:

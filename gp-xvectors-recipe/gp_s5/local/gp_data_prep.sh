@@ -71,6 +71,7 @@ for x in eval train; do
   mkdir -p $DATADIR/${x}
 done
 
+:<<'TEMP'
 # (2) get the various file lists (for audio, transcription, etc.) for the
 # specified language.
 printf "Preparing file lists ... "
@@ -86,6 +87,7 @@ for L in $LANGUAGES; do
 done
 wait;
 echo "Done"
+TEMP
 
 # (3) Create directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
@@ -110,5 +112,16 @@ echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${DATA
 echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${DATADIR}||g")"
 utils/combine_data.sh $DATADIR/train ${train_dirs[@]}
 utils/combine_data.sh $DATADIR/eval ${eval_dirs[@]}
+
+
+# (5) Add utt2lang and lang2utt files for the collected languaages
+for x in train eval; do
+  sed -e 's?[0-9]*$??' $DATADIR/${x}/utt2spk \
+  > $DATADIR/${x}/utt2lang
+
+  local/utt2lang_to_lang2utt.pl $DATADIR/${x}/utt2lang \
+  > $DATADIR/${x}/lang2utt
+
+done
 
 echo "Finished data preparation."

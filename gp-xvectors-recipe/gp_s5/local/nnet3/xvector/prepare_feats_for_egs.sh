@@ -56,6 +56,8 @@ done
 
 cp $data_in/utt2spk $data_out/utt2spk
 cp $data_in/spk2utt $data_out/spk2utt
+cp $data_in/utt2lang $data_out/utt2lang
+cp $data_in/lang2utt $data_out/lang2utt
 cp $data_in/wav.scp $data_out/wav.scp
 
 write_num_frames_opt="--write-num-frames=ark,t:$featdir/log/utt2num_frames.JOB"
@@ -67,7 +69,7 @@ $cmd JOB=1:$nj $dir/log/create_xvector_feats_${name}.JOB.log \
   apply-cmvn-sliding --norm-vars=false --center=true --cmn-window=$cmn_window \
   scp:${sdata_in}/JOB/feats.scp ark:- \| \
   select-voiced-frames ark:- scp,s,cs:${sdata_in}/JOB/vad.scp ark:- \| \
-  copy-feats --compress=$compress ark:- \
+  copy-feats --compress=$compress $write_num_frames_opt ark:-\
   ark,scp:$featdir/xvector_feats_${name}.JOB.ark,$featdir/xvector_feats_${name}.JOB.scp || exit 1;
 
 # Replaced line 70 - originally was:
@@ -80,6 +82,6 @@ done > ${data_out}/feats.scp || exit 1
 for n in $(seq $nj); do
   cat $featdir/log/utt2num_frames.$n || exit 1;
 done > $data_out/utt2num_frames || exit 1
-rm $featdir/log/utt2num_frames.*
+#rm $featdir/log/utt2num_frames.*
 
 echo "$0: Succeeded creating xvector features for $name"
