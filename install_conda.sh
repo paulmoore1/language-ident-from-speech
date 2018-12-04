@@ -17,8 +17,8 @@ else
 fi
 
 if [ ! "$(conda env list | grep lid)" ]; then 
-  echo "Conda environment does not exist. Creating it."
+  echo "Conda environment 'lid' does not exist. Creating it."
   conda env create -f ./environment.yml
+else
+  echo "Conda environment 'lid' exists already."
 fi
-
-source activate lid
