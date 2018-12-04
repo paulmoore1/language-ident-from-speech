@@ -47,3 +47,4 @@ src/logs/
 *.out
 *.app
 
+*.Rhistory
