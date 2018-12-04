@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 PROG=`basename $0`;
 usage="Usage: $PROG <arguments>\n
 Installs KALDI in a specified directory.\n\n
 Required arguments:\n
-  --root-dir=DIR\tName of the directory Kaldi will be installed in (starting from the home directory, in its own subdirectory).
+  --root-dir=DIR\tName of the directory where the kaldi/ directory will be created.
 ";
 
 if [ $# -lt 1 ]; then
@@ -21,10 +21,9 @@ do
   esac
 done
 
-INSTALLDIR=~/${dir_name}/kaldi
+INSTALLDIR=${dir_name}/kaldi
 mkdir -p ${INSTALLDIR}
 echo "Installing KALDI in ${INSTALLDIR}"
-
 
 echo \
 $'\n#################################################

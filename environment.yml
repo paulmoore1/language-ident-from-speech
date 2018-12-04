@@ -3,7 +3,6 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - kaldi=r7271.1a4dbf6=2
   - libgcc=7.2.0=h69d50b8_2
   - libgcc-ng=7.2.0=hdf63c60_3
   - libgfortran=3.0.0=1
@@ -12,4 +11,3 @@ dependencies:
   - openblas=0.2.20=8
   - openfst=1.6.1=0
   - speex=1.2.0=h470a237_1
-
