@@ -11,7 +11,6 @@ To change into a worker node, use `srun` like so:
 srun --nodelist=landonia04 --pty bash
 ```
 
-
 ## Networking
 Only head nodes have internet access, worker nodes do not.
 
@@ -24,6 +23,12 @@ Copy things from AFS homedir to cluster homedir first (whilst in a head node), t
 
 ## Scratch disk
 This is **not** shared across nodes and can be accessed as `/disk/scratch` on every machine.
+
+
+## Setting up the environment (any node)
+1. Ensure Conda is installed
+1. Ensure environment from `environment.yml` is installed AND activated
+1. Install Kaldi using `install_kaldi.sh`
 
 
 ## Running jobs
@@ -43,3 +48,9 @@ sbatch \
 ```
 
 To check the job queue use `squeue`.
+
+
+## Workflow
+1. Ensure environment is activated and everything is installed
+1. Move data to head node
+1. Run script from head node
