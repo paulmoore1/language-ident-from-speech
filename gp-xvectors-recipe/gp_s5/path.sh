@@ -39,6 +39,8 @@ elif [[ $(whichMachine) = "dice_sam" ]]; then
 	#GP_CORPUS=/group/corpora/public/global_phone
 elif [[ $(whichMachine) = "dice_other" ]]; then
 	GP_CORPUS=/group/corpora/public/global_phone
+elif [[ $(whichMachine) == cluster* ]]; then
+	GP_CORPUS=/disk/scratch/lid/global_phone
 else
 	echo "NOT IMPLEMENTED: setting GlobalPhone directory."
 fi

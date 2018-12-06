@@ -7,6 +7,14 @@
 
 num_speakers_per_language=3
 
+if [ $# != 1 ]; then
+  echo "Usage: $0 <target-dir>"
+  echo " e.g.: $0 ~/global_phone"
+  exit 0
+else
+  target_dir=$1/
+fi
+
 gpPath=/group/corpora/public/global_phone
 arr=($(find "$gpPath" -maxdepth 1 -mindepth 1 -name "[[:upper:]]*" -type d -printf '%f\n'))
 toExclude=( Dictionaries )
@@ -17,10 +25,10 @@ for d in "${arr[@]/$toExclude}" ; do
         continue
     fi
     echo "Copying language: ${d}"
-    mkdir -p $d/
-    mkdir -p $d/adc/
-    mkdir -p $d/spk/
-    mkdir -p $d/trl/
+    mkdir -p $target_dir$d/
+    mkdir -p $target_dir$d/adc/
+    mkdir -p $target_dir$d/spk/
+    mkdir -p $target_dir$d/trl/
     sampleSpeakers=($(ls "${gpPath}/${d}/adc/" | sort -n | head -n 6))
     echo "  Copying speakers: ${sampleSpeakers[*]}"
 
@@ -30,9 +38,9 @@ for d in "${arr[@]/$toExclude}" ; do
         echo "      Copying audio for speaker: ${speakerDir}"
         echo "      Copying speaker file: ${speakerFile}"
         echo "      Copying transcript file: ${transcriptFile}"
-        cp -n -R $gpPath/$d/adc/$speakerDir $d/adc
-        cp -n $gpPath/$d/spk/$speakerFile $d/spk/
-        cp -n $gpPath/$d/trl/$transcriptFile $d/trl/
+        cp -n -R $gpPath/$d/adc/$speakerDir $target_dir$d/adc
+        cp -n $gpPath/$d/spk/$speakerFile $target_dir$d/spk/
+        cp -n $gpPath/$d/trl/$transcriptFile $target_dir$d/trl/
     done
 done
 
