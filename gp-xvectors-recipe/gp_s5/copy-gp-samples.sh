@@ -45,4 +45,4 @@ for d in "${arr[@]/$toExclude}" ; do
 done
 
 echo "Now copying the dictionaries"
-rsync -av --exclude='*.pdf' --exclude='*.dict' --exclude='*.trl' $gpPath/Dictionaries .
+rsync -av --exclude='*.pdf' --exclude='*.dict' --exclude='*.trl' --no-perms --omit-dir-times $gpPath/Dictionaries $target_dir
