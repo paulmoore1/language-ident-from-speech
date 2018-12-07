@@ -11,7 +11,8 @@ else
 
   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ./miniconda.sh
   bash ./miniconda.sh -b -p $HOME/miniconda -f
-  echo 'export PATH="$PATH:$HOME/miniconda/bin"' >> ~/.bashrc
+  # echo 'export PATH="$PATH:$HOME/miniconda/bin"' >> ~/.bashrc
+  echo ". $HOME/miniconda/etc/profile.d/conda.sh" >> ~/.bashrc
   source ~/.bashrc
   popd
 fi
