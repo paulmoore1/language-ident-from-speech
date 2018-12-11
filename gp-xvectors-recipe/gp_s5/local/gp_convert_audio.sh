@@ -19,7 +19,7 @@ set -o errexit
 
 function read_dirname () {
   local dir_name=`expr "X$1" : '[^=]*=\(.*\)'`;
-  [ -d "$dir_name" ] || { echo "Argument '$dir_name' not a directory" >&2; \
+  [ -d "$dir_name" ] || mkdir -p "$dir_name" || { echo "Directory '$dir_name' not found." >&2; \
     exit 1; }
   local retval=`cd $dir_name 2>/dev/null && pwd || $dir_name`;
   echo $retval

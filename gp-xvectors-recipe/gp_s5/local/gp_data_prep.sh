@@ -23,7 +23,7 @@ function error_exit () {
 
 function read_dirname () {
   local dir_name=`expr "X$1" : '[^=]*=\(.*\)'`;
-  [ -d "$dir_name" ] || error_exit "Argument '$dir_name' not a directory";
+  [ -d "$dir_name" ] || mkdir -p "$dir_name" || error_exit "Directory '$dir_name' not found";
   local retval=`cd $dir_name 2>/dev/null && pwd || exit 1`
   echo $retval
 }

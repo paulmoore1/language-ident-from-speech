@@ -22,7 +22,7 @@ function error_exit () {
 }
 
 function read_dirname () {
-  [ -d "$1" ] || error_exit "Argument '$1' not a directory";
+  [ -d "$1" ] || mkdir -p "$1" || error_exit "Argument '$1' not a directory";
   local retval=`cd $1 2>/dev/null && pwd || exit 1`
   echo $retval
 }
