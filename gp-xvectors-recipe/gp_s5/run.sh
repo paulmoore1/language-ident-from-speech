@@ -81,7 +81,7 @@ export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
 
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
-if [ $stage -le 0 ]; then
+if [ $stage -eq 0 ]; then
   echo "#### STAGE 0: Data preparation. ####"
 	local/gp_data_prep.sh \
 		--config-dir=$PWD/conf \
@@ -94,7 +94,7 @@ fi
 # TEMP
 
 # Now make MFCC features.
-if [ $stage -le 1 ]; then
+if [ $stage -eq 1 ]; then
   echo "#### STAGE 1: MFCC and VAD. ####"
   # Make MFCCs and compute the energy-based VAD for each dataset
   #TODO is this doing anything important?
@@ -136,7 +136,7 @@ fi
 # noise, music, and babble, and combined it with the clean data.
 # The combined list will be used to train the xvector DNN.  The SRE
 # subset will be used to train the PLDA model.
-if [ $stage -le 2 ]; then
+if [ $stage -eq 2 ]; then
   frame_shift=0.01
   awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $TRAINDIR/utt2num_frames > $TRAINDIR/reco2dur
 
@@ -213,7 +213,7 @@ fi
 MUSAN
 
 # Now we prepare the features to generate examples for xvector training.
-if [ $stage -le 3 ]; then
+if [ $stage -eq 3 ]; then
   echo "#### STAGE 3: Preprocessing for X-vector training examples. ####"
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
@@ -253,7 +253,7 @@ if [ $stage -le 3 ]; then
 fi
 
 #NOTE main things we need to work on are the num-repeats and num-jobs parameters
-if [ $stage -le 4 ]; then
+if [ $stage -eq 4 ]; then
   local/nnet3/xvector/run_xvector.sh --stage 4 --train-stage -1 \
     --data $TRAINDIR/combined_no_sil --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
@@ -262,7 +262,7 @@ exit
 
 #NOTE the stages after this are unfinished
 
-if [ $stage -le 7 ]; then
+if [ $stage -eq 7 ]; then
   #unnecessary?
   local/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --nj 40 \
     $nnet_dir $EVALDIR \
@@ -276,7 +276,7 @@ exit
 
 fi
 
-if [ $stage -le 8 ]; then
+if [ $stage -eq 8 ]; then
   # Compute the mean vector for centering the evaluation xvectors.
   $train_cmd exp/xvectors_eval/log/compute_mean.log \
     ivector-mean scp:exp/xvectors_eval/xvector.scp \
@@ -302,7 +302,7 @@ if [ $stage -le 8 ]; then
     exp/xvectors_eval/plda_adapt || exit 1;
 fi
 
-if [ $stage -le 9 ]; then
+if [ $stage -eq 9 ]; then
   # Get results using the out-of-domain PLDA model.
   $train_cmd exp/scores/log/eval_scoring.log \
     ivector-plda-scoring --normalize-length=true \
@@ -323,7 +323,7 @@ if [ $stage -le 9 ]; then
   # EER: Pooled 13.65%, Tagalog 17.73%, Cantonese 9.61%
 fi
 
-if [ $stage -le 10 ]; then
+if [ $stage -eq 10 ]; then
   # Get results using the adapted PLDA model.
   $train_cmd exp/scores/log/sre16_eval_scoring_adapt.log \
     ivector-plda-scoring --normalize-length=true \
