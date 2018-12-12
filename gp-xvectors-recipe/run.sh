@@ -116,7 +116,7 @@ if [ $stage -eq 1 ]; then
 		utils/data/get_utt2num_frames.sh $DATADIR/${name}
     utils/fix_data_dir.sh $DATADIR/${name}
 
-    sid/compute_vad_decision.sh \
+    ./local/compute_vad_decision.sh \
       --nj $MAXNUMJOBS \
       --cmd "$train_cmd" \
       $DATADIR/${name} \
@@ -219,7 +219,7 @@ if [ $stage -eq 3 ]; then
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
-  local/nnet3/xvector/prepare_feats_for_egs.sh \
+  local/prepare_feats_for_egs.sh \
     --nj $MAXNUMJOBS \
     --cmd "$train_cmd" \
     $TRAINDIR \
@@ -259,7 +259,7 @@ fi
 
 #NOTE main things we need to work on are the num-repeats and num-jobs parameters
 if [ $stage -eq 4 ]; then
-  local/nnet3/xvector/run_xvector.sh --stage 4 --train-stage -1 \
+  local/run_xvector.sh --stage 4 --train-stage -1 \
     --data $TRAINDIR/combined_no_sil --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
 fi
@@ -268,12 +268,12 @@ fi
 
 if [ $stage -eq 7 ]; then
 
-  local/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
+  local/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
    --nj $MAXNUMJOBS \
     $nnet_dir $EVALDIR \
     $DATADIR/exp/xvectors_eval
 
-  local/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
+  local/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
   --nj $MAXNUMJOBS \
       $nnet_dir $TRAINDIR \
       $DATADIR/exp/xvectors_combined

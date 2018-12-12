@@ -1,1 +1,1 @@
-# Paul's and Sam's X-vector implementation recipe for the GlobalPhones corpus
+This directory is originally a copy of the original GlobalPhone recipe found in ```egs/gp/s5```.

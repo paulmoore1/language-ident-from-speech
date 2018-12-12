@@ -25,7 +25,7 @@ egs_dir=exp/xvector_nnet_1a/egs
 
 num_pdfs=$(awk '{print $2}' $data/utt2spk | sort | uniq -c | wc -l)
 
-# Now we create the nnet examples using sid/nnet3/xvector/get_egs.sh.
+# Now we create the nnet examples using local/get_egs.sh.
 # The argument --num-repeats is related to the number of times a speaker
 # repeats per archive.  If it seems like you're getting too many archives
 # (e.g., more than 200) try increasing the --frames-per-iter option.  The
@@ -62,7 +62,7 @@ if [ $stage -le 4 ]; then
      /export/b{03,04,05,06}/$USER/kaldi-data/egs/sre16/v2/xvector-$(date +'%m_%d_%H_%M')/$egs_dir/storage $egs_dir/storage
   fi
   # NOTE changed frames-per-iter so that there would be more archives
-  local/nnet3/xvector/get_egs.sh --cmd "$train_cmd" \
+  ./local/get_egs.sh --cmd "$train_cmd" \
     --nj 8 \
     --stage 0 \
     --frames-per-iter 10000000 \
@@ -124,7 +124,7 @@ EOF
       --config-dir $nnet_dir/configs/
   cp $nnet_dir/configs/final.config $nnet_dir/nnet.config
 
-  # These three files will be used by sid/nnet3/xvector/extract_xvectors.sh
+  # These three files will be used by local/extract_xvectors.sh
   echo "output-node name=output input=tdnn6.affine" > $nnet_dir/extract.config
   echo "$max_chunk_size" > $nnet_dir/max_chunk_size
   echo "$min_chunk_size" > $nnet_dir/min_chunk_size
