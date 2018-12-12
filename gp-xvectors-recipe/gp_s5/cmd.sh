@@ -28,10 +28,10 @@ if [[ $(whichMachine) = "sam" ]] || [[ $(whichMachine) = "dice"* ]]; then
 	export highmem_cmd=run.pl
 elif [[ $(whichMachine) == cluster* ]]; then
 	echo "Running on the cluster."
-	export train_cmd=slurm.pl
+	# export train_cmd=slurm.pl
 	# export decode_cmd=slurm.pl
 	# export highmem_cmd=slurm.pl
-	# export train_cmd=run.pl
+	export train_cmd=run.pl
 	export decode_cmd=run.pl
 	export highmem_cmd=run.pl
 else
