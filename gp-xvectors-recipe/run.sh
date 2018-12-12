@@ -309,6 +309,10 @@ if [ $stage -eq 4 ]; then
     --data $TRAINDIR/combined_no_sil \
     --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
+
+  if [ "$run_all" = true ]; then
+    stage=`expr $stage + 1`
+  fi
 fi
 
 #NOTE the stages after this are unfinished
