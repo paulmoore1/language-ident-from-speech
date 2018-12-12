@@ -393,12 +393,10 @@ if [ $stage -eq 9 ]; then
     ivector-plda-scoring --normalize-length=true \
     --num-utts=ark:$EXPDIR/xvectors_eval/num_utts.ark \
     "ivector-copy-plda --smoothing=0.0 ${EXPDIR}/xvectors_train/plda - |" \
-    "ark:ivector-mean ark:${EVALDIR}/spk2utt scp:${EXPDIR}/xvectors_eval/xvector.scp ark:- | " \
-    "transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- | " \
-    "ark:ivector-subtract-global-mean ${EXPDIR}/xvectors_eval/mean.vec scp:${EXPDIR}/xvectors_eval/xvector.scp ark:- | "\
-    "transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- | " \
-    "cat '$sre16_trials' | cut -d\  --fields=1,2 |" $EXPDIR/scores/lang_eval_scores || exit 1;
-    # NOTE - removed ivector-subtract-global-mean exp/xvectors_sre16_major/mean.vec
+    "ark:ivector-mean ark:${EVALDIR}/lang2utt scp:${EXPDIR}/xvectors_eval/xvector.scp ark:- | ivector-subtract-global-mean ${EXPDIR}/xvectors_train/mean.vec ark:- ark:- | transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- | " \
+    "ark:ivector-subtract-global-mean ${EXPDIR}/xvectors_eval/mean.vec scp:${EXPDIR}/xvectors_eval/xvector.scp ark:- | transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- | " \
+    "cat './conf/eval_trials_example' | cut -d\  --fields=1,2 |" $EXPDIR/scores/lang_eval_scores || exit 1;
+    # NOTE -the first ivector-subtract-global-mean exp/xvectors_sre16_major/mean.vec should be the unlaballed data
     # The sre16_major is unlabelled in-domain data, which we currently don't have.
 
   utils/filter_scp.pl $sre16_trials_tgl ${EXPDIR}/scores/sre16_eval_scores > ${EXPDIR}/scores/sre16_eval_tgl_scores
