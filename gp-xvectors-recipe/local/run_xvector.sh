@@ -121,7 +121,7 @@ EOF
 
   steps/nnet3/xconfig_to_configs.py \
       --xconfig-file $nnet_dir/configs/network.xconfig \
-      --config-dir $nnet_dir/configs/
+      --config-dir $nnet_dir/configs
   cp $nnet_dir/configs/final.config $nnet_dir/nnet.config
 
   # These three files will be used by local/extract_xvectors.sh

@@ -37,18 +37,18 @@ if [ $# -eq 0 ]; then
   stage=0
 else
   if [ $# -eq 1 ]; then
-    echo "Continuing from stage $1"
+    echo "Doing stage $1"
     stage=$1
-    echo "Assuming that only an individual stage will be run"
+    echo "Only a single stage will be run"
     run_all=false
   fi
 
   if [ $# -eq 2 ]; then
-	echo "Continuing from stage $1"
-	stage=$1
-  shift
-  echo "Running entire thing: $1"
-  run_all=$1
+  	echo "Doing stage $1"
+  	stage=$1
+    shift
+    echo "Running entire thing: $1"
+    run_all=$1
   fi
 fi
 
@@ -122,7 +122,7 @@ if [ $stage -eq 0 ]; then
 		--data-dir=$DATADIR \
 		|| exit 1;
 	#local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
-  if [ $run_all ]; then
+  if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
     exit
@@ -164,7 +164,7 @@ if [ $stage -eq 1 ]; then
   done
 	#utils/combine_data.sh --extra-files 'utt2num_frames' $DATADIR/
   utils/fix_data_dir.sh $TRAINDIR
-  if [ $run_all ]; then
+  if [ "$run_all" = true ]; then
     # NOTE this is set to 2 since we're skipping stage 2 at the moment.
     stage=`expr $stage + 2`
   else
@@ -299,7 +299,7 @@ if [ $stage -eq 3 ]; then
 
   # Now we're ready to create training examples.
   #utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
-  if [ $run_all ]; then
+  if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
     exit
@@ -308,11 +308,15 @@ fi
 
 #NOTE main things we need to work on are the num-repeats and num-jobs parameters
 if [ $stage -eq 4 ]; then
-  local/run_xvector.sh --stage 4 --train-stage -1 \
-    --data $TRAINDIR/combined_no_sil --nnet-dir $nnet_dir \
+  echo "#### STAGE 4: Training the X-vector DNN. ####"
+  ./local/run_xvector.sh \
+    --stage 4 \
+    --train-stage -1 \
+    --data $TRAINDIR/combined_no_sil \
+    --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
     #NOTE not sure if the stage variable will be updated by the running of the xvector
-  if [ $run_all ]; then
+  if [ "$run_all" = true ]; then
     stage=`expr $stage + 3`
   else
     exit
@@ -320,6 +324,8 @@ if [ $stage -eq 4 ]; then
 fi
 
 if [ $stage -eq 7 ]; then
+  echo "#### STAGE 7: Extracting X-vectors from the trained DNN. ####"
+
   ./local/extract_xvectors.sh \
     --cmd "$train_cmd --mem 6G" \
     --use-gpu false \
@@ -335,7 +341,7 @@ if [ $stage -eq 7 ]; then
     $nnet_dir \
     $TRAINDIR \
     $DATADIR/exp/xvectors_combined
-    if [ $run_all ]; then
+    if [ "$run_all" = true ]; then
       stage=`expr $stage + 1`
     else
       exit
