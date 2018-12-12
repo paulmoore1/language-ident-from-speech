@@ -114,7 +114,7 @@ if [ $stage -le 0 ]; then
   utils/filter_scp.pl $temp/utt2num_frames.valid $temp/utt2int > $temp/utt2int.valid
   utils/filter_scp.pl $temp/utt2num_frames.train_subset $temp/utt2int > $temp/utt2int.train_subset
 
-  # Create a mapping from language to speaker ID (an integer)
+  # Create a mapping from utterance to language ID (an integer)
   awk -v id=0 '{print $1, id++}' $data/lang2utt > $temp/lang2int
   utils/sym2int.pl -f 2 $temp/lang2int $data/utt2lang > $temp/utt_lang2int
   utils/filter_scp.pl $temp/utt2num_frames.train $temp/utt_lang2int > $temp/utt_lang2int.train
