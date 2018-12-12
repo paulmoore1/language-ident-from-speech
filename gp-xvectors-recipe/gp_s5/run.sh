@@ -219,12 +219,8 @@ if [ $stage -eq 3 ]; then
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
-  local/nnet3/xvector/prepare_feats_for_egs.sh \
-    --nj $MAXNUMJOBS \
-    --cmd "$train_cmd" \
-    $TRAINDIR \
-    $TRAINDIR/combined_no_sil \
-    $FEATDIR
+  local/nnet3/xvector/prepare_feats_for_egs.sh --nj $MAXNUMJOBS --cmd "$train_cmd" \
+    $TRAINDIR $TRAINDIR/combined_no_sil $FEATDIR
 		# !!!TODO change to $TRAINDIR/combined when data augmentation works
 	utils/data/get_utt2num_frames.sh $TRAINDIR/combined_no_sil
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
@@ -268,6 +264,10 @@ fi
 
 if [ $stage -eq 7 ]; then
 
+  echo $stage
+  stage=`expr $stage + 1`
+  echo $stage
+  exit
   local/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
    --nj $MAXNUMJOBS \
     $nnet_dir $EVALDIR \
@@ -277,9 +277,7 @@ if [ $stage -eq 7 ]; then
   --nj $MAXNUMJOBS \
       $nnet_dir $TRAINDIR \
       $DATADIR/exp/xvectors_combined
-
-exit
-
+  #stage=`expr $stage + 1`
 fi
 
 if [ $stage -eq 8 ]; then
