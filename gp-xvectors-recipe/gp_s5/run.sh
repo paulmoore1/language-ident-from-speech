@@ -105,7 +105,7 @@ if [ $stage -eq 1 ]; then
 	# temporarily set to false, isn't doing it right
   for name in train eval; do
     steps/make_mfcc.sh \
-      --write-utt2num-frames true \
+      --write-utt2num-frames false \
       --mfcc-config conf/mfcc.conf \
       --nj $MAXNUMJOBS \
       --cmd "$train_cmd" \
