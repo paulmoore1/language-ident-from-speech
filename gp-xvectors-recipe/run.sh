@@ -124,6 +124,8 @@ if [ $stage -eq 0 ]; then
 	#local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
   if [ $run_all ]; then
     stage=`expr $stage + 1`
+  else
+    exit
   fi
 fi
 # TEMP
@@ -165,6 +167,8 @@ if [ $stage -eq 1 ]; then
   if [ $run_all ]; then
     # NOTE this is set to 2 since we're skipping stage 2 at the moment.
     stage=`expr $stage + 2`
+  else
+    exit
   fi
 fi
 
@@ -297,6 +301,8 @@ if [ $stage -eq 3 ]; then
   #utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
   if [ $run_all ]; then
     stage=`expr $stage + 1`
+  else
+    exit
   fi
 fi
 
@@ -305,13 +311,15 @@ if [ $stage -eq 4 ]; then
   local/run_xvector.sh --stage 4 --train-stage -1 \
     --data $TRAINDIR/combined_no_sil --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
+    #NOTE not sure if the stage variable will be updated by the running of the xvector
+  if [ $run_all ]; then
+    stage=`expr $stage + 3`
+  else
+    exit
+  fi
 fi
 
-#NOTE the stages after this are unfinished
-
 if [ $stage -eq 7 ]; then
-
-  exit
   ./local/extract_xvectors.sh \
     --cmd "$train_cmd --mem 6G" \
     --use-gpu false \
@@ -327,8 +335,14 @@ if [ $stage -eq 7 ]; then
     $nnet_dir \
     $TRAINDIR \
     $DATADIR/exp/xvectors_combined
-  #stage=`expr $stage + 1`
+    if [ $run_all ]; then
+      stage=`expr $stage + 1`
+    else
+      exit
+    fi
 fi
+
+#NOTE the stages after this are unfinished
 
 if [ $stage -eq 8 ]; then
   # Compute the mean vector for centering the evaluation xvectors.
