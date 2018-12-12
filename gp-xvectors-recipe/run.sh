@@ -225,6 +225,7 @@ if [ $stage -eq 3 ]; then
     $TRAINDIR \
     $TRAINDIR/combined_no_sil \
     $FEATDIR
+
 		# !!!TODO change to $TRAINDIR/combined when data augmentation works
 	utils/data/get_utt2num_frames.sh $TRAINDIR/combined_no_sil
   utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
@@ -267,19 +268,26 @@ fi
 #NOTE the stages after this are unfinished
 
 if [ $stage -eq 7 ]; then
-
-  local/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
-   --nj $MAXNUMJOBS \
-    $nnet_dir $EVALDIR \
+  echo $stage
+  stage=`expr $stage + 1`
+  echo $stage
+  exit
+  ./local/extract_xvectors.sh \
+    --cmd "$train_cmd --mem 6G" \
+    --use-gpu false \
+    --nj $MAXNUMJOBS \
+    $nnet_dir \
+    $EVALDIR \
     $DATADIR/exp/xvectors_eval
 
-  local/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
-  --nj $MAXNUMJOBS \
-      $nnet_dir $TRAINDIR \
-      $DATADIR/exp/xvectors_combined
-
-exit
-
+  ./local/extract_xvectors.sh \
+    --cmd "$train_cmd --mem 6G" \
+    --use-gpu false \
+    --nj $MAXNUMJOBS \
+    $nnet_dir \
+    $TRAINDIR \
+    $DATADIR/exp/xvectors_combined
+  #stage=`expr $stage + 1`
 fi
 
 if [ $stage -eq 8 ]; then
