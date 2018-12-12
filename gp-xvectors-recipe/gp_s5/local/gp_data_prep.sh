@@ -71,7 +71,10 @@ for x in eval train; do
   mkdir -p $DATADIR/${x}
 done
 
-:<<'TEMP'
+<<<<<<< HEAD
+
+=======
+>>>>>>> f8b93f2fade601ba578052172e1275faf117609e
 # (2) get the various file lists (for audio, transcription, etc.) for the
 # specified language.
 printf "Preparing file lists ... "
@@ -87,7 +90,10 @@ for L in $LANGUAGES; do
 done
 wait;
 echo "Done"
-TEMP
+<<<<<<< HEAD
+
+=======
+>>>>>>> f8b93f2fade601ba578052172e1275faf117609e
 
 # (3) Create directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
