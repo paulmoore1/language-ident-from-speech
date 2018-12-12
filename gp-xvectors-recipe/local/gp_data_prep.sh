@@ -60,6 +60,7 @@ done
 
 # (1) check if the config files are in place:
 pushd $CONFDIR > /dev/null
+[ -f unlabelled_spk.list ] || error_exit "$PROG: Unlabelled-set speaker list not found.";
 [ -f eval_spk.list ] || error_exit "$PROG: Eval-set speaker list not found.";
 [ -f lang_codes.txt ] || error_exit "$PROG: Mapping for language name to 2-letter code not found.";
 
@@ -67,7 +68,7 @@ popd > /dev/null
 [ -f path.sh ] && . ./path.sh  # Sets the PATH to contain necessary executables
 
 # Make data folders to contain all the language files.
-for x in eval train; do
+for x in eval train unlabelled; do
   mkdir -p $DATADIR/${x}
 done
 
@@ -78,7 +79,8 @@ for L in $LANGUAGES; do
   mkdir -p $DATADIR/$L/local/data
   local/gp_prep_flists.sh \
   	--corpus-dir=$GPDIR \
-    --eval-spk=$CONFDIR/eval_spk.list \
+    --eval-spk=$CONFDIR/eval_spk-example.list \
+    --unlabelled-spk=$CONFDIR/unlabelled_spk.list
     --lang-map=$CONFDIR/lang_codes.txt \
     --work-dir=$DATADIR $L >& $DATADIR/$L/prep_flists.log &
   # Running these in parallel since this does audio conversion (to figure out
@@ -90,7 +92,7 @@ echo "Done"
 # (3) Create directories to contain files needed in training and testing:
 for L in $LANGUAGES; do
   printf "Language - ${L}: formatting train/test data ... "
-  for x in train eval; do
+  for x in train eval unlabelled; do
     mkdir -p $DATADIR/$L/$x
     cp $DATADIR/$L/local/data/${x}_${L}_wav.scp $DATADIR/$L/$x/wav.scp
     cp $DATADIR/$L/local/data/${x}_${L}.spk2utt $DATADIR/$L/$x/spk2utt
@@ -99,20 +101,25 @@ for L in $LANGUAGES; do
   echo "Done"
 done
 
-# (4) Combine data from all languages into one big pile
+# (4) Combine data from all languages into big piles
 train_dirs=()
 eval_dirs=()
+unlabelled_dirs=()
 for L in $LANGUAGES; do
   train_dirs+=($DATADIR/$L/train)
   eval_dirs+=($DATADIR/$L/eval)
+  unlabelled_dirs+=($DATADIR/$L/unlabelled)
 done
 echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${DATADIR}||g")"
 echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${DATADIR}||g")"
+echo "Combining unlabelled directories: $(echo ${unlabelled_dirs[@]} | sed -e "s|${DATADIR}||g")"
 utils/combine_data.sh $DATADIR/train ${train_dirs[@]}
 utils/combine_data.sh $DATADIR/eval ${eval_dirs[@]}
+utils/combine_data.sh $DATADIR/unlabelled ${unlabelled_dirs[@]}
 
 
-# (5) Add utt2lang and lang2utt files for the collected languaages
+# (5) Add utt2lang and lang2utt files for the collected languages
+# Don't bother with unlabelled data
 for x in train eval; do
   sed -e 's?[0-9]*$??' $DATADIR/${x}/utt2spk \
   > $DATADIR/${x}/utt2lang

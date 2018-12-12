@@ -32,6 +32,7 @@ Prepare train, dev, eval file lists for a language.\n\n
 Required arguments:\n
   --corpus-dir=DIR\tDirectory for the GlobalPhone corpus\n
   --eval-spk=FILE\tEval set speaker list\n
+  --unlabelled-spk=FILE\tUnlabelled set speaker list\n
   --lang-map=FILE\tMapping from 2-letter language code to full name\n
   --work-dir=DIR\t\tPlace to write the files (in a subdirectory with the 2-letter language code)\n
 ";
@@ -50,6 +51,8 @@ do
   WDIR=`read_dirname $1`; shift ;;
   --eval-spk=*)
   EVALSPK=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --unlabelled-spk=*)
+  UNLABELLEDSPK=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --lang-map=*)
   LANGMAP=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   ??) LCODE=$1; shift ;;
@@ -63,12 +66,17 @@ done
 tmpdir=$(mktemp -d /tmp/kaldi.XXXX);
 trap 'rm -rf "$tmpdir"' EXIT
 
+grep "^$LCODE" $UNLABELLEDSPK | cut -f2- | tr ' ' '\n' \
+  | sed -e "s?^?$LCODE?" -e 's?$?_?' > $tmpdir/unlabelled_spk
 grep "^$LCODE" $EVALSPK | cut -f2- | tr ' ' '\n' \
   | sed -e "s?^?$LCODE?" -e 's?$?_?' > $tmpdir/eval_spk
 
 # Currently the Dev/Eval info is missing for some languages and is marked
 # by either TBA or XXX in the speaker list. We are currently not processing
 # such languages.
+egrep 'XXX|TBA' $tmpdir/unlabelled_spk \
+  && { echo "Unlabelled speaker list not defined. File contents:"; \
+    cat $tmpdir/unlabelled_spk; exit 1; }
 egrep 'XXX|TBA' $tmpdir/eval_spk \
   && { echo "Eval speaker list not defined. File contents:"; \
     cat $tmpdir/eval_spk; exit 1; }
@@ -79,27 +87,25 @@ full_name=`awk '/'$LCODE'/ {print $2}' $LANGMAP`;
 ls "$GPDIR/$full_name/adc" | sed -e "s?^?$LCODE?" -e 's?$?_?' \
   > $tmpdir/all_spk
 
-grep -v -f $tmpdir/eval_spk $tmpdir/all_spk \
+grep -v -f $tmpdir/eval_spk -f $tmpdir/unlabelled_spk $tmpdir/all_spk \
   > $tmpdir/train_spk || echo "Could not find any training set speakers; \
   are you trying to use all of them for evaluation and testing?";
 
 echo "All speakers"
 cat $tmpdir/all_spk
-#echo "Dev speakers"
-#cat $tmpdir/dev_spk
 echo "Eval speakers"
 cat $tmpdir/eval_spk
 echo "Train speakers"
 cat $tmpdir/train_spk
+echo "Unlabelled speakers"
+cat $tmpdir/unlabelled_spk
 
 
 ODIR=$WDIR/$LCODE/local/data     # Directory to write file lists
 mkdir -p $ODIR $WDIR/$LCODE/wav  # Directory for WAV files
 
 echo "Preparing file lists, putting into $ODIR"
-for x in eval train; do
-  # Can add 087 to the file name so that only one speaker is counted
-  # Added 1 to the end to reduce number
+for x in eval train unlabelled; do
   find $GPDIR/$full_name/adc -name "${LCODE}*\.adc\.shn" \
      | grep -f $tmpdir/${x}_spk > $ODIR/${x}_${LCODE}.flist
   # The audio conversion is done here since some files cannot be converted,

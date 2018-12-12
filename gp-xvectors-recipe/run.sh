@@ -349,13 +349,12 @@ if [ $stage -eq 7 ]; then
     fi
 fi
 
-#NOTE the stages after this are unfinished
-
 if [ $stage -eq 8 ]; then
   # Compute the mean vector for centering the evaluation xvectors.
   $train_cmd $EXPDIR/xvectors_eval/log/compute_mean.log \
     ivector-mean scp:$EXPDIR/xvectors_eval/xvector.scp \
     $EXPDIR/xvectors_eval/mean.vec || exit 1;
+    #NOTE this should use unlabelled in-domain data instead
 
   # This script uses LDA to decrease the dimensionality prior to PLDA.
   lda_dim=150
@@ -386,9 +385,13 @@ if [ $stage -eq 9 ]; then
     ivector-plda-scoring --normalize-length=true \
     --num-utts=ark:$EXPDIR/xvectors_eval/num_utts.ark \
     "ivector-copy-plda --smoothing=0.0 ${EXPDIR}/xvectors_train/plda - |" \
-    "ark:ivector-mean ark:${EVALDIR}/spk2utt scp:${EXPDIR}/xvectors_eval/xvector.scp ark:- | ivector-subtract-global-mean ${EXPDIR}/xvectors_sre16_major/mean.vec ark:- ark:- | transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
-    "ark:ivector-subtract-global-mean ${EXPDIR}/xvectors_eval/mean.vec scp:${EXPDIR}/xvectors_sre16_eval_test/xvector.scp ark:- | transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
-    "cat '$sre16_trials' | cut -d\  --fields=1,2 |" exp/scores/sre16_eval_scores || exit 1;
+    "ark:ivector-mean ark:${EVALDIR}/spk2utt scp:${EXPDIR}/xvectors_eval/xvector.scp ark:- | " \
+    "transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- | " \
+    "ark:ivector-subtract-global-mean ${EXPDIR}/xvectors_eval/mean.vec scp:${EXPDIR}/xvectors_sre16_eval_test/xvector.scp ark:- | "\
+    "transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- | " \
+    "cat '$sre16_trials' | cut -d\  --fields=1,2 |" $EXPDIR/scores/lang_eval_scores || exit 1;
+    # NOTE - removed ivector-subtract-global-mean exp/xvectors_sre16_major/mean.vec
+    # The sre16_major is unlabelled in-domain data, which we currently don't have.
 
   utils/filter_scp.pl $sre16_trials_tgl ${EXPDIR}/scores/sre16_eval_scores > ${EXPDIR}/scores/sre16_eval_tgl_scores
   utils/filter_scp.pl $sre16_trials_yue ${EXPDIR}/scores/sre16_eval_scores > ${EXPDIR}/scores/sre16_eval_yue_scores
