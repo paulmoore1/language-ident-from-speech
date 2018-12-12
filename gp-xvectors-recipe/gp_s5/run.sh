@@ -120,7 +120,7 @@ if [ $stage -eq 1 ]; then
       --nj $MAXNUMJOBS \
       --cmd "$train_cmd" \
       $DATADIR/${name} \
-      exp/make_vad \
+      $DATADIR/exp/make_vad \
       $vaddir
 
     utils/fix_data_dir.sh $DATADIR/${name}
@@ -214,6 +214,7 @@ MUSAN
 
 # Now we prepare the features to generate examples for xvector training.
 if [ $stage -eq 3 ]; then
+  # NOTE silence not being removed
   echo "#### STAGE 3: Preprocessing for X-vector training examples. ####"
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
@@ -258,19 +259,20 @@ if [ $stage -eq 4 ]; then
     --data $TRAINDIR/combined_no_sil --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
 fi
-exit
 
 #NOTE the stages after this are unfinished
 
 if [ $stage -eq 7 ]; then
-  #unnecessary?
-  local/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --nj 40 \
-    $nnet_dir $EVALDIR \
-    exp/xvectors_eval
 
-  local/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --nj 40 \
-      $nnet_dir $TRAINDIR/ \
-      exp/xvectors_combined
+  local/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
+   --nj $MAXNUMJOBS \
+    $nnet_dir $EVALDIR \
+    $DATADIR/exp/xvectors_eval
+
+  local/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
+  --nj $MAXNUMJOBS \
+      $nnet_dir $TRAINDIR \
+      $DATADIR/exp/xvectors_combined
 
 exit
 
@@ -278,45 +280,45 @@ fi
 
 if [ $stage -eq 8 ]; then
   # Compute the mean vector for centering the evaluation xvectors.
-  $train_cmd exp/xvectors_eval/log/compute_mean.log \
-    ivector-mean scp:exp/xvectors_eval/xvector.scp \
-    exp/xvectors_eval/mean.vec || exit 1;
+  $train_cmd $DATADIR/exp/xvectors_eval/log/compute_mean.log \
+    ivector-mean scp:$DATADIR/exp/xvectors_eval/xvector.scp \
+    $DATADIR/exp/xvectors_eval/mean.vec || exit 1;
 
   # This script uses LDA to decrease the dimensionality prior to PLDA.
   lda_dim=150
-  $train_cmd exp/xvectors_combined/log/lda.log \
+  $train_cmd $DATADIR/exp/xvectors_combined/log/lda.log \
     ivector-compute-lda --total-covariance-factor=0.0 --dim=$lda_dim \
-    "ark:ivector-subtract-global-mean scp:exp/xvectors_combined/xvector.scp ark:- |" \
-    ark:$TRAINDIR/combined/utt2spk exp/xvectors_combined/transform.mat || exit 1;
+    "ark:ivector-subtract-global-mean scp:${DATADIR}/exp/xvectors_combined/xvector.scp ark:- |" \
+    ark:$TRAINDIR/combined/utt2spk $DATADIR/exp/xvectors_combined/transform.mat || exit 1;
 
   # Train an out-of-domain PLDA model.
   $train_cmd exp/xvectors_combined/log/plda.log \
     ivector-compute-plda ark:$TRAINDIR/combined/spk2utt \
-    "ark:ivector-subtract-global-mean scp:exp/xvectors_combined/xvector.scp ark:- | transform-vec exp/xvectors_sre_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:-  ark:- |" \
-    exp/xvectors_combined/plda || exit 1;
+    "ark:ivector-subtract-global-mean scp:${DATADIR}/exp/xvectors_combined/xvector.scp ark:- | transform-vec ${DATADIR}/exp/xvectors_sre_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:-  ark:- |" \
+    $DATADIR/exp/xvectors_combined/plda || exit 1;
 
-  $train_cmd exp/xvectors_eval/log/plda_adapt.log \
+  $train_cmd $DATADIR/exp/xvectors_eval/log/plda_adapt.log \
     ivector-adapt-plda --within-covar-scale=0.75 --between-covar-scale=0.25 \
-    exp/xvectors_combined/plda \
-    "ark:ivector-subtract-global-mean scp:exp/xvectors_eval/xvector.scp ark:- | transform-vec exp/xvectors_sre_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
-    exp/xvectors_eval/plda_adapt || exit 1;
+    $DATADIR/exp/xvectors_combined/plda \
+    "ark:ivector-subtract-global-mean scp:${DATADIR}/exp/xvectors_eval/xvector.scp ark:- | transform-vec ${DATADIR}/exp/xvectors_sre_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
+    $DATADIR/exp/xvectors_eval/plda_adapt || exit 1;
 fi
 
 if [ $stage -eq 9 ]; then
   # Get results using the out-of-domain PLDA model.
-  $train_cmd exp/scores/log/eval_scoring.log \
+  $train_cmd ${DATADIR}/exp/scores/log/eval_scoring.log \
     ivector-plda-scoring --normalize-length=true \
-    --num-utts=ark:exp/xvectors_eval/num_utts.ark \
-    "ivector-copy-plda --smoothing=0.0 exp/xvectors_combined/plda - |" \
-    "ark:ivector-mean ark:${EVALDIR}/spk2utt scp:exp/xvectors_eval/xvector.scp ark:- | ivector-subtract-global-mean exp/xvectors_sre16_major/mean.vec ark:- ark:- | transform-vec exp/xvectors_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
-    "ark:ivector-subtract-global-mean exp/xvectors_eval/mean.vec scp:exp/xvectors_sre16_eval_test/xvector.scp ark:- | transform-vec exp/xvectors_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
+    --num-utts=ark:${DATADIR}/exp/xvectors_eval/num_utts.ark \
+    "ivector-copy-plda --smoothing=0.0 ${DATADIR}/exp/xvectors_combined/plda - |" \
+    "ark:ivector-mean ark:${EVALDIR}/spk2utt scp:${DATADIR}/exp/xvectors_eval/xvector.scp ark:- | ivector-subtract-global-mean ${DATADIR}/exp/xvectors_sre16_major/mean.vec ark:- ark:- | transform-vec ${DATADIR}/exp/xvectors_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
+    "ark:ivector-subtract-global-mean ${DATADIR}/exp/xvectors_eval/mean.vec scp:${DATADIR}/exp/xvectors_sre16_eval_test/xvector.scp ark:- | transform-vec ${DATADIR}/exp/xvectors_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
     "cat '$sre16_trials' | cut -d\  --fields=1,2 |" exp/scores/sre16_eval_scores || exit 1;
 
-  utils/filter_scp.pl $sre16_trials_tgl exp/scores/sre16_eval_scores > exp/scores/sre16_eval_tgl_scores
-  utils/filter_scp.pl $sre16_trials_yue exp/scores/sre16_eval_scores > exp/scores/sre16_eval_yue_scores
-  pooled_eer=$(paste $sre16_trials exp/scores/sre16_eval_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
-  tgl_eer=$(paste $sre16_trials_tgl exp/scores/sre16_eval_tgl_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
-  yue_eer=$(paste $sre16_trials_yue exp/scores/sre16_eval_yue_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  utils/filter_scp.pl $sre16_trials_tgl ${DATADIR}/exp/scores/sre16_eval_scores > ${DATADIR}/exp/scores/sre16_eval_tgl_scores
+  utils/filter_scp.pl $sre16_trials_yue ${DATADIR}/exp/scores/sre16_eval_scores > ${DATADIR}/exp/scores/sre16_eval_yue_scores
+  pooled_eer=$(paste $sre16_trials ${DATADIR}/exp/scores/sre16_eval_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  tgl_eer=$(paste $sre16_trials_tgl ${DATADIR}/exp/scores/sre16_eval_tgl_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  yue_eer=$(paste $sre16_trials_yue ${DATADIR}/exp/scores/sre16_eval_yue_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
   echo "Using Out-of-Domain PLDA, EER: Pooled ${pooled_eer}%, Tagalog ${tgl_eer}%, Cantonese ${yue_eer}%"
   # EER: Pooled 11.73%, Tagalog 15.96%, Cantonese 7.52%
   # For reference, here's the ivector system from ../v1:
@@ -325,19 +327,19 @@ fi
 
 if [ $stage -eq 10 ]; then
   # Get results using the adapted PLDA model.
-  $train_cmd exp/scores/log/sre16_eval_scoring_adapt.log \
+  $train_cmd ${DATADIR}/exp/scores/log/sre16_eval_scoring_adapt.log \
     ivector-plda-scoring --normalize-length=true \
-    --num-utts=ark:exp/xvectors_sre16_eval_enroll/num_utts.ark \
-    "ivector-copy-plda --smoothing=0.0 exp/xvectors_sre16_major/plda_adapt - |" \
-    "ark:ivector-mean ark:data/sre16_eval_enroll/spk2utt scp:exp/xvectors_sre16_eval_enroll/xvector.scp ark:- | ivector-subtract-global-mean exp/xvectors_sre16_major/mean.vec ark:- ark:- | transform-vec exp/xvectors_sre_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
-    "ark:ivector-subtract-global-mean exp/xvectors_sre16_major/mean.vec scp:exp/xvectors_sre16_eval_test/xvector.scp ark:- | transform-vec exp/xvectors_sre_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
-    "cat '$sre16_trials' | cut -d\  --fields=1,2 |" exp/scores/sre16_eval_scores_adapt || exit 1;
+    --num-utts=ark:${DATADIR}/exp/xvectors_sre16_eval_enroll/num_utts.ark \
+    "ivector-copy-plda --smoothing=0.0 ${DATADIR}/exp/xvectors_sre16_major/plda_adapt - |" \
+    "ark:ivector-mean ark:data/sre16_eval_enroll/spk2utt scp:${DATADIR}/exp/xvectors_sre16_eval_enroll/xvector.scp ark:- | ivector-subtract-global-mean ${DATADIR}/exp/xvectors_sre16_major/mean.vec ark:- ark:- | transform-vec ${DATADIR}/exp/xvectors_sre_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
+    "ark:ivector-subtract-global-mean ${DATADIR}/exp/xvectors_sre16_major/mean.vec scp:${DATADIR}/exp/xvectors_sre16_eval_test/xvector.scp ark:- | transform-vec ${DATADIR}/exp/xvectors_sre_combined/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
+    "cat '$sre16_trials' | cut -d\  --fields=1,2 |" ${DATADIR}/exp/scores/sre16_eval_scores_adapt || exit 1;
 
-  utils/filter_scp.pl $sre16_trials_tgl exp/scores/sre16_eval_scores_adapt > exp/scores/sre16_eval_tgl_scores_adapt
-  utils/filter_scp.pl $sre16_trials_yue exp/scores/sre16_eval_scores_adapt > exp/scores/sre16_eval_yue_scores_adapt
-  pooled_eer=$(paste $sre16_trials exp/scores/sre16_eval_scores_adapt | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
-  tgl_eer=$(paste $sre16_trials_tgl exp/scores/sre16_eval_tgl_scores_adapt | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
-  yue_eer=$(paste $sre16_trials_yue exp/scores/sre16_eval_yue_scores_adapt | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  utils/filter_scp.pl $sre16_trials_tgl ${DATADIR}/exp/scores/sre16_eval_scores_adapt > ${DATADIR}/exp/scores/sre16_eval_tgl_scores_adapt
+  utils/filter_scp.pl $sre16_trials_yue ${DATADIR}/exp/scores/sre16_eval_scores_adapt > ${DATADIR}/exp/scores/sre16_eval_yue_scores_adapt
+  pooled_eer=$(paste $sre16_trials ${DATADIR}/exp/scores/sre16_eval_scores_adapt | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  tgl_eer=$(paste $sre16_trials_tgl ${DATADIR}/exp/scores/sre16_eval_tgl_scores_adapt | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  yue_eer=$(paste $sre16_trials_yue ${DATADIR}/exp/scores/sre16_eval_yue_scores_adapt | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
   echo "Using Adapted PLDA, EER: Pooled ${pooled_eer}%, Tagalog ${tgl_eer}%, Cantonese ${yue_eer}%"
   # EER: Pooled 8.57%, Tagalog 12.29%, Cantonese 4.89%
   # For reference, here's the ivector system from ../v1:
