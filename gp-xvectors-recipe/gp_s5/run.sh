@@ -24,6 +24,8 @@
 # MERCHANTABLITY OR NON-INFRINGEMENT.
 # See the Apache 2 License for the specific language governing permissions and
 # limitations under the License.
+function bool (){ return "$((!${#1}))"; }
+
 
 echo $'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        This shell script runs the GlobalPhone+X-vectors recipe.
@@ -31,12 +33,42 @@ echo $'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
        or don\'t provide stage number to run the whole recipe.
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 
-if [ $# -lt 1 ]; then
+if [ $# -eq 0 ]; then
 	echo "No stage specified; assuming stage 0 and running the recipe from the beginning."
   stage=0
 else
+  if [ $# -eq 1 ]; then
+    echo "Continuing from stage $1"
+    stage=$1
+    echo "Assuming that only an individual stage will be run"
+    run_all=false
+  fi
+
+  if [ $# -eq 2 ]; then
 	echo "Continuing from stage $1"
 	stage=$1
+  shift
+  echo "Running entire thing: $1"
+  run_all=$1
+  fi
+fi
+
+# Check that the boolean argument is valid
+if [ "$run_all" = false ]; then
+  false_test="False"
+else
+  false_test="True"
+fi
+
+if [ "$run_all" = true ]; then
+  true_test="True"
+else
+  true_test="False"
+fi
+
+if [[ $false_test == "True" && $true_test == "False" ]]; then
+  echo "Invalid argument given for boolean. Should be <true|false>"
+  exit 1
 fi
 
 if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
@@ -78,6 +110,7 @@ nnet_dir=$DATADIR/nnet
 
 export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
 
+echo "Running with languages: ${GP_LANGUAGES}"
 
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
@@ -90,6 +123,9 @@ if [ $stage -eq 0 ]; then
 		--data-dir=$DATADIR \
 		|| exit 1;
 	#local/gp_dict_prep.sh --config-dir $PWD/conf $GP_CORPUS $GP_LANGUAGES || exit 1;
+  if [ $run_all ]; then
+    stage=`expr $stage + 1`
+  fi
 fi
 # TEMP
 
@@ -127,6 +163,10 @@ if [ $stage -eq 1 ]; then
   done
 	#utils/combine_data.sh --extra-files 'utt2num_frames' $DATADIR/
   utils/fix_data_dir.sh $TRAINDIR
+  if [ $run_all ]; then
+    # NOTE this is set to 2 since we're skipping stage 2 at the moment.
+    stage=`expr $stage + 2`
+  fi
 fi
 
 
@@ -251,6 +291,9 @@ if [ $stage -eq 3 ]; then
 
   # Now we're ready to create training examples.
   #utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
+  if [ $run_all ]; then
+    stage=`expr $stage + 1`
+  fi
 fi
 
 #NOTE main things we need to work on are the num-repeats and num-jobs parameters
@@ -263,11 +306,6 @@ fi
 #NOTE the stages after this are unfinished
 
 if [ $stage -eq 7 ]; then
-
-  echo $stage
-  stage=`expr $stage + 1`
-  echo $stage
-  exit
   local/nnet3/xvector/extract_xvectors.sh --cmd "$train_cmd --mem 6G" --use-gpu false \
    --nj $MAXNUMJOBS \
     $nnet_dir $EVALDIR \
