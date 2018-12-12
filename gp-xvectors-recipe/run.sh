@@ -302,14 +302,19 @@ fi
 
 #NOTE main things we need to work on are the num-repeats and num-jobs parameters
 if [ $stage -eq 4 ]; then
-  local/run_xvector.sh --stage 4 --train-stage -1 \
-    --data $TRAINDIR/combined_no_sil --nnet-dir $nnet_dir \
+  echo "#### STAGE 4: Training the X-vector DNN. ####"
+  ./local/run_xvector.sh \
+    --stage 4 \
+    --train-stage -1 \
+    --data $TRAINDIR/combined_no_sil \
+    --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
 fi
 
 #NOTE the stages after this are unfinished
 
 if [ $stage -eq 7 ]; then
+  echo "#### STAGE 7: Extracting X-vectors from the trained DNN. ####"
 
   exit
   ./local/extract_xvectors.sh \
