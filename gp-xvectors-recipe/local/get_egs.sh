@@ -157,7 +157,7 @@ fi
 if [ $stage -le 2 ]; then
   echo "$0: Allocating training examples"
   $cmd $dir/log/allocate_examples_train.log \
-    local/nnet3/xvector/allocate_egs.py \
+    local/allocate_egs.py \
       --num-repeats=$num_repeats \
       --min-frames-per-chunk=$min_frames_per_chunk \
       --max-frames-per-chunk=$max_frames_per_chunk \
@@ -170,7 +170,7 @@ if [ $stage -le 2 ]; then
 
   echo "$0: Allocating training subset examples"
   $cmd $dir/log/allocate_examples_train_subset.log \
-    local/nnet3/xvector/allocate_egs.py \
+    local/allocate_egs.py \
       --prefix train_subset \
       --num-repeats=2 \
       --min-frames-per-chunk=$min_frames_per_chunk \
@@ -185,7 +185,7 @@ if [ $stage -le 2 ]; then
 
   echo "$0: Allocating validation examples"
   $cmd $dir/log/allocate_examples_valid.log \
-    local/nnet3/xvector/allocate_egs.py \
+    local/allocate_egs.py \
       --prefix valid \
       --num-repeats=10 \
       --min-frames-per-chunk=$min_frames_per_chunk \

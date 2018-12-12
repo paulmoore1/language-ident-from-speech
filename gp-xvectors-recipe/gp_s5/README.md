@@ -1,1 +1,0 @@
-This directory is originally a copy of the original GlobalPhone recipe found in ```egs/gp/s5```.

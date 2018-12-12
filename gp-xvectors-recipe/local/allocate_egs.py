@@ -70,7 +70,7 @@ import re, os, argparse, sys, math, warnings, random
 def get_args():
     parser = argparse.ArgumentParser(description="Writes ranges.*, outputs.* and archive_chunk_lengths files "
                                  "in preparation for dumping egs for xvector training.",
-                                 epilog="Called by sid/nnet3/xvector/get_egs.sh")
+                                 epilog="Called by local/get_egs.sh")
     parser.add_argument("--prefix", type=str, default="",
                    help="Adds a prefix to the output files. This is used to distinguish between the train "
                    "and diagnostic files.")
