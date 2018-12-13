@@ -105,7 +105,7 @@ while read line; do
     fi
   fi
   counter=$(expr $counter + 1)
-  if ! ((counter / percent_marker > percent_counter)); then
+  if ! (($(bc <<< "$counter / $percent_marker") > percent_counter)); then
     percent_counter=$(expr $percent_counter + 1)
     echo "${percent_counter}%"
   fi
