@@ -72,7 +72,7 @@ soxerr=$tmpdir/soxerr;
 nshnerr=0;
 nsoxerr=0;
 
-num_files=$(ls $INLIST | wc -l)
+num_files=$(cat $INLIST | wc -l)
 echo "$num_files to convert"
 counter=0
 percent_marker=$((num_files / 100))
