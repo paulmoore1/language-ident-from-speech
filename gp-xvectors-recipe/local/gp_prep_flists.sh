@@ -117,7 +117,7 @@ for x in eval train unlabelled; do
   # called directly from compute-mfcc-feats as a piped command.
   gp_convert_audio.sh --input-list=$ODIR/${x}_${LCODE}.flist \
     --output-dir=$WDIR/$LCODE/wav \
-    --output-list=$ODIR/${x}_${LCODE}_wav.flist &
+    --output-list=$ODIR/${x}_${LCODE}_wav.flist
 
   # Get the utterance IDs for the audio files successfully converted to WAV
   sed -e "s?.*/??" -e 's?.wav$??' $ODIR/${x}_${LCODE}_wav.flist \
@@ -132,7 +132,8 @@ for x in eval train unlabelled; do
   utt2spk_to_spk2utt.pl $ODIR/${x}_${LCODE}.utt2spk \
     > $ODIR/${x}_${LCODE}.spk2utt || exit 1;
 done
-wait;
+
+exit
 
 # Either do this or the original (above, lines 99-124). Basically equivalent, so inefficient to do both
 :<<TRANSCRIPT

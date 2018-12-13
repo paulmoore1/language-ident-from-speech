@@ -73,7 +73,6 @@ nshnerr=0;
 nsoxerr=0;
 
 num_files=$(cat $INLIST | wc -l)
-echo "$num_files to convert"
 counter=0
 percent_counter=0
 percent_marker=$(bc <<< "scale=10; $num_files / 100")
@@ -105,9 +104,9 @@ while read line; do
     fi
   fi
   counter=$(expr $counter + 1)
-  if ! (($(bc <<< "$counter / $percent_marker") > percent_counter)); then
+  if [ $(bc <<< "scale=5; $counter / $percent_marker > $percent_counter") -eq 1 ]; then
     percent_counter=$(expr $percent_counter + 1)
-    echo "${percent_counter}%"
+    echo "${percent_counter}% (${counter}/${num_files})"
   fi
   set -e
 done < "$INLIST"
