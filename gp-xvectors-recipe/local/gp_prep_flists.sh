@@ -98,6 +98,7 @@ mkdir -p $ODIR $WDIR/$LCODE/wav  # Directory for WAV files
 
 echo "Preparing file lists, putting into $ODIR"
 for x in eval train; do
+  echo "Converting $x data from SHN to WAV..."
   # Can add 087 to the file name so that only one speaker is counted
   # Added 1 to the end to reduce number
   find $GPDIR/$full_name/adc -name "${LCODE}*\.adc\.shn" \

@@ -8,7 +8,7 @@
 num_speakers_per_language=3
 
 if [ $# != 1 ]; then
-  echo "Usage: $0 <target-dir>"
+  echo "Usage: $0 <target-dir> <#speakers-per-language>"
   echo " e.g.: $0 ~/global_phone"
   exit 0
 else
@@ -29,7 +29,7 @@ for d in "${arr[@]/$toExclude}" ; do
     mkdir -p $target_dir$d/adc/
     mkdir -p $target_dir$d/spk/
     mkdir -p $target_dir$d/trl/
-    sampleSpeakers=($(ls "${gpPath}/${d}/adc/" | sort -n | head -n 6))
+    sampleSpeakers=($(ls "${gpPath}/${d}/adc/" | sort -n | head -n $num_speakers_per_language))
     echo "  Copying speakers: ${sampleSpeakers[*]}"
 
     for speakerDir in "${sampleSpeakers[@]}"; do
@@ -46,3 +46,8 @@ done
 
 echo "Now copying the dictionaries"
 rsync -av --exclude='*.pdf' --exclude='*.dict' --exclude='*.trl' --no-perms --omit-dir-times $gpPath/Dictionaries $target_dir
+
+# rsync -av --no-perms --omit-dir-times /afs/inf.ed.ac.uk/user/s15/s1513472/lid/global_phone /disk/scratch/lid/global_phone
+# rsync -av --no-perms --omit-dir-times French ~/lid/global_phone/French
+
+# rsync -av --no-perms --omit-dir-times French/ ~/lid/global_phone/French
