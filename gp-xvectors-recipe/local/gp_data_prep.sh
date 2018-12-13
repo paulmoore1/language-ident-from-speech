@@ -80,7 +80,7 @@ for L in $LANGUAGES; do
   ./local/gp_prep_flists.sh \
   	--corpus-dir=$GPDIR \
     --eval-spk=$CONFDIR/eval_spk-example.list \
-    --unlabelled-spk=$CONFDIR/unlabelled_spk.list
+    --unlabelled-spk=$CONFDIR/unlabelled_spk.list \
     --lang-map=$CONFDIR/lang_codes.txt \
     --work-dir=$DATADIR $L >& $DATADIR/$L/prep_flists.log &
   # Running these in parallel since this does audio conversion (to figure out
