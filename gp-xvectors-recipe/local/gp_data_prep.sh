@@ -77,12 +77,12 @@ done
 printf "Preparing file lists ... "
 for L in $LANGUAGES; do
   mkdir -p $DATADIR/$L/local/data
-  local/gp_prep_flists.sh \
+  ./local/gp_prep_flists.sh \
   	--corpus-dir=$GPDIR \
-    --eval-spk=$CONFDIR/eval_spk-example.list \
-    --unlabelled-spk=$CONFDIR/unlabelled_spk.list
+    --eval-spk=$CONFDIR/eval_spk.list \
+    --unlabelled-spk=$CONFDIR/unlabelled_spk.list \
     --lang-map=$CONFDIR/lang_codes.txt \
-    --work-dir=$DATADIR $L >& $DATADIR/$L/prep_flists.log &
+    --work-dir=$DATADIR $L >& $DATADIR/$L/prep_flists.log
   # Running these in parallel since this does audio conversion (to figure out
   # which files cannot be processed) and takes some time to run.
 done

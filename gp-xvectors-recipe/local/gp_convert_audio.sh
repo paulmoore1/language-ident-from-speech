@@ -72,6 +72,12 @@ soxerr=$tmpdir/soxerr;
 nshnerr=0;
 nsoxerr=0;
 
+num_files=$(cat $INLIST | wc -l)
+echo "$num_files to convert"
+counter=0
+percent_counter=0
+percent_marker=$(bc <<< "scale=10; $num_files / 100")
+
 while read line; do
   [[ "$line" =~ ^.*/.*\.adc.shn$ ]] || { echo "Bad line: '$line'"; exit 1; }
   set +e  # Don't want script to die if conversion fails.
@@ -91,12 +97,17 @@ while read line; do
       # which, assuming 16KHz sampling, is 0.0625 seconds.
       nsamples=`soxi -s "$ODIR/${b}.wav"`;
       if [[ "$nsamples" -gt 1000 ]]; then 
-	echo "$ODIR/${b}.wav" >> $OLIST;
+	      echo "$ODIR/${b}.wav" >> $OLIST;
       else
-	echo "$tmpdir/raw/${b}.raw: #samples = $nsamples" >> $soxerr;
-	let "nsoxerr+=1"
+	      echo "$tmpdir/raw/${b}.raw: #samples = $nsamples" >> $soxerr;
+	      let "nsoxerr+=1"
       fi
     fi
+  fi
+  counter=$(expr $counter + 1)
+  if ! (($(bc <<< "$counter / $percent_marker") > percent_counter)); then
+    percent_counter=$(expr $percent_counter + 1)
+    echo "${percent_counter}%"
   fi
   set -e
 done < "$INLIST"

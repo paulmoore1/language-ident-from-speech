@@ -26,8 +26,8 @@ This is **not** shared across nodes and can be accessed as `/disk/scratch` on ev
 
 
 ## Setting up the environment (any node)
-1. Ensure Conda is installed
-1. Ensure environment from `environment.yml` is installed AND activated
+1. Run `install_conda.sh` to ensure that Conda is installed and that the `lid` environment exists
+1. Run `source ~/.bashrc; conda activate lid`
 1. Install Kaldi using `install_kaldi.sh`
 
 
