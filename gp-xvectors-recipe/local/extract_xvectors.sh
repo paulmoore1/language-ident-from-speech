@@ -97,9 +97,9 @@ if [ $stage -le 1 ]; then
 fi
 
 if [ $stage -le 2 ]; then
-  # Average the utterance-level xvectors to get speaker-level xvectors.
-  echo "$0: computing mean of xvectors for each speaker"
-  $cmd $dir/log/speaker_mean.log \
-    ivector-mean ark:$data/spk2utt scp:$dir/xvector.scp \
-    ark,scp:$dir/spk_xvector.ark,$dir/spk_xvector.scp ark,t:$dir/num_utts.ark || exit 1;
+  # Average the utterance-level xvectors to get language-level xvectors.
+  echo "$0: computing mean of xvectors for each language"
+  $cmd $dir/log/language_mean.log \
+    ivector-mean ark:$data/lang2utt scp:$dir/xvector.scp \
+    ark,scp:$dir/lang_xvector.ark,$dir/lang_xvector.scp ark,t:$dir/num_utts.ark || exit 1;
 fi

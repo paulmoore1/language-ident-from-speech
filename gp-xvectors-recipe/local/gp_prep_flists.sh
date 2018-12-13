@@ -131,7 +131,7 @@ for x in eval train unlabelled; do
 done
 
 # Either do this or the original (above, lines 99-124). Basically equivalent, so inefficient to do both
-:<<TRANSCRIPT
+:<<'TRANSCRIPT'
 for x in eval train; do
   find $GPDIR/$full_name/adc -name "${LCODE}*\.adc\.shn" \
     | grep -f $tmpdir/${x}_spk > $ODIR/${x}_${LCODE}.flist
