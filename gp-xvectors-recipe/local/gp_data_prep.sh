@@ -79,7 +79,7 @@ for L in $LANGUAGES; do
   mkdir -p $DATADIR/$L/local/data
   ./local/gp_prep_flists.sh \
   	--corpus-dir=$GPDIR \
-    --eval-spk=$CONFDIR/eval_spk-example.list \
+    --eval-spk=$CONFDIR/eval_spk.list \
     --unlabelled-spk=$CONFDIR/unlabelled_spk.list \
     --lang-map=$CONFDIR/lang_codes.txt \
     --work-dir=$DATADIR $L >& $DATADIR/$L/prep_flists.log &
