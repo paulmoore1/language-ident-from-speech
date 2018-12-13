@@ -75,7 +75,8 @@ nsoxerr=0;
 num_files=$(cat $INLIST | wc -l)
 echo "$num_files to convert"
 counter=0
-percent_marker=$((num_files / 100))
+percent_counter=0
+percent_marker=$(bc <<< "scale=10; $num_files / 100")
 
 while read line; do
   [[ "$line" =~ ^.*/.*\.adc.shn$ ]] || { echo "Bad line: '$line'"; exit 1; }
@@ -104,8 +105,9 @@ while read line; do
     fi
   fi
   counter=$(expr $counter + 1)
-  if ! ((counter % percent_marker)); then
-    echo "$((counter / percent_marker))%"
+  if ! ((counter / percent_marker > percent_counter)); then
+    percent_counter=$(expr $percent_counter + 1)
+    echo "${percent_counter}%"
   fi
   set -e
 done < "$INLIST"
