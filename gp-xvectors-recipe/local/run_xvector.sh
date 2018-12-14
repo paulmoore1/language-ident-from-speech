@@ -56,11 +56,6 @@ echo $egs_dir
 
 if [ $stage -le 4 ]; then
   echo "$0: Getting neural network training egs";
-  # dump egs.
-  if [[ $(hostname -f) == *.clsp.jhu.edu ]] && [ ! -d $egs_dir/storage ]; then
-    utils/create_split_dir.pl \
-     /export/b{03,04,05,06}/$USER/kaldi-data/egs/sre16/v2/xvector-$(date +'%m_%d_%H_%M')/$egs_dir/storage $egs_dir/storage
-  fi
   # NOTE changed frames-per-iter so that there would be more archives
   ./local/get_egs.sh --cmd "$train_cmd" \
     --nj 8 \

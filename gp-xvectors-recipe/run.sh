@@ -304,7 +304,7 @@ if [ $stage -eq 4 ]; then
     --data $train_dir/combined_no_sil \
     --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
-    #NOTE not sure if the stage variable will be updated by the running of the xvector
+  #NOTE not sure if the stage variable will be updated by the running of the xvector
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 3`
   else
