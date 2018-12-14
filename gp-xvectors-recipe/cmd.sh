@@ -23,6 +23,7 @@ source ./helper_functions.sh
 # To run locally, use:
 if [[ $(whichMachine) = "sam" ]] || [[ $(whichMachine) = "dice"* ]]; then
 	echo "Running locally."
+	export preprocess_cmd=run.pl
 	export train_cmd=run.pl
 	export decode_cmd=run.pl
 	export highmem_cmd=run.pl
@@ -31,7 +32,8 @@ elif [[ $(whichMachine) == cluster* ]]; then
 	# export train_cmd=slurm.pl
 	# export decode_cmd=slurm.pl
 	# export highmem_cmd=slurm.pl
-	export train_cmd=run.pl
+	export preprocess_cmd=run.pl
+	export train_cmd=slurm.pl
 	export decode_cmd=run.pl
 	export highmem_cmd=run.pl
 else
