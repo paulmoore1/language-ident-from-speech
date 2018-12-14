@@ -55,7 +55,7 @@ echo "$data"
 echo $egs_dir
 
 if [ $stage -le 4 ]; then
-  echo "$0: Getting neural network training egs";
+  echo "#### STAGE 4: Getting NN training egs. ####";
   # NOTE changed frames-per-iter so that there would be more archives
   ./local/get_egs.sh --cmd "$train_cmd" \
     --nj 8 \
@@ -70,6 +70,7 @@ if [ $stage -le 4 ]; then
 fi
 
 if [ $stage -le 5 ]; then
+  echo  "#### STAGE 5: Creating NN configs using the xconfig parser. ####";
   echo "$0: creating neural net configs using the xconfig parser";
   num_targets=$(wc -w $egs_dir/pdf2num | awk '{print $1}')
   feat_dim=$(cat $egs_dir/info/feat_dim)
@@ -131,6 +132,7 @@ dropout_schedule='0,0@0.20,0.1@0.50,0'
 srand=123
 #NOTE use_gpu set to false on this DICE machine
 if [ $stage -le 6 ]; then
+  echo  "#### STAGE 6: Training the network. ####"
   steps/nnet3/train_raw_dnn.py --stage=$train_stage \
     --cmd="$train_cmd" \
     --trainer.optimization.proportional-shrink 10 \

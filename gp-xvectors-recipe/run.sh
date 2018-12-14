@@ -304,7 +304,7 @@ if [ $stage -eq 4 ]; then
     --data $train_dir/combined_no_sil \
     --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
-  #NOTE not sure if the stage variable will be updated by the running of the xvector
+    #NOTE not sure if the stage variable will be updated by the running of the xvector
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 3`
   else
@@ -378,6 +378,9 @@ fi
 
 if [ $stage -eq 9 ]; then
   echo "#### STAGE 9: Get results from PLDA model ####"
+  # Generate trials
+  python ./local/get_trials.py --test-dir $eval_test_dir
+
   # Get results using the out-of-domain PLDA model.
   $train_cmd $exp_dir/scores/log/eval_scoring.log \
   ivector-plda-scoring --normalize-length=true \
@@ -385,10 +388,10 @@ if [ $stage -eq 9 ]; then
   "ivector-copy-plda --smoothing=0.0 $exp_dir/xvectors_train/plda - |" \
   "ark:ivector-mean ark:${eval_enroll_dir}/lang2utt scp:${exp_dir}/xvectors_eval_enroll/xvector.scp ark:- | ivector-subtract-global-mean ${exp_dir}/xvectors_eval_enroll/mean.vec ark:- ark:- | transform-vec ${exp_dir}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
   "ark:ivector-subtract-global-mean ${exp_dir}/xvectors_eval_enroll/mean.vec scp:${exp_dir}/xvectors_eval_test/xvector.scp ark:- | transform-vec ${exp_dir}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
-  "cat './conf/eval_trials_example' | cut -d\  --fields=1,2 |" $exp_dir/scores/lang_eval_scores || exit 1;
-    # NOTE -the first ivector-subtract-global-mean exp/xvectors_sre16_major/mean.vec should be the unlaballed data
-    # The sre16_major is eval_enroll in-domain data, which we currently don't have.
-  pooled_eer=$(paste './conf/eval_trials_example' ${exp_dir}/scores/lang_eval_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  "cat '${eval_test_dir}/trials_all' | cut -d\  --fields=1,2 |" $exp_dir/scores/lang_eval_scores || exit 1;
+  python ./local/classify_scores.py --scores-dir $exp_dir/scores
+  exit
+  pooled_eer=$(paste ${eval_test_dir}/trials_all ${exp_dir}/scores/lang_eval_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
   echo "Using Out-of-Domain PLDA, EER: Pooled ${pooled_eer}%" #, Tagalog ${tgl_eer}%, Cantonese ${yue_eer}%"
   exit
   utils/filter_scp.pl $sre16_trials_tgl ${exp_dir}/scores/sre16_eval_scores > ${exp_dir}/scores/sre16_eval_tgl_scores
