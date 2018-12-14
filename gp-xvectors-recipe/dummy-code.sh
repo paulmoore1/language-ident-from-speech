@@ -2,6 +2,10 @@
 
 echo "Dummy code starting"
 
-/usr/bin/nvidia-smi
+nvidia-smi
+ls -la /disk/scratch
+pwd
+/bin/hostname
+ls -la
 
 echo "Dummy code ending..."
