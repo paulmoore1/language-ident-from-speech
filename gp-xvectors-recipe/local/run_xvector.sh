@@ -126,7 +126,12 @@ EOF
   echo "$min_chunk_size" > $nnet_dir/min_chunk_size
 fi
 
-
+source ./helper_functions.sh
+elif [[ $(whichMachine) == cluster* ]]; then
+  use_gpu=true
+else
+  use_gpu=false
+fi
 
 dropout_schedule='0,0@0.20,0.1@0.50,0'
 srand=123
@@ -151,7 +156,7 @@ if [ $stage -le 6 ]; then
     --egs.dir="$egs_dir" \
     --cleanup.remove-egs $remove_egs \
     --cleanup.preserve-model-interval=10 \
-    --use-gpu=false \
+    --use-gpu=$use_gpu \
     --dir=$nnet_dir  || exit 1;
 fi
 

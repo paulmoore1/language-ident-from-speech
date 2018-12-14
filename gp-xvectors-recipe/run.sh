@@ -148,7 +148,7 @@ if [ $stage -eq 1 ]; then
       --write-utt2num-frames false \
       --mfcc-config conf/mfcc.conf \
       --nj $MAXNUMJOBS \
-      --cmd "$train_cmd" \
+      --cmd "$preprocess_cmd" \
       $DATADIR/${name} \
       $DATADIR/log/make_mfcc \
       $mfccdir
@@ -158,7 +158,7 @@ if [ $stage -eq 1 ]; then
 
     ./local/compute_vad_decision.sh \
       --nj $MAXNUMJOBS \
-      --cmd "$train_cmd" \
+      --cmd "$preprocess_cmd" \
       $DATADIR/${name} \
       $exp_dir/make_vad \
       $vaddir
@@ -267,7 +267,7 @@ if [ $stage -eq 3 ]; then
   # creating training examples, this can be removed.
   local/prepare_feats_for_egs.sh \
     --nj $MAXNUMJOBS \
-    --cmd "$train_cmd" \
+    --cmd "$preprocess_cmd" \
     $train_dir \
     $train_dir/combined_no_sil \
     $feat_dir
