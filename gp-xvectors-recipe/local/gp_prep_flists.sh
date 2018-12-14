@@ -31,8 +31,8 @@ usage="Usage: $PROG <arguments> <2-letter language code>\n
 Prepare train, dev, eval file lists for a language.\n\n
 Required arguments:\n
   --corpus-dir=DIR\tDirectory for the GlobalPhone corpus\n
-  --eval-spk=FILE\tEval set speaker list\n
-  --unlabelled-spk=FILE\tUnlabelled set speaker list\n
+  --eval-test-spk=FILE\tTest set speaker list\n
+  --eval-enroll-spk=FILE\tEnrollment set speaker list\n
   --lang-map=FILE\tMapping from 2-letter language code to full name\n
   --work-dir=DIR\t\tPlace to write the files (in a subdirectory with the 2-letter language code)\n
 ";
@@ -49,10 +49,10 @@ do
   GPDIR=`read_dirname $1`; shift ;;
   --work-dir=*)
   WDIR=`read_dirname $1`; shift ;;
-  --eval-spk=*)
-  EVALSPK=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
-  --unlabelled-spk=*)
-  UNLABELLEDSPK=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --eval-test-spk=*)
+  EVALTESTSPK=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --eval-enroll-spk=*)
+  EVALENROLLSPK=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --lang-map=*)
   LANGMAP=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   ??) LCODE=$1; shift ;;
@@ -66,20 +66,20 @@ done
 tmpdir=$(mktemp -d /tmp/kaldi.XXXX);
 trap 'rm -rf "$tmpdir"' EXIT
 
-grep "^$LCODE" $UNLABELLEDSPK | cut -f2- | tr ' ' '\n' \
-  | sed -e "s?^?$LCODE?" -e 's?$?_?' > $tmpdir/unlabelled_spk
-grep "^$LCODE" $EVALSPK | cut -f2- | tr ' ' '\n' \
-  | sed -e "s?^?$LCODE?" -e 's?$?_?' > $tmpdir/eval_spk
+grep "^$LCODE" $EVALENROLLSPK | cut -f2- | tr ' ' '\n' \
+  | sed -e "s?^?$LCODE?" -e 's?$?_?' > $tmpdir/eval_enroll_spk
+grep "^$LCODE" $EVALTESTSPK | cut -f2- | tr ' ' '\n' \
+  | sed -e "s?^?$LCODE?" -e 's?$?_?' > $tmpdir/eval_test_spk
 
 # Currently the Dev/Eval info is missing for some languages and is marked
 # by either TBA or XXX in the speaker list. We are currently not processing
 # such languages.
-egrep 'XXX|TBA' $tmpdir/unlabelled_spk \
-  && { echo "Unlabelled speaker list not defined. File contents:"; \
-    cat $tmpdir/unlabelled_spk; exit 1; }
-egrep 'XXX|TBA' $tmpdir/eval_spk \
-  && { echo "Eval speaker list not defined. File contents:"; \
-    cat $tmpdir/eval_spk; exit 1; }
+egrep 'XXX|TBA' $tmpdir/eval_enroll_spk \
+  && { echo "Enrollment-set speaker list not defined. File contents:"; \
+    cat $tmpdir/eval_enroll_spk; exit 1; }
+egrep 'XXX|TBA' $tmpdir/eval_test_spk \
+  && { echo "Test-set speaker list not defined. File contents:"; \
+    cat $tmpdir/eval_test_spk; exit 1; }
 
 # We are going to use the 2-letter codes throughout, but the top-level
 # directories of the GlobalPhone corpus use the full names of languages.
@@ -87,25 +87,25 @@ full_name=`awk '/'$LCODE'/ {print $2}' $LANGMAP`;
 ls "$GPDIR/$full_name/adc" | sed -e "s?^?$LCODE?" -e 's?$?_?' \
   > $tmpdir/all_spk
 
-grep -v -f $tmpdir/eval_spk -f $tmpdir/unlabelled_spk $tmpdir/all_spk \
+grep -v -f $tmpdir/eval_test_spk -f $tmpdir/eval_enroll_spk $tmpdir/all_spk \
   > $tmpdir/train_spk || echo "Could not find any training set speakers; \
   are you trying to use all of them for evaluation and testing?";
 
 echo "All speakers"
 cat $tmpdir/all_spk
-echo "Eval speakers"
-cat $tmpdir/eval_spk
+echo "Test speakers"
+cat $tmpdir/eval_test_spk
 echo "Train speakers"
 cat $tmpdir/train_spk
-echo "Unlabelled speakers"
-cat $tmpdir/unlabelled_spk
+echo "Enrollment speakers"
+cat $tmpdir/eval_enroll_spk
 
 
 ODIR=$WDIR/$LCODE/local/data     # Directory to write file lists
 mkdir -p $ODIR $WDIR/$LCODE/wav  # Directory for WAV files
 
 echo "Preparing file lists, putting into $ODIR"
-for x in eval train unlabelled; do
+for x in eval_test eval_enroll train; do
   echo "Converting $x data from SHN to WAV..."
   # Can add 087 to the file name so that only one speaker is counted
   # Added 1 to the end to reduce number
