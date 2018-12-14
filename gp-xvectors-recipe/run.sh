@@ -33,8 +33,9 @@ echo $'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
 
 if [ $# -eq 0 ]; then
-	echo "No stage specified; assuming stage 0 and running the recipe from the beginning."
+	echo "No stage specified; assuming stage 0 and running the entire recipe from the beginning."
   stage=0
+  run_all=true
 else
   if [ $# -eq 1 ]; then
     echo "Doing stage $1"
@@ -100,16 +101,16 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 # Don't need language models for LID.
 # GP_LM=$PWD/language_models
 
-TRAINDIR=$DATADIR/train
-EVALDIR=$DATADIR/eval
-UNLABELLEDDIR=$DATADIR/unlabelled
-FEATDIR=$DATADIR/x_vector_features
-EXPDIR=$DATADIR/exp
+train_dir=$DATADIR/train
+eval_test_dir=$DATADIR/eval_test
+eval_enroll_dir=$DATADIR/eval_enroll
+feat_dir=$DATADIR/x_vector_features
+exp_dir=$DATADIR/exp
 mfccdir=$DATADIR/mfcc
 vaddir=$DATADIR/mfcc
 nnet_dir=$DATADIR/nnet
 
-export GP_LANGUAGES="CR TU" # Set the languages that will actually be processed
+export GP_LANGUAGES="GE SW KO" # Set the languages that will actually be processed
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
@@ -142,7 +143,7 @@ if [ $stage -eq 1 ]; then
   #    /export/b{14,15,16,17}/$USER/kaldi-data/egs/sre16/v2/xvector-$(date +'%m_%d_%H_%M')/mfccs/storage $mfccdir/storage
   #fi
 	# temporarily set to false, isn't doing it right
-  for name in train eval; do
+  for name in train eval_test eval_enroll; do
     steps/make_mfcc.sh \
       --write-utt2num-frames false \
       --mfcc-config conf/mfcc.conf \
@@ -159,13 +160,13 @@ if [ $stage -eq 1 ]; then
       --nj $MAXNUMJOBS \
       --cmd "$train_cmd" \
       $DATADIR/${name} \
-      $EXPDIR/make_vad \
+      $exp_dir/make_vad \
       $vaddir
 
     utils/fix_data_dir.sh $DATADIR/${name}
   done
 	#utils/combine_data.sh --extra-files 'utt2num_frames' $DATADIR/
-  utils/fix_data_dir.sh $TRAINDIR
+  utils/fix_data_dir.sh $train_dir
   if [ "$run_all" = true ]; then
     # NOTE this is set to 2 since we're skipping stage 2 at the moment.
     stage=`expr $stage + 2`
@@ -183,7 +184,7 @@ fi
 # subset will be used to train the PLDA model.
 if [ $stage -eq 2 ]; then
   frame_shift=0.01
-  awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $TRAINDIR/utt2num_frames > $TRAINDIR/reco2dur
+  awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $train_dir/utt2num_frames > $train_dir/reco2dur
 
   if [ ! -d "RIRS_NOISES" ]; then
     # Download the package that includes the real RIRs, simulated RIRs, isotropic noises and point-source noises
@@ -205,11 +206,11 @@ if [ $stage -eq 2 ]; then
     --isotropic-noise-addition-probability 0 \
     --num-replications 1 \
     --source-sampling-rate 8000 \
-    $TRAINDIR $TRAINDIR/reverb
-  cp $TRAINDIR/vad.scp $TRAINDIR/reverb
-  utils/copy_data_dir.sh --utt-suffix "-reverb" $TRAINDIR/reverb $TRAINDIR/reverb.new
-  rm -rf $TRAINDIR/reverb
-  mv $TRAINDIR/reverb.new $TRAINDIR/reverb
+    $train_dir $train_dir/reverb
+  cp $train_dir/vad.scp $train_dir/reverb
+  utils/copy_data_dir.sh --utt-suffix "-reverb" $train_dir/reverb $train_dir/reverb.new
+  rm -rf $train_dir/reverb
+  mv $train_dir/reverb.new $train_dir/reverb
 
   # Prepare the MUSAN corpus, which consists of music, speech, and noise
   # suitable for augmentation.
@@ -223,35 +224,35 @@ if [ $stage -eq 2 ]; then
   done
 
   # Augment with musan_noise
-  python steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "data/musan_noise" $TRAINDIR $TRAINDIR/noise
+  python steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "data/musan_noise" $train_dir $train_dir/noise
   # Augment with musan_music
-  python steps/data/augment_data_dir.py --utt-suffix "music" --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "data/musan_music" $TRAINDIR $TRAINDIR/music
+  python steps/data/augment_data_dir.py --utt-suffix "music" --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "data/musan_music" $train_dir $train_dir/music
   # Augment with musan_speech
-  python steps/data/augment_data_dir.py --utt-suffix "babble" --bg-snrs "20:17:15:13" --num-bg-noises "3:4:5:6:7" --bg-noise-dir "data/musan_speech" $TRAINDIR $TRAINDIR/babble
+  python steps/data/augment_data_dir.py --utt-suffix "babble" --bg-snrs "20:17:15:13" --num-bg-noises "3:4:5:6:7" --bg-noise-dir "data/musan_speech" $train_dir $train_dir/babble
 
   # Combine reverb, noise, music, and babble into one directory.
-  utils/combine_data.sh $TRAINDIR/aug $TRAINDIR/reverb $TRAINDIR/noise $TRAINDIR/music $TRAINDIR/babble
+  utils/combine_data.sh $train_dir/aug $train_dir/reverb $train_dir/noise $train_dir/music $train_dir/babble
 
   # Take a random subset of the augmentations (128k is somewhat larger than twice
   # the size of the SWBD+SRE list)
-  utils/subset_data_dir.sh $TRAINDIR/aug 128000 $TRAINDIR/aug_128k
-  utils/fix_data_dir.sh $TRAINDIR/aug_128k
+  utils/subset_data_dir.sh $train_dir/aug 128000 $train_dir/aug_128k
+  utils/fix_data_dir.sh $train_dir/aug_128k
 
   # Make MFCCs for the augmented data.  Note that we do not compute a new
   # vad.scp file here.  Instead, we use the vad.scp from the clean version of
   # the list.
   steps/make_mfcc.sh --mfcc-config conf/mfcc.conf --nj $MAXNUMJOBS --cmd "$train_cmd" \
-    $TRAINDIR/aug_128k exp/make_mfcc $mfccdir
+    $train_dir/aug_128k exp/make_mfcc $mfccdir
 
   # Combine the clean and augmented SWBD+SRE list.  This is now roughly
   # double the size of the original clean list.
-  utils/combine_data.sh $TRAINDIR/combined $TRAINDIR/aug_128k $TRAINDIR
+  utils/combine_data.sh $train_dir/combined $train_dir/aug_128k $train_dir
 
   #TODO not quite sure how to do this with our setup
   # Filter out the clean + augmented portion of the SRE list.  This will be used to
   # train the PLDA model later in the script.
   CLEANDIR = $DATADIR/clean
-  utils/copy_data_dir.sh $TRAINDIR/combined $CLEANDIR/combined
+  utils/copy_data_dir.sh $train_dir/combined $CLEANDIR/combined
   utils/filter_scp.pl data/sre/spk2utt data/swbd_sre_combined/spk2utt | utils/spk2utt_to_utt2spk.pl > data/sre_combined/utt2spk
   utils/fix_data_dir.sh data/sre_combined
 fi
@@ -267,40 +268,26 @@ if [ $stage -eq 3 ]; then
   local/prepare_feats_for_egs.sh \
     --nj $MAXNUMJOBS \
     --cmd "$train_cmd" \
-    $TRAINDIR \
-    $TRAINDIR/combined_no_sil \
-    $FEATDIR
+    $train_dir \
+    $train_dir/combined_no_sil \
+    $feat_dir
 
-		# !!!TODO change to $TRAINDIR/combined when data augmentation works
-	utils/data/get_utt2num_frames.sh $TRAINDIR/combined_no_sil
-  utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
+	utils/data/get_utt2num_frames.sh $train_dir/combined_no_sil
+  utils/fix_data_dir.sh $train_dir/combined_no_sil
 
   # Now, we need to remove features that are too short after removing silence
   # frames.  We want atleast 5s (500 frames) per utterance.
 	echo "Removing short features..."
   min_len=500
-  mv $TRAINDIR/combined_no_sil/utt2num_frames $TRAINDIR/combined_no_sil/utt2num_frames.bak
-  awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $TRAINDIR/combined_no_sil/utt2num_frames.bak > $TRAINDIR/combined_no_sil/utt2num_frames
-  utils/filter_scp.pl $TRAINDIR/combined_no_sil/utt2num_frames $TRAINDIR/combined_no_sil/utt2spk > $TRAINDIR/combined_no_sil/utt2spk.new
-  mv $TRAINDIR/combined_no_sil/utt2spk.new $TRAINDIR/combined_no_sil/utt2spk
-  utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
+  mv $train_dir/combined_no_sil/utt2num_frames $train_dir/combined_no_sil/utt2num_frames.bak
+  awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $train_dir/combined_no_sil/utt2num_frames.bak > $train_dir/combined_no_sil/utt2num_frames
+  utils/filter_scp.pl $train_dir/combined_no_sil/utt2num_frames $train_dir/combined_no_sil/utt2spk > $train_dir/combined_no_sil/utt2spk.new
+  mv $train_dir/combined_no_sil/utt2spk.new $train_dir/combined_no_sil/utt2spk
+  utils/fix_data_dir.sh $train_dir/combined_no_sil
 	echo "Done"
 
-  #NOTE: This step is unnecessary since we need several utterances per language (which we have)
-  # We also want several utterances per speaker. Now we'll throw out speakers
-  # with fewer than 8 utterances.
-	#echo "Removing speakers with < 8 utterances..."
-  #min_num_utts=8
-  #awk '{print $1, NF-1}' $TRAINDIR/combined_no_sil/spk2utt > $TRAINDIR/combined_no_sil/spk2num
-  #awk -v min_num_utts=${min_num_utts} '$2 >= min_num_utts {print $1, $2}' $TRAINDIR/combined_no_sil/spk2num | utils/filter_scp.pl - $TRAINDIR/combined_no_sil/spk2utt > $TRAINDIR/combined_no_sil/spk2utt.new
-  #mv $TRAINDIR/combined_no_sil/spk2utt.new $TRAINDIR/combined_no_sil/spk2utt
-  #utils/spk2utt_to_utt2spk.pl $TRAINDIR/combined_no_sil/spk2utt > $TRAINDIR/combined_no_sil/utt2spk
-	#echo "Done"
-  #utils/filter_scp.pl $TRAINDIR/combined_no_sil/utt2spk $TRAINDIR/combined_no_sil/utt2num_frames > $TRAINDIR/combined_no_sil/utt2num_frames.new
-  #mv $TRAINDIR/combined_no_sil/utt2num_frames.new $TRAINDIR/combined_no_sil/utt2num_frames
-
   # Now we're ready to create training examples.
-  #utils/fix_data_dir.sh $TRAINDIR/combined_no_sil
+  #utils/fix_data_dir.sh $train_dir/combined_no_sil
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
@@ -314,7 +301,7 @@ if [ $stage -eq 4 ]; then
   ./local/run_xvector.sh \
     --stage 4 \
     --train-stage -1 \
-    --data $TRAINDIR/combined_no_sil \
+    --data $train_dir/combined_no_sil \
     --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs
   #NOTE not sure if the stage variable will be updated by the running of the xvector
@@ -327,30 +314,30 @@ fi
 
 if [ $stage -eq 7 ]; then
   echo "#### STAGE 7: Extracting X-vectors from the trained DNN. ####"
- :<<TEMP
-  ./local/extract_xvectors.sh \
-    --cmd "$train_cmd --mem 6G" \
-    --use-gpu false \
-    --nj $MAXNUMJOBS \
-    $nnet_dir \
-    $UNLABELLEDDIR \
-    $EXPDIR/xvectors_unlabelled
-TEMP
-  ./local/extract_xvectors.sh \
-    --cmd "$train_cmd --mem 6G" \
-    --use-gpu false \
-    --nj $MAXNUMJOBS \
-    $nnet_dir \
-    $EVALDIR \
-    $EXPDIR/xvectors_eval
 
   ./local/extract_xvectors.sh \
     --cmd "$train_cmd --mem 6G" \
     --use-gpu false \
     --nj $MAXNUMJOBS \
     $nnet_dir \
-    $TRAINDIR \
-    $EXPDIR/xvectors_train
+    $eval_enroll_dir \
+    $exp_dir/xvectors_eval_enroll
+
+  ./local/extract_xvectors.sh \
+    --cmd "$train_cmd --mem 6G" \
+    --use-gpu false \
+    --nj $MAXNUMJOBS \
+    $nnet_dir \
+    $eval_test_dir \
+    $exp_dir/xvectors_eval_test
+
+  ./local/extract_xvectors.sh \
+    --cmd "$train_cmd --mem 6G" \
+    --use-gpu false \
+    --nj $MAXNUMJOBS \
+    $nnet_dir \
+    $train_dir \
+    $exp_dir/xvectors_train
     if [ "$run_all" = true ]; then
       stage=`expr $stage + 1`
     else
@@ -360,31 +347,26 @@ fi
 
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Building PLDA model. ####"
-  :<<TEMP
-  # Compute the mean vector for centering the evaluation xvectors.
-  $train_cmd $EXPDIR/xvectors_unlabelled/log/compute_mean.log \
-    ivector-mean scp:$EXPDIR/xvectors_unlabelled/xvector.scp \
-    $EXPDIR/xvectors_unlabelled/mean.vec || exit 1;
-TEMP
 
-  $train_cmd $EXPDIR/xvectors_eval/log/compute_mean.log \
-    ivector-mean scp:$EXPDIR/xvectors_eval/xvector.scp \
-    $EXPDIR/xvectors_eval/mean.vec || exit 1;
+  # Compute the mean vector for centering the evaluation xvectors.
+  $train_cmd $exp_dir/xvectors_eval_enroll/log/compute_mean.log \
+    ivector-mean scp:$exp_dir/xvectors_eval_enroll/xvector.scp \
+    $exp_dir/xvectors_eval_enroll/mean.vec || exit 1;
 
   echo "Decreasing dimensionality with LDA before doing PLDA"
   # This script uses LDA to decrease the dimensionality prior to PLDA.
   lda_dim=150
-  $train_cmd $EXPDIR/xvectors_train/log/lda.log \
+  $train_cmd $exp_dir/xvectors_train/log/lda.log \
     ivector-compute-lda --total-covariance-factor=0.0 --dim=$lda_dim \
-    "ark:ivector-subtract-global-mean scp:${EXPDIR}/xvectors_train/xvector.scp ark:- |" \
-    ark:$TRAINDIR/utt2lang $EXPDIR/xvectors_train/transform.mat || exit 1;
+    "ark:ivector-subtract-global-mean scp:${exp_dir}/xvectors_train/xvector.scp ark:- |" \
+    ark:$train_dir/utt2lang $exp_dir/xvectors_train/transform.mat || exit 1;
 
   echo "Training PLDA model"
   # Train an out-of-domain PLDA model.
-  $train_cmd $EXPDIR/xvectors_train/log/plda.log \
-    ivector-compute-plda ark:$TRAINDIR/lang2utt \
-    "ark:ivector-subtract-global-mean scp:${EXPDIR}/xvectors_train/xvector.scp ark:- | transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:-  ark:- |" \
-    $EXPDIR/xvectors_train/plda || exit 1;
+  $train_cmd $exp_dir/xvectors_train/log/plda.log \
+    ivector-compute-plda ark:$train_dir/lang2utt \
+    "ark:ivector-subtract-global-mean scp:${exp_dir}/xvectors_train/xvector.scp ark:- | transform-vec ${exp_dir}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:-  ark:- |" \
+    $exp_dir/xvectors_train/plda || exit 1;
 
     if [ "$run_all" = true ]; then
       stage=`expr $stage + 1`
@@ -397,23 +379,23 @@ fi
 if [ $stage -eq 9 ]; then
   echo "#### STAGE 9: Get results from PLDA model ####"
   # Get results using the out-of-domain PLDA model.
-  $train_cmd $EXPDIR/scores/log/eval_scoring.log \
+  $train_cmd $exp_dir/scores/log/eval_scoring.log \
   ivector-plda-scoring --normalize-length=true \
-  --num-utts=ark:$EXPDIR/xvectors_eval/num_utts.ark \
-  "ivector-copy-plda --smoothing=0.0 $EXPDIR/xvectors_train/plda - |" \
-  "ark:ivector-mean ark:${EVALDIR}/lang2utt scp:${EXPDIR}/xvectors_eval/xvector.scp ark:- | ivector-subtract-global-mean ${EXPDIR}/xvectors_eval/mean.vec ark:- ark:- | transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
-  "ark:ivector-subtract-global-mean ${EXPDIR}/xvectors_eval/mean.vec scp:${EXPDIR}/xvectors_eval/xvector.scp ark:- | transform-vec ${EXPDIR}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
-  "cat './conf/eval_trials_example' | cut -d\  --fields=1,2 |" $EXPDIR/scores/lang_eval_scores || exit 1;
+  --num-utts=ark:$exp_dir/xvectors_eval_test/num_utts.ark \
+  "ivector-copy-plda --smoothing=0.0 $exp_dir/xvectors_train/plda - |" \
+  "ark:ivector-mean ark:${eval_enroll_dir}/lang2utt scp:${exp_dir}/xvectors_eval_enroll/xvector.scp ark:- | ivector-subtract-global-mean ${exp_dir}/xvectors_eval_enroll/mean.vec ark:- ark:- | transform-vec ${exp_dir}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
+  "ark:ivector-subtract-global-mean ${exp_dir}/xvectors_eval_enroll/mean.vec scp:${exp_dir}/xvectors_eval_test/xvector.scp ark:- | transform-vec ${exp_dir}/xvectors_train/transform.mat ark:- ark:- | ivector-normalize-length ark:- ark:- |" \
+  "cat './conf/eval_trials_example' | cut -d\  --fields=1,2 |" $exp_dir/scores/lang_eval_scores || exit 1;
     # NOTE -the first ivector-subtract-global-mean exp/xvectors_sre16_major/mean.vec should be the unlaballed data
-    # The sre16_major is unlabelled in-domain data, which we currently don't have.
-  pooled_eer=$(paste './conf/eval_trials_example' ${EXPDIR}/scores/lang_eval_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+    # The sre16_major is eval_enroll in-domain data, which we currently don't have.
+  pooled_eer=$(paste './conf/eval_trials_example' ${exp_dir}/scores/lang_eval_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
   echo "Using Out-of-Domain PLDA, EER: Pooled ${pooled_eer}%" #, Tagalog ${tgl_eer}%, Cantonese ${yue_eer}%"
   exit
-  utils/filter_scp.pl $sre16_trials_tgl ${EXPDIR}/scores/sre16_eval_scores > ${EXPDIR}/scores/sre16_eval_tgl_scores
-  utils/filter_scp.pl $sre16_trials_yue ${EXPDIR}/scores/sre16_eval_scores > ${EXPDIR}/scores/sre16_eval_yue_scores
-  pooled_eer=$(paste $sre16_trials ${EXPDIR}/scores/sre16_eval_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
-  tgl_eer=$(paste $sre16_trials_tgl ${EXPDIR}/scores/sre16_eval_tgl_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
-  yue_eer=$(paste $sre16_trials_yue ${EXPDIR}/scores/sre16_eval_yue_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  utils/filter_scp.pl $sre16_trials_tgl ${exp_dir}/scores/sre16_eval_scores > ${exp_dir}/scores/sre16_eval_tgl_scores
+  utils/filter_scp.pl $sre16_trials_yue ${exp_dir}/scores/sre16_eval_scores > ${exp_dir}/scores/sre16_eval_yue_scores
+  pooled_eer=$(paste $sre16_trials ${exp_dir}/scores/sre16_eval_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  tgl_eer=$(paste $sre16_trials_tgl ${exp_dir}/scores/sre16_eval_tgl_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
+  yue_eer=$(paste $sre16_trials_yue ${exp_dir}/scores/sre16_eval_yue_scores | awk '{print $6, $3}' | compute-eer - 2>/dev/null)
   echo "Using Out-of-Domain PLDA, EER: Pooled ${pooled_eer}%, Tagalog ${tgl_eer}%, Cantonese ${yue_eer}%"
   # EER: Pooled 11.73%, Tagalog 15.96%, Cantonese 7.52%
   # For reference, here's the ivector system from ../v1:

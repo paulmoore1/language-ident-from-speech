@@ -223,6 +223,8 @@ for ($jobid = $jobstart; $jobid <= $jobend; $jobid++) {
     print F "# Accounting: time=" . ($endtime - $starttime) . " threads=1\n";
     print F "# Ended ($return_str) at " . $enddate . ", elapsed time " . ($endtime-$starttime) . " seconds\n";
     close(F);
+
+
     exit($ret == 0 ? 0 : 1);
   } else {
     $pid[$jobid] = $childpid;
@@ -230,6 +232,13 @@ for ($jobid = $jobstart; $jobid <= $jobend; $jobid++) {
     # print STDERR "Queued: " .  Dumper(\%active_pids) . "\n";
   }
 }
+#$perms = `ls -la /afs/inf.ed.ac.uk/user/s15/s1531206/gp-data/exp/xvectors_train`;
+#print "Permissions for all files in xvectors_train: " . $perms;
+
+#$perms = `ls -la /afs/inf.ed.ac.uk/user/s15/s1531206/kaldi/src/bin`;
+#print "Permissions for all files in bin: " . $perms;
+
+
 
 # Now we have submitted all the jobs, lets wait until all the jobs finish
 foreach $child (keys %active_pids) {
