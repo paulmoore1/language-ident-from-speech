@@ -127,7 +127,7 @@ EOF
 fi
 
 source ./helper_functions.sh
-elif [[ $(whichMachine) == cluster* ]]; then
+if [[ $(whichMachine) == cluster* ]]; then
   use_gpu=true
 else
   use_gpu=false
