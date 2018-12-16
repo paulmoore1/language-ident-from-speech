@@ -257,7 +257,7 @@ if [ $stage -eq 7 ]; then
     --nj $MAXNUMJOBS \
     $nnet_dir \
     $eval_enroll_dir \
-    $exp_dir/xvectors_eval_enroll
+    $exp_dir/xvectors_eval_enroll &
 
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
@@ -265,7 +265,7 @@ if [ $stage -eq 7 ]; then
     --nj $MAXNUMJOBS \
     $nnet_dir \
     $eval_test_dir \
-    $exp_dir/xvectors_eval_test
+    $exp_dir/xvectors_eval_test &
 
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
@@ -273,13 +273,15 @@ if [ $stage -eq 7 ]; then
     --nj $MAXNUMJOBS \
     $nnet_dir \
     $train_data \
-    $exp_dir/xvectors_train
+    $exp_dir/xvectors_train &
+    
+  wait
 
-    if [ "$run_all" = true ]; then
-      stage=`expr $stage + 1`
-    else
-      exit
-    fi
+  if [ "$run_all" = true ]; then
+    stage=`expr $stage + 1`
+  else
+    exit
+  fi
 fi
 
 if [ $stage -eq 8 ]; then
