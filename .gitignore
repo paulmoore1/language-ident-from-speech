@@ -48,3 +48,5 @@ src/logs/
 *.app
 
 *.Rhistory
+
+*.pyc
