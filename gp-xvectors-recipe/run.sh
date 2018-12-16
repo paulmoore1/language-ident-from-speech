@@ -98,15 +98,13 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
-train_data=$DATADIR/train
-mfccdir=$DATADIR/mfcc
-vaddir=$DATADIR/mfcc
-eval_test_dir=$DATADIR/eval_test
-eval_enroll_dir=$DATADIR/eval_enroll
 
 if [[ $(whichMachine) == cluster* ]]; then
   home_prefix=$HOME/lid
 
+  train_data=$home_prefix/train
+  eval_test_dir=$home_prefix/eval_test
+  eval_enroll_dir=$home_prefix/eval_enroll
   log_dir=$home_prefix/log
   mfccdir=$home_prefix/mfcc
   vaddir=$home_prefix/mfcc
@@ -115,6 +113,9 @@ if [[ $(whichMachine) == cluster* ]]; then
   nnet_dir=$home_prefix/nnet
   exp_dir=$home_prefix/exp
 else
+  train_data=$DATADIR/train
+  eval_test_dir=$DATADIR/eval_test
+  eval_enroll_dir=$DATADIR/eval_enroll
   log_dir=$DATADIR/log
   mfccdir=$DATADIR/mfcc
   vaddir=$DATADIR/mfcc
