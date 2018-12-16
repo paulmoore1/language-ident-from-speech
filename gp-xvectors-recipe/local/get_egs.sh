@@ -107,12 +107,6 @@ if [ $stage -le 0 ]; then
   # Pick a subset of the training list for diagnostics
   awk '{print $1}' $temp/utt2num_frames.train | utils/shuffle_list.pl | head -$num_heldout_utts > $temp/train_subset_uttlist || exit 1;
   utils/filter_scp.pl $temp/train_subset_uttlist <$temp/utt2num_frames.train > $temp/utt2num_frames.train_subset
-  # Create a mapping from utterance to speaker ID (an integer)
-  awk -v id=0 '{print $1, id++}' $data/spk2utt > $temp/spk2int
-  utils/sym2int.pl -f 2 $temp/spk2int $data/utt2spk > $temp/utt2int
-  utils/filter_scp.pl $temp/utt2num_frames.train $temp/utt2int > $temp/utt2int.train
-  utils/filter_scp.pl $temp/utt2num_frames.valid $temp/utt2int > $temp/utt2int.valid
-  utils/filter_scp.pl $temp/utt2num_frames.train_subset $temp/utt2int > $temp/utt2int.train_subset
 
   # Create a mapping from utterance to language ID (an integer)
   awk -v id=0 '{print $1, id++}' $data/lang2utt > $temp/lang2int
@@ -122,7 +116,6 @@ if [ $stage -le 0 ]; then
   utils/filter_scp.pl $temp/utt2num_frames.train_subset $temp/utt_lang2int > $temp/utt_lang2int.train_subset
 fi
 
-#num_pdfs=$(awk '{print $2}' $temp/utt2int | sort | uniq -c | wc -l)
 num_pdfs=$(awk '{print $2}' $temp/utt_lang2int | sort | uniq -c | wc -l)
 # The script assumes you've prepared the features ahead of time.
 feats="scp,s,cs:utils/filter_scp.pl $temp/ranges.JOB $data/feats.scp |"
@@ -172,7 +165,7 @@ if [ $stage -le 2 ]; then
   $cmd $dir/log/allocate_examples_train_subset.log \
     local/allocate_egs.py \
       --prefix train_subset \
-      --num-repeats=2 \
+      --num-repeats=1 \
       --min-frames-per-chunk=$min_frames_per_chunk \
       --max-frames-per-chunk=$max_frames_per_chunk \
       --randomize-chunk-length false \
@@ -187,7 +180,7 @@ if [ $stage -le 2 ]; then
   $cmd $dir/log/allocate_examples_valid.log \
     local/allocate_egs.py \
       --prefix valid \
-      --num-repeats=10 \
+      --num-repeats=1 \
       --min-frames-per-chunk=$min_frames_per_chunk \
       --max-frames-per-chunk=$max_frames_per_chunk \
       --randomize-chunk-length false \
@@ -198,6 +191,7 @@ if [ $stage -le 2 ]; then
       #--utt2int-filename=$dir/temp/utt2int.valid --egs-dir=$dir  || exit 1
 
 fi
+
 
 # At this stage we'll have created the ranges files that define how many egs
 # there are and where they come from.  If this is your first time running this

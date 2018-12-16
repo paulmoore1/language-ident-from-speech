@@ -132,7 +132,7 @@ utils/combine_data.sh $DATADIR/eval_enroll ${eval_enroll_dirs[@]}
 
 # (5) Add utt2lang and lang2utt files for the collected languages
 # Don't bother with test data
-for x in train eval; do
+for x in train eval_enroll eval_test; do
   sed -e 's?[0-9]*$??' $DATADIR/${x}/utt2spk \
   > $DATADIR/${x}/utt2lang
 
