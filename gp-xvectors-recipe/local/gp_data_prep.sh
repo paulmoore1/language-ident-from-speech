@@ -91,10 +91,12 @@ for L in $LANGUAGES; do
   mkdir -p $DATADIR/$L/local/data
   ./local/gp_prep_flists.sh \
   	--corpus-dir=$GPDIR \
+    --train-spk=$CONFDIR/train_spk.list \
     --eval-test-spk=$eval_test_list \
     --eval-enroll-spk=$eval_enroll_list \
     --lang-map=$CONFDIR/lang_codes.txt \
-    --work-dir=$DATADIR $L >& $DATADIR/$L/prep_flists.log &
+    --work-dir=$DATADIR \
+    $L >& $DATADIR/$L/prep_flists.log &
   # Running these in parallel since this does audio conversion (to figure out
   # which files cannot be processed) and takes some time to run.
 done

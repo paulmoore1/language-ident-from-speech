@@ -31,6 +31,7 @@ usage="Usage: $PROG <arguments> <2-letter language code>\n
 Prepare train, dev, eval file lists for a language.\n\n
 Required arguments:\n
   --corpus-dir=DIR\tDirectory for the GlobalPhone corpus\n
+  --train-spk=FILE\tTrain set speaker list\n
   --eval-test-spk=FILE\tTest set speaker list\n
   --eval-enroll-spk=FILE\tEnrollment set speaker list\n
   --lang-map=FILE\tMapping from 2-letter language code to full name\n
@@ -49,6 +50,8 @@ do
   GPDIR=`read_dirname $1`; shift ;;
   --work-dir=*)
   WDIR=`read_dirname $1`; shift ;;
+  --train-spk=*)
+  TRAINSPK=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --eval-test-spk=*)
   EVALTESTSPK=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --eval-enroll-spk=*)
@@ -87,9 +90,14 @@ full_name=`awk '/'$LCODE'/ {print $2}' $LANGMAP`;
 ls "$GPDIR/$full_name/adc" | sed -e "s?^?$LCODE?" -e 's?$?_?' \
   > $tmpdir/all_spk
 
-grep -v -f $tmpdir/eval_test_spk -f $tmpdir/eval_enroll_spk $tmpdir/all_spk \
-  > $tmpdir/train_spk || echo "Could not find any training set speakers; \
-  are you trying to use all of them for evaluation and testing?";
+if [ -f $TRAINSPK ]; then
+  cat $TRAINSPK > $tmpdir/train_spk
+else
+  echo "Train-set speaker list not found. Using all speakers not in eval set."
+  grep -v -f $tmpdir/eval_test_spk -f $tmpdir/eval_enroll_spk $tmpdir/all_spk \
+    > $tmpdir/train_spk || echo "Could not find any training set speakers; \
+    are you trying to use all of them for evaluation and testing?";
+fi
 
 echo "All speakers"
 cat $tmpdir/all_spk
