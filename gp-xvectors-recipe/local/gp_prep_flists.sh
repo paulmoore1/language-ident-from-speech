@@ -91,7 +91,8 @@ ls "$GPDIR/$full_name/adc" | sed -e "s?^?$LCODE?" -e 's?$?_?' \
   > $tmpdir/all_spk
 
 if [ -f $TRAINSPK ]; then
-  cat $TRAINSPK > $tmpdir/train_spk
+  grep "^$LCODE" $TRAINSPK | cut -f2- | tr ' ' '\n' \
+    | sed -e "s?^?$LCODE?" -e 's?$?_?' > $tmpdir/train_spk
 else
   echo "Train-set speaker list not found. Using all speakers not in eval set."
   grep -v -f $tmpdir/eval_test_spk -f $tmpdir/eval_enroll_spk $tmpdir/all_spk \
