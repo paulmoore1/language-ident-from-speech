@@ -69,7 +69,10 @@ def get_language_error(data, language, step_size):
         else:
             num_wrong += 1
     total = num_correct + num_wrong
-    return float(num_wrong)/total*100
+    if total == 0:
+        return 100
+    else:
+        return float(num_wrong)/total*100
 
 
 def main():
@@ -80,12 +83,13 @@ def main():
     language_errors = []
     for language in languages:
         language_error = get_language_error(data, language, step_size)
-        str_out = "Error for language {} is {:.4f}".format(language, language_error)
+        str_out = "Error for language {} is {:.1f}%".format(language, language_error)
         print(str_out)
         language_errors.append(str_out)
+    
     with open("lang_classification_errors", "w") as f:
         for error in language_errors:
-            f.write(error + "\n")
+            f.write("{}\n".format(error))
 
 
 
