@@ -99,7 +99,6 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
 train_data=$DATADIR/train
-feat_dir=$DATADIR/x_vector_features # NOTE: Is this one even needed? What is the directory good for?
 mfccdir=$DATADIR/mfcc
 vaddir=$DATADIR/mfcc
 eval_test_dir=$DATADIR/eval_test
@@ -107,19 +106,22 @@ eval_enroll_dir=$DATADIR/eval_enroll
 
 if [[ $(whichMachine) == cluster* ]]; then
   home_prefix=$HOME/lid
+
+  log_dir=$home_prefix/log
   mfccdir=$home_prefix/mfcc
   vaddir=$home_prefix/mfcc
-  log_dir=$home_prefix/log
+  feat_dir=$home_prefix/x_vector_features
   nnet_train_data=$home_prefix/nnet_train_data
-  exp_dir=$home_prefix/exp
   nnet_dir=$home_prefix/nnet
+  exp_dir=$home_prefix/exp
 else
+  log_dir=$DATADIR/log
   mfccdir=$DATADIR/mfcc
   vaddir=$DATADIR/mfcc
-  log_dir=$DATADIR/log
+  feat_dir=$DATADIR/x_vector_features
   nnet_train_data=$train_data/combined_no_sil
-  exp_dir=$DATADIR/exp
   nnet_dir=$DATADIR/nnet
+  exp_dir=$DATADIR/exp
 fi
 
 
