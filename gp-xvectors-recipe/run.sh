@@ -107,11 +107,15 @@ eval_enroll_dir=$DATADIR/eval_enroll
 
 if [[ $(whichMachine) == cluster* ]]; then
   home_prefix=$HOME/lid
+  mfccdir=$home_prefix/mfcc
+  vaddir=$home_prefix/mfcc
   log_dir=$home_prefix/log
   nnet_train_data=$home_prefix/nnet_train_data
   exp_dir=$home_prefix/exp
   nnet_dir=$home_prefix/nnet
 else
+  mfccdir=$DATADIR/mfcc
+  vaddir=$DATADIR/mfcc
   log_dir=$DATADIR/log
   nnet_train_data=$train_data/combined_no_sil
   exp_dir=$DATADIR/exp
