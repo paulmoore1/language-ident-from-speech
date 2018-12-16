@@ -245,9 +245,15 @@ fi
 if [ $stage -eq 7 ]; then
   echo "#### STAGE 7: Extracting X-vectors from the trained DNN. ####"
 
+  if [[ $(whichMachine) == cluster* ]]; then
+    use_gpu=true
+  else
+    use_gpu=false
+  fi
+
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
-    --use-gpu false \
+    --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     $nnet_dir \
     $eval_enroll_dir \
@@ -255,7 +261,7 @@ if [ $stage -eq 7 ]; then
 
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
-    --use-gpu false \
+    --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     $nnet_dir \
     $eval_test_dir \
@@ -263,7 +269,7 @@ if [ $stage -eq 7 ]; then
 
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
-    --use-gpu false \
+    --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     $nnet_dir \
     $train_data \

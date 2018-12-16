@@ -37,7 +37,7 @@ elif [[ $(whichMachine) == cluster* ]]; then
 	# export highmem_cmd=slurm.pl
 	export preprocess_cmd=run.pl
 	export train_cmd=slurm.pl
-	export extract_cmd=run.pl
+	export extract_cmd=slurm.pl
 	export plda_cmd=run.pl
 
 	export decode_cmd=run.pl
