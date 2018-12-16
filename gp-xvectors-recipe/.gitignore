@@ -22,6 +22,8 @@ dev_spk.list
 eval_spk.list
 train_spk.list
 unlabelled_spk.list
+eval_enroll_spk.list
+eval_test_spk.list
 
 ## Other user-specific configs
 user_specific_config.sh
