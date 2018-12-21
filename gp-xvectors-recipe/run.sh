@@ -134,7 +134,7 @@ echo "Running with languages: ${GP_LANGUAGES}"
 # shorten to WAV to take out the empty files and those with compression errors.
 if [ $stage -eq 0 ]; then
   echo "#### STAGE 0: Data preparation. ####"
-	local/gp_data_prep.sh \
+	./local/gp_data_prep.sh \
 		--config-dir=$PWD/conf \
 		--corpus-dir=$GP_CORPUS \
 		--languages="$GP_LANGUAGES" \
@@ -154,6 +154,8 @@ if [ $stage -eq 1 ]; then
   # Make MFCCs and compute the energy-based VAD for each dataset
   
   for name in train eval_test eval_enroll; do
+    # TO-DO: Review the MFCC config (lre07 recipe uses interesting parameters 
+    # which may be more suitable than those used by the GP recipe for ASR.)
     steps/make_mfcc.sh \
       --write-utt2num-frames false \
       --mfcc-config conf/mfcc.conf \
@@ -284,6 +286,21 @@ if [ $stage -eq 7 ]; then
     exit
   fi
 fi
+
+if [ $stage -eq 8 ]; then
+  echo "#### STAGE 8: Training logistic regression classifier and evaluating end-to-end performance. ####"
+  
+  ./local/run_logistic_regression.sh \
+    --prior-scale 0.70 \
+    --conf conf/logistic-regression.conf \
+    --train-dir $exp_dir/xvectors_eval_enroll \
+    --test-dir $exp_dir/xvectors_eval_test \
+    --model-dir $exp_dir/xvectors_eval_enroll \
+    --train-utt2lang $DATADIR/eval_enroll/utt2lang \
+    --test-utt2lang $DATADIR/eval_test/utt2lang
+fi
+
+exit
 
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Building PLDA model. ####"
