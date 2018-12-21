@@ -302,6 +302,12 @@ fi
 
 exit
 
+
+#####################################################################
+## Training PLDAs (used for speaker verification 
+## by the original SRE recipe) 
+#####################################################################
+
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Building PLDA model. ####"
 
