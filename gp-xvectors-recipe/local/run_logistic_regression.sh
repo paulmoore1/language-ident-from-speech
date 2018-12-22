@@ -95,6 +95,6 @@ cat $test_dir/posteriors | \
 # Note: we treat the language as a sentence.
 compute-wer \
   --mode=present \
-  --text ark:<(cat $test_utt2lang) \
   --print-args=false \
+  --text ark:<(cat $test_utt2lang) \
   ark:$test_dir/output
