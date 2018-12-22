@@ -11,18 +11,18 @@
 set -e
 
 ## All these now provided as arguments when calling this script
-# train_dir=exp/ivectors_train
-# test_dir=exp/ivectors_lre07
-# model_dir=exp/ivectors_train
-# train_utt2lang=data/train_lr/utt2lang
-# test_utt2lang=data/lre07/utt2lang
+prior_scale=1.0
+conf="NONE" # conf/logistic-regression.conf
+train_dir="NONE" # exp/ivectors_train
+test_dir="NONE" # exp/ivectors_lre07
+model_dir="NONE" # exp/ivectors_train
+train_utt2lang="NONE" # data/train_lr/utt2lang
+test_utt2lang="NONE" # data/lre07/utt2lang
 # TO-DO: Change the file (more precisely: generate it in run.sh 
 # or pass its contents as an argument to this script)
 # languages=conf/general_lr_closed_set_langs.txt
-# languages=conf/test_languages.list
-# conf=conf/logistic-regression.conf
+languages="NONE" # conf/test_languages.list
 
-prior_scale=1.0
 apply_log=true # If true, the output of the binary
                # logistitic-regression-eval are log-posteriors.
                # Probabilities are the output if this is false.

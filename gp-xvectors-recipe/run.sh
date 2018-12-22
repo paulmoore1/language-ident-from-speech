@@ -305,8 +305,7 @@ if [ $stage -eq 8 ]; then
     --model-dir $exp_dir/xvectors_eval_enroll \
     --train-utt2lang $DATADIR/eval_enroll/utt2lang \
     --test-utt2lang $DATADIR/eval_test/utt2lang \
-    --languages conf/test_languages.list \
-    --conf conf/logistic-regression.conf
+    --languages conf/test_languages.list
 fi
 
 exit
