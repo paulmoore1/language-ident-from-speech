@@ -44,6 +44,7 @@ classes="ark:cat $train_utt2lang | utils/sym2int.pl -f 2 $languages - |"
 
 # Create priors to rebalance the model. The following script rebalances
 # the languages as ( count(lang_test) / count(lang_train) )^(prior_scale).
+echo "Re-balancing the model using non-uniform priors"
 ./local/balance_priors_to_test.pl \
     <(utils/filter_scp.pl -f 1 \
       $train_dir/xvector.scp $train_utt2lang) \
@@ -52,13 +53,14 @@ classes="ark:cat $train_utt2lang | utils/sym2int.pl -f 2 $languages - |"
     $prior_scale \
     $model_dir/priors.vec
 
+echo "Training the log-reg model"
 logistic-regression-train \
   --config=$conf \
   "$train_xvectors" \
   "$classes" \
-  $model \
-  2>$model_dir/log/logistic_regression.log
+  $model
 
+echo "Storing re-balanced trained model in $model_rebalanced"
 logistic-regression-copy \
   --scale-priors=$model_dir/priors.vec \
   --print-args=false \
@@ -80,6 +82,7 @@ logistic-regression-copy \
 #   ark:$train_dir/output
 
 # Evaluate on test data.
+echo "Classifying test utterances"
 logistic-regression-eval \
   --apply-log=$apply_log \
   --print-args=false \

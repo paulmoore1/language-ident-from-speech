@@ -3,8 +3,7 @@ A very simple error calculator.
 Takes the scores file as input, prints the error rate for each language.
 For each utterance, classifies it as the most likely of all the languages scores
 """
-from __future__ import print_function
-import re, os, argparse, sys, math, warnings, random
+import argparse
 import numpy as np
 from collections import OrderedDict
 from sklearn.metrics import confusion_matrix
@@ -23,33 +22,34 @@ def get_args():
 
 def make_stats(classification_file, output_file, languages):
     with open(classification_file, "r") as f:
+        # From lines like "GE001_33 KO" make simple pairs (true, predicted) like [GE, KO]
         classifications = np.array([[l.split()[0][:2], l.split()[1]] for l in f.readlines()])
         y_true = classifications[:, 0]
         y_pred = classifications[:, 1]
         conf_matrix = confusion_matrix(y_true, y_pred, labels=languages)
 
+        # Accuracy (sum along the diagonal of the conf. matrix)
         accuracy = np.trace(conf_matrix)/np.sum(conf_matrix)
         acc_msg = "Accuracy: {:.3f} ({}/{} classified correctly)"\
             .format(accuracy, np.trace(conf_matrix), np.sum(conf_matrix))
         print(acc_msg)
 
+        # Pretty-printing the conf. matrix
         n = 4        
-        conf_matrix_nice = [languages[i].ljust(n) + " ".join([str(e).ljust(n) for e in row]) for i, row in enumerate(conf_matrix)]
-        conf_mtrx_msg = "Confusion matrix:\n{}{}\n{}".format(" "*n, " ".join([l.ljust(n) for l in languages]), \
-            "\n".join(conf_matrix_nice))
+        conf_matrix_nice = [languages[i].ljust(n) + " ".join([str(e).ljust(n) for e in row]) \
+            for i, row in enumerate(conf_matrix)]
+        conf_mtrx_msg = "Confusion matrix:\n{}{}\n{}".format(
+                            " "*n,
+                            " ".join([l.ljust(n) for l in languages]),
+                            "\n".join(conf_matrix_nice))
         print(conf_mtrx_msg)
 
+        # Write results to file
         with open(output_file, "w") as o:
             o.write("{}\n".format(acc_msg))
             o.write("{}\n".format(conf_mtrx_msg))
 
-def main():
-    args = get_args()
-
-    languages = args.language_list.split()
-
-    make_stats(args.classification_file, args.output_file, languages)
-
-
 if __name__ == "__main__":
-    main()
+    args = get_args()
+    languages = args.language_list.split()
+    make_stats(args.classification_file, args.output_file, languages)

@@ -288,7 +288,9 @@ if [ $stage -eq 7 ]; then
 fi
 
 if [ $stage -eq 8 ]; then
-  echo "#### STAGE 8: Training logistic regression classifier and evaluating end-to-end performance. ####"
+  echo "#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####"
+  
+  # Make language-int map (essentially just indexing the languages 0 to L)
   langs=($GP_LANGUAGES)
   i=0
   for l in "${langs[@]}"; do
@@ -298,6 +300,7 @@ if [ $stage -eq 8 ]; then
 
   mkdir -p $exp_dir/results
 
+  # Training the log reg model and classifying test set samples
   ./local/run_logistic_regression.sh \
     --prior-scale 0.70 \
     --conf conf/logistic-regression.conf \
@@ -307,9 +310,14 @@ if [ $stage -eq 8 ]; then
     --classification-file $exp_dir/results/classification \
     --train-utt2lang $DATADIR/eval_enroll/utt2lang \
     --test-utt2lang $DATADIR/eval_test/utt2lang \
-    --languages conf/test_languages.list
+    --languages conf/test_languages.list \
+    > $exp_dir/classfier/logistic-regression.log
+fi
 
-  python ./local/classify_scores.py \
+if [ $stage -eq 9 ]; then
+  echo "#### STAGE 9: Calculating results. ####"
+
+  python ./local/compute_results.py \
     --classification-file $exp_dir/results/classification \
     --output-file $exp_dir/results/results \
     --language-list "$GP_LANGUAGES"
