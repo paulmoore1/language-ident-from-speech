@@ -299,7 +299,8 @@ if [ $stage -eq 8 ]; then
   done > conf/test_languages.list
 
   mkdir -p $exp_dir/results
-
+  mkdir -p $exp_dir/classifier
+  
   # Training the log reg model and classifying test set samples
   ./local/run_logistic_regression.sh \
     --prior-scale 0.70 \
@@ -311,7 +312,7 @@ if [ $stage -eq 8 ]; then
     --train-utt2lang $DATADIR/eval_enroll/utt2lang \
     --test-utt2lang $DATADIR/eval_test/utt2lang \
     --languages conf/test_languages.list \
-    > $exp_dir/classfier/logistic-regression.log
+    > $exp_dir/classifier/logistic-regression.log
 fi
 
 if [ $stage -eq 9 ]; then
