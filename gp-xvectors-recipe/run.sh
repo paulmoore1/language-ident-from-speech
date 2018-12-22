@@ -327,7 +327,8 @@ if [ $stage -eq 9 ]; then
   python ./local/compute_results.py \
     --classification-file $exp_dir/results/classification \
     --output-file $exp_dir/results/results \
-    --language-list "$GP_LANGUAGES"
+    --language-list "$GP_LANGUAGES" \
+    2>$exp_dir/results/compute_results.log
 fi
 
 exit
