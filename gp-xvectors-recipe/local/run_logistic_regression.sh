@@ -96,4 +96,5 @@ cat $test_dir/posteriors | \
 compute-wer \
   --mode=present \
   --text ark:<(cat $test_utt2lang) \
+  --print-args=false \
   ark:$test_dir/output
