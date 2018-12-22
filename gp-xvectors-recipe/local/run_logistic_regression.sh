@@ -16,16 +16,16 @@ set -e
 # model_dir=exp/ivectors_train
 # train_utt2lang=data/train_lr/utt2lang
 # test_utt2lang=data/lre07/utt2lang
+# TO-DO: Change the file (more precisely: generate it in run.sh 
+# or pass its contents as an argument to this script)
+# languages=conf/general_lr_closed_set_langs.txt
+# languages=conf/test_languages.list
+# conf=conf/logistic-regression.conf
 
 prior_scale=1.0
 apply_log=true # If true, the output of the binary
                # logistitic-regression-eval are log-posteriors.
                # Probabilities are the output if this is false.
-conf=conf/logistic-regression.conf
-
-# TO-DO: Change the file (more precisely: generate it in run.sh 
-# or pass its contents as an argument to this script)
-languages=conf/general_lr_closed_set_langs.txt
 
 if [ -f path.sh ]; then . ./path.sh; fi
 . parse_options.sh || exit 1;
@@ -34,10 +34,10 @@ mkdir -p $model_dir/log
 
 model=$model_dir/logistic_regression
 model_rebalanced=$model_dir/logistic_regression_rebalanced
-train_ivectors="ark:ivector-normalize-length \
-         scp:$train_dir/ivector.scp ark:- |";
-test_ivectors="ark:ivector-normalize-length \
-         scp:$test_dir/ivector.scp ark:- |";
+train_xvectors="ark:ivector-normalize-length \
+         scp:$train_dir/xvector.scp ark:- |";
+test_xvectors="ark:ivector-normalize-length \
+         scp:$test_dir/xvector.scp ark:- |";
 classes="ark:cat $train_utt2lang \
          | utils/sym2int.pl -f 2 $languages - |"
 # A uniform prior.
@@ -49,16 +49,16 @@ classes="ark:cat $train_utt2lang \
 # Create priors to rebalance the model. The following script rebalances
 # the languages as ( count(lang_test) / count(lang_train) )^(prior_scale).
 
-# TO-DO: Change. Also note that we don't need to remove dialects.
-lid/balance_priors_to_test.pl \
+# TO-DO: Change.
+./local/balance_priors_to_test.pl \
     <(utils/filter_scp.pl -f 1 \
-        $train_dir/ivector.scp $train_utt2lang) \
+      $train_dir/xvector.scp $train_utt2lang) \
     <(cat $test_utt2lang) \
     $languages \
     $prior_scale \
     $model_dir/priors.vec
 
-logistic-regression-train --config=$conf "$train_ivectors" \
+logistic-regression-train --config=$conf "$train_xvectors" \
                           "$classes" $model \
    2>$model_dir/log/logistic_regression.log
 
@@ -66,7 +66,7 @@ logistic-regression-copy --scale-priors=$model_dir/priors.vec \
    $model $model_rebalanced
 
 logistic-regression-eval --apply-log=$apply_log $model \
-  "$train_ivectors" ark,t:$train_dir/posteriors
+  "$train_xvectors" ark,t:$train_dir/posteriors
 
 cat $train_dir/posteriors | \
   awk '{max=$3; argmax=3; for(f=3;f<NF;f++) { if ($f>max) 
@@ -82,7 +82,7 @@ compute-wer --mode=present --text ark:<(cat $train_utt2lang) \
 
 # Evaluate on test data. Most likely a NIST LRE.
 logistic-regression-eval --apply-log=$apply_log $model_rebalanced \
-  "$test_ivectors" ark,t:$test_dir/posteriors
+  "$test_xvectors" ark,t:$test_dir/posteriors
 
 cat $test_dir/posteriors | \
   awk '{max=$3; argmax=3; for(f=3;f<NF;f++) { if ($f>max) 

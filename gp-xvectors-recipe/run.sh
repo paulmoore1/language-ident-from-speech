@@ -289,7 +289,14 @@ fi
 
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Training logistic regression classifier and evaluating end-to-end performance. ####"
-  
+  langs=($GP_LANGUAGES)
+  i=0
+  for l in "${langs[@]}"; do
+    echo $l $i
+    i=$(expr $i + 1)
+  done > conf/test_languages.list
+
+
   ./local/run_logistic_regression.sh \
     --prior-scale 0.70 \
     --conf conf/logistic-regression.conf \
@@ -297,7 +304,9 @@ if [ $stage -eq 8 ]; then
     --test-dir $exp_dir/xvectors_eval_test \
     --model-dir $exp_dir/xvectors_eval_enroll \
     --train-utt2lang $DATADIR/eval_enroll/utt2lang \
-    --test-utt2lang $DATADIR/eval_test/utt2lang
+    --test-utt2lang $DATADIR/eval_test/utt2lang \
+    --languages conf/test_languages.list \
+    --conf conf/logistic-regression.conf
 fi
 
 exit
