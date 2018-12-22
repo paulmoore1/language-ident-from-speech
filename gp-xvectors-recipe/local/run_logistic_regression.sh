@@ -51,21 +51,24 @@ echo "Re-balancing the model using non-uniform priors"
     <(cat $test_utt2lang) \
     $languages \
     $prior_scale \
-    $model_dir/priors.vec
+    $model_dir/priors.vec \
+    2>$model_dir/balance-priors.log
 
 echo "Training the log-reg model"
 logistic-regression-train \
   --config=$conf \
   "$train_xvectors" \
   "$classes" \
-  $model
+  $model \
+  2>$model_dir/logistic-regression-train.log
 
 echo "Storing re-balanced trained model in $model_rebalanced"
 logistic-regression-copy \
   --scale-priors=$model_dir/priors.vec \
   --print-args=false \
   $model \
-  $model_rebalanced
+  $model_rebalanced \
+  2>$model_dir/logistic-regression-copy.log
 
 ## Evaluate on train data.
 # logistic-regression-eval --apply-log=$apply_log $model \
@@ -87,7 +90,8 @@ logistic-regression-eval \
   --apply-log=$apply_log \
   --print-args=false \
   $model_rebalanced \
-  "$test_xvectors" ark,t:$test_dir/posteriors
+  "$test_xvectors" ark,t:$test_dir/posteriors \
+  2>$model_dir/logistic-regression-eval.log
 
 cat $test_dir/posteriors | \
   awk '{max=$3; argmax=3; for(f=3;f<NF;f++) { if ($f>max) 
