@@ -296,6 +296,7 @@ if [ $stage -eq 8 ]; then
     i=$(expr $i + 1)
   done > conf/test_languages.list
 
+  mkdir -p $exp_dir/results
 
   ./local/run_logistic_regression.sh \
     --prior-scale 0.70 \
@@ -311,15 +312,7 @@ if [ $stage -eq 8 ]; then
   python ./local/classify_scores.py \
     --classification-file $exp_dir/results/classification \
     --output-file $exp_dir/results/results \
-    --language-list $GP_LANGUAGES
-
-
-  # Note: we treat the language as a sentence.
-  compute-wer \
-    --mode=present \
-    --print-args=false \
-    --text ark:<(cat $DATADIR/eval_test/utt2lang) \
-    ark:$DATADIR/eval_test/output
+    --language-list "$GP_LANGUAGES"
 fi
 
 exit
