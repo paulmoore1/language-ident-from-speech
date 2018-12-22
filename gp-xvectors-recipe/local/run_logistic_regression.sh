@@ -18,6 +18,7 @@ model_dir="NONE" # exp/ivectors_train
 train_utt2lang="NONE" # data/train_lr/utt2lang
 test_utt2lang="NONE" # data/lre07/utt2lang
 languages="NONE" # conf/test_languages.list
+classification_file="NONE" # $train/test_dir/output
 
 apply_log=true # If true, the output of the binary
                # logistitic-regression-eval are log-posteriors.
@@ -90,11 +91,4 @@ cat $test_dir/posteriors | \
                           { max=$f; argmax=f; }}  
                           print $1, (argmax - 3); }' | \
   utils/int2sym.pl -f 2 $languages \
-    >$test_dir/output
-
-# Note: we treat the language as a sentence.
-compute-wer \
-  --mode=present \
-  --print-args=false \
-  --text ark:<(cat $test_utt2lang) \
-  ark:$test_dir/output
+    >$classification_file

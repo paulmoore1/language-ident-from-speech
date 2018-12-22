@@ -302,10 +302,24 @@ if [ $stage -eq 8 ]; then
     --conf conf/logistic-regression.conf \
     --train-dir $exp_dir/xvectors_eval_enroll \
     --test-dir $exp_dir/xvectors_eval_test \
-    --model-dir $exp_dir/xvectors_eval_enroll \
+    --model-dir $exp_dir/classifier \
+    --classification-file $exp_dir/results/classification \
     --train-utt2lang $DATADIR/eval_enroll/utt2lang \
     --test-utt2lang $DATADIR/eval_test/utt2lang \
     --languages conf/test_languages.list
+
+  python ./local/classify_scores.py \
+    --classification-file $exp_dir/results/classification \
+    --output-file $exp_dir/results/results \
+    --language-list $GP_LANGUAGES
+
+
+  # Note: we treat the language as a sentence.
+  compute-wer \
+    --mode=present \
+    --print-args=false \
+    --text ark:<(cat $DATADIR/eval_test/utt2lang) \
+    ark:$DATADIR/eval_test/output
 fi
 
 exit
