@@ -27,8 +27,6 @@ apply_log=true # If true, the output of the binary
 if [ -f path.sh ]; then . ./path.sh; fi
 . parse_options.sh || exit 1;
 
-mkdir -p $model_dir/log
-
 model=$model_dir/logistic_regression
 model_rebalanced=$model_dir/logistic_regression_rebalanced
 train_xvectors="ark:ivector-normalize-length scp:$train_dir/xvector.scp ark:- |";
