@@ -60,6 +60,7 @@ logistic-regression-train \
 
 logistic-regression-copy \
   --scale-priors=$model_dir/priors.vec \
+  --print-args=false \
   $model \
   $model_rebalanced
 
@@ -80,6 +81,7 @@ logistic-regression-copy \
 # Evaluate on test data.
 logistic-regression-eval \
   --apply-log=$apply_log \
+  --print-args=false \
   $model_rebalanced \
   "$test_xvectors" ark,t:$test_dir/posteriors
 
