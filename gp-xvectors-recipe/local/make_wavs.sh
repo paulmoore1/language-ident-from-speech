@@ -34,7 +34,7 @@ do
   --wav-dir=*)
   WAVDIR=`read_dirname $1`; shift ;;
   --languages=*)
-  LANGUAGES=$1; shift ;;
+  LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --lang-map=*)
   LANGMAP=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
@@ -50,7 +50,8 @@ echo "Wav dir: ${WAVDIR}"
 tmpdir=$(mktemp -d /tmp/kaldi.XXXX);
 trap 'rm -rf "$tmpdir"' EXIT
 
-for L in LANGUAGES; do
+for L in $LANGUAGES; do
+  (
   LNAME=`awk '/'$L'/ {print $2}' $LANGMAP`;
   echo "Converting $L ($LNAME) data from SHN to WAV..."
 
@@ -58,7 +59,7 @@ for L in LANGUAGES; do
   FILEDIR=$WAVDIR/$L/files # Directory to write wav files
   mkdir -p $LISTDIR $FILEDIR
 
-  find $GPDIR/$LNAME/adc -name "${L}*\.adc\.shn" > $LISTDIR/shn.flist
+  find $GPDIR/$LNAME/adc -name "${L}*_1\.adc\.shn" > $LISTDIR/shn.list
   
   gp_convert_audio.sh \
     --input-list=$LISTDIR/shn.list \
@@ -66,14 +67,20 @@ for L in LANGUAGES; do
     --output-list=$LISTDIR/wav.list
 
   # Get the utterance IDs for the audio files successfully converted to WAV
-  sed -e "s?.*/??" -e 's?.wav$??' $LISTDIR/wav.list > $tmpdir/${L}_basenames_wav
-  paste $tmpdir/${L}_basenames_wav $LISTDIR/wav.list | sort -k1,1 \
+  sed -e "s?.*/??" -e 's?.wav$??' $LISTDIR/wav.list > $LISTDIR/basenames_wav
+
+  paste $LISTDIR/basenames_wav $LISTDIR/wav.list | sort -k1,1 \
     > $LISTDIR/wav.scp
 
-  sed -e 's?_.*$??' $tmpdir/${L}_basenames_wav \
-    | paste -d' ' $tmpdir/${L}_basenames_wav - \
+  sed -e 's?_.*$??' $LISTDIR/basenames_wav \
+    | paste -d' ' $LISTDIR/basenames_wav - \
     > $LISTDIR/utt2spk
 
   utt2spk_to_spk2utt.pl $LISTDIR/utt2spk \
     > $LISTDIR/spk2utt || exit 1;
+
+  rm $LISTDIR/basenames_wav
+  ) &
 done
+wait;
+exit

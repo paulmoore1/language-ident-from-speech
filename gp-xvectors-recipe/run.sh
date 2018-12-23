@@ -140,7 +140,7 @@ if [ $stage -eq 47 ]; then
     --corpus-dir=$GP_CORPUS \
     --wav-dir=/disk/scratch/lid/wav \
     --lang-map=$PWD/conf/lang_codes.txt \
-    --languages=$GP_LANGUAGES
+    --languages="$GP_LANGUAGES"
 fi
 
 # The following data preparation step actually converts the audio files from
