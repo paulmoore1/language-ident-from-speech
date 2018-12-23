@@ -77,7 +77,7 @@ else
   echo "Test-set speaker list not found. Using default list"
 fi
 if [ -f train_spk.list ]; then
-  train_list=$CONFDIR/train_spk
+  train_list=$CONFDIR/train_spk.list
 fi
 
 [ -f lang_codes.txt ] || error_exit "$PROG: Mapping for language name to 2-letter code not found.";
