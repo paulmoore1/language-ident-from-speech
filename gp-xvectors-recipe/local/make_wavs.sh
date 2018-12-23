@@ -59,7 +59,7 @@ for L in $LANGUAGES; do
   FILEDIR=$WAVDIR/$L/files # Directory to write wav files
   mkdir -p $LISTDIR $FILEDIR
 
-  find $GPDIR/$LNAME/adc -name "${L}*_1\.adc\.shn" > $LISTDIR/shn.list
+  find $GPDIR/$LNAME/adc -name "${L}*\.adc\.shn" > $LISTDIR/shn.list
   
   gp_convert_audio.sh \
     --input-list=$LISTDIR/shn.list \
