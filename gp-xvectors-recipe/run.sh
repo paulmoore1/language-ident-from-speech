@@ -26,67 +26,72 @@
 # limitations under the License.
 
 
-echo $'+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-       This shell script runs the GlobalPhone+X-vectors recipe.
-       Use like this: ./run.sh stagenumber
-       or don\'t provide stage number to run the whole recipe.
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'
+usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n
+\t       This shell script runs the GlobalPhone+X-vectors recipe.\n
+\t       Use like this: $0 <options>\n
+\t       --stage=INT\t\tStage from which to start\n
+\t       --run-all=(false|true)\tWhether to run all stages\n
+\t       \t\t\tor just the specified one\n\n
+\t       If no stage number is provided, either all stages\n
+\t       will be run (--run-all=true) or no stages at all.\n
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
-if [ $# -eq 0 ]; then
-	echo "No stage specified; assuming stage 0 and running the entire recipe from the beginning."
-  stage=0
-  run_all=true
-else
-  if [ $# -eq 1 ]; then
-    echo "Doing stage $1"
-    stage=$1
-    echo "Only a single stage will be run"
-    run_all=false
+stage=-1
+run_all=false
+while [ $# -gt 0 ];
+do
+  case "$1" in
+  --help) echo -e $usage; exit 0 ;;
+  --run-all=*)
+  run_all=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --stage=*)
+  stage=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
+  esac
+done
+
+echo -e $usage
+
+if [ $stage -eq -1 ]; then
+  if [ "$run_all" = true ]; then
+    echo "No stage specified and --run-all=true, running all stages."
+    stage=0
+  else
+    echo "No stage specified and --run-all=false, not running any stages."
   fi
-
-  if [ $# -eq 2 ]; then
-  	echo "Doing stage $1"
-  	stage=$1
-    shift
-    echo "Running entire thing: $1"
-    run_all=$1
+else
+  if [ "$run_all" = true ]; then
+    echo "Running all stages starting with $stage."
+  else
+    echo "Running only stage $stage."
   fi
 fi
-
-# Check that the boolean argument is valid
-if [ "$run_all" = false ]; then
-  false_test="False"
-else
-  false_test="True"
-fi
-
-if [ "$run_all" = true ]; then
-  true_test="True"
-else
-  true_test="False"
-fi
-
-if [[ $false_test == "True" && $true_test == "False" ]]; then
-  echo "Invalid argument given for boolean. Should be <true|false>"
-  exit 1
-fi
-
-if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
-	echo "Seems like your conda environment is not activated. Use: source activate ENVNAME."
-	exit
-else
-	echo "Conda environment '$CONDA_DEFAULT_ENV' active."
-fi
-
-[ -f conf/general_config.sh ] && source ./conf/general_config.sh \
-	|| echo "conf/general_config.sh not found or contains errors!"
-
-[ -f conf/user_specific_config.sh ] && source ./conf/user_specific_config.sh \
-	|| echo "conf/user_specific_config.sh not found, create it by cloning " + \
-					"conf/user_specific_config-example.sh"
 
 [ -f helper_functions.sh ] && source ./helper_functions.sh \
   || echo "helper_functions.sh not found. Won't be able to set environment variables and similar."
+
+if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
+  if [[ $(whichMachine) == cluster* ]]; then
+    echo "Conda environment not activated, sourcing ~/.bashrc and activating the 'lid' env."
+    source ~/.bashrc
+    conda activate lid || exit
+  elif [[ $(whichMachine) == dice* ]]; then
+    echo "Conda environment not activated, trying to activate it."
+    source activate lid || exit
+  else
+    echo "Conda environment not activated, trying to activate it."
+    conda activate lid || exit
+  fi
+else
+  echo "Conda environment '$CONDA_DEFAULT_ENV' active."
+fi
+
+[ -f conf/general_config.sh ] && source ./conf/general_config.sh \
+  || echo "conf/general_config.sh not found or contains errors!"
+
+[ -f conf/user_specific_config.sh ] && source ./conf/user_specific_config.sh \
+  || echo "conf/user_specific_config.sh not found, create it by cloning " + \
+          "conf/user_specific_config-example.sh"
 
 [ -f cmd.sh ] && source ./cmd.sh || echo "cmd.sh not found. Jobs may not execute properly."
 
@@ -125,10 +130,18 @@ else
   exp_dir=$DATADIR/exp
 fi
 
-
-export GP_LANGUAGES="GE SW KO" # Set the languages that will actually be processed
+GP_LANGUAGES="GE SW KO" # Set the languages that will actually be processed
 
 echo "Running with languages: ${GP_LANGUAGES}"
+
+if [ $stage -eq 47 ]; then
+  echo "#### STAGE 47: Converting all SHN files to WAV files. ####"
+  ./local/make_wavs.sh \
+    --corpus-dir=$GP_CORPUS \
+    --wav-dir=/disk/scratch/lid/wav \
+    --lang-map=$PWD/conf/lang_codes.txt \
+    --languages=$GP_LANGUAGES
+fi
 
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
@@ -287,6 +300,8 @@ if [ $stage -eq 7 ]; then
   fi
 fi
 
+# Using logistic regression as a classifier (adapted from egs/lre07,
+# described in https://arxiv.org/pdf/1804.05000.pdf)
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####"
   

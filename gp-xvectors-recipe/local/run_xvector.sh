@@ -57,6 +57,8 @@ echo $egs_dir
 if [ $stage -le 4 ]; then
   echo "#### STAGE 4: Getting NN training egs. ####";
   # NOTE changed frames-per-iter so that there would be more archives
+  # TO-DO: Look into the num-repeats parameter (also discussed here:
+  # https://groups.google.com/forum/#!searchin/kaldi-help/classification%7Csort:date/kaldi-help/JksAYC4YiNQ/nNmI7KurAQAJ)
   ./local/get_egs.sh --cmd "$train_cmd" \
     --nj 8 \
     --stage 0 \
