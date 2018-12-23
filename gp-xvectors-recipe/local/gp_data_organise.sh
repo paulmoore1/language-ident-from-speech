@@ -64,7 +64,7 @@ done
 eval_test_list=$CONFDIR/eval_test_example.list
 eval_enroll_list=$CONFDIR/eval_enroll_example.list
 
-# (1) check if the config files are in place:
+# Check if the config files are in place:
 pushd $CONFDIR > /dev/null
 if [ -f eval_enroll_spk.list ]; then
   eval_enroll_list=$CONFDIR/eval_enroll_spk.list
@@ -93,27 +93,7 @@ done
 tmpdir=$(mktemp -d /tmp/kaldi.XXXX);
 trap 'rm -rf "$tmpdir"' EXIT
 
-
-# (2) get the various file lists (for audio, transcription, etc.) for the
-# specified language.
-# printf "Preparing file lists ... "
-# for L in $LANGUAGES; do
-#   mkdir -p $DATADIR/$L/local/data
-#   ./local/gp_prep_flists.sh \
-#     --corpus-dir=$GPDIR \
-#     --train-spk=$CONFDIR/train_spk.list \
-#     --eval-test-spk=$eval_test_list \
-#     --eval-enroll-spk=$eval_enroll_list \
-#     --lang-map=$CONFDIR/lang_codes.txt \
-#     --work-dir=$DATADIR \
-#     $L >& $DATADIR/$L/prep_flists.log &
-#   # Running these in parallel since this does audio conversion (to figure out
-#   # which files cannot be processed) and takes some time to run.
-# done
-# wait;
-# echo "Done"
-
-# (3) Create directories to contain files needed in training and testing:
+# Create directories to contain files needed in training and testing:
 echo "DATADIR is: $DATADIR"
 for L in $LANGUAGES; do
   grep "^$L" $eval_enroll_list | cut -f2- | tr ' ' '\n' \
@@ -132,26 +112,21 @@ for L in $LANGUAGES; do
   
   echo "Language - ${L}: formatting train/test data."
   for x in train eval_test eval_enroll; do
-    echo $x
+    echo "$x speakers"
 
     mkdir -p $DATADIR/$L/$x
     rm -f $DATADIR/$L/$x/wav.scp $DATADIR/$L/$x/spk2utt $DATADIR/$L/$x/utt2spk
     
     for spk in `cat $tmpdir/${x}_spk`; do
-      echo "SPK: $spk"
       grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $DATADIR/$L/$x/wav.scp
       grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $DATADIR/$L/$x/spk2utt
       grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $DATADIR/$L/$x/utt2spk
-      # cp $DATADIR/$L/local/data/${x}_${L}_wav.scp $DATADIR/$L/$x/wav.scp
-      # cp $DATADIR/$L/local/data/${x}_${L}.spk2utt $DATADIR/$L/$x/spk2utt
-      # cp $DATADIR/$L/local/data/${x}_${L}.utt2spk $DATADIR/$L/$x/utt2spk
     done
   done
   echo "Done"
 done
 
-
-# (4) Combine data from all languages into big piles
+# Combine data from all languages into big piles
 train_dirs=()
 eval_test_dirs=()
 eval_enroll_dirs=()
@@ -168,7 +143,7 @@ utils/combine_data.sh $DATADIR/eval_test ${eval_test_dirs[@]}
 utils/combine_data.sh $DATADIR/eval_enroll ${eval_enroll_dirs[@]}
 
 
-# (5) Add utt2lang and lang2utt files for the collected languages
+# Add utt2lang and lang2utt files for the collected languages
 # Don't bother with test data
 for x in train eval_enroll eval_test; do
   sed -e 's?[0-9]*$??' $DATADIR/${x}/utt2spk \
