@@ -1,6 +1,6 @@
 AR Arabic
-BL Bulgarian
-CM Mandarin
+BG Bulgarian
+CH Mandarin
 CR Croatian
 CZ Czech
 FR French
@@ -12,8 +12,8 @@ PL Polish
 PO Portuguese
 RU Russian
 SP Spanish
-SV Swedish
-SW Swahili
+SW Swedish
+SA Swahili
 TA Tamil
 TH Thai
 TU Turkish

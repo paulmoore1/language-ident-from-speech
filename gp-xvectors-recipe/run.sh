@@ -131,7 +131,13 @@ else
 fi
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="AR BL CM CR CZ FR JA PL PO RU SP SV SW TH TU UA VN"
+GP_LANGUAGES="AR CR CZ FR JA PL PO RU SP SW TH TU VN"
+
+# Languages yet to be converted to WAV
+# GP_LANGUAGES="BG CH SW SA"
+
+# Languages that need to be treated in a special way while converting to WAV
+# GP_LANGUAGES="HA TA UA WU"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 

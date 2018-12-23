@@ -1,6 +1,6 @@
 AR	OK
-BL	OK
-CM  OK (Chinese Mandarin)
+BG	OK
+CH  OK (Chinese Mandarin)
 CR	OK
 CZ	OK
 FR	OK
@@ -12,11 +12,11 @@ PL	OK
 PO	OK
 RU	OK
 SP	OK
-SV	OK (Swedish)
-SW  OK (Swahili)
+SW	OK (Swedish)
+SA  OK (Swahili)
 TA	need to omit the adc/ level and work with files like ta01001d.wav.shn
 TH	OK
 TU	OK
-UA  OK (Ukrainian)
+UA  (Ukrainian) all files lack the .shn suffix, otherwise OK
 VN	OK
 WU	(Chinese) must go to Chinese-Shanghai/Chinese-Shanghai/Wu/adc, then OK
