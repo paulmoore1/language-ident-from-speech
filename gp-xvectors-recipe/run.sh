@@ -143,6 +143,17 @@ if [ $stage -eq 47 ]; then
     --languages="$GP_LANGUAGES"
 fi
 
+if [ $stage -eq 48 ]; then
+  echo "#### STAGE 48: Organising speakers into sets. ####"
+  ./local/gp_data_organise.sh \
+    --config-dir=$PWD/conf \
+    --corpus-dir=$GP_CORPUS \
+    --wav-dir=/disk/scratch/lid/wav \
+    --languages="$GP_LANGUAGES" \
+    --data-dir=$DATADIR \
+    || exit 1;
+fi
+
 # The following data preparation step actually converts the audio files from
 # shorten to WAV to take out the empty files and those with compression errors.
 if [ $stage -eq 0 ]; then

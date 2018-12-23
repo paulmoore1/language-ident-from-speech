@@ -79,6 +79,9 @@ for L in $LANGUAGES; do
   utt2spk_to_spk2utt.pl $LISTDIR/utt2spk \
     > $LISTDIR/spk2utt || exit 1;
 
+  grep -ohE "[A-Z]+[0-9]+ " $LISTDIR/spk2utt \
+    | grep -ohE "[0-9]+" | sort | uniq -u > $LISTDIR/spk
+
   rm $LISTDIR/basenames_wav
   ) &
 done
