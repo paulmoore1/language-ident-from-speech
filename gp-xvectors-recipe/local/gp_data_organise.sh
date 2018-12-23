@@ -114,6 +114,7 @@ trap 'rm -rf "$tmpdir"' EXIT
 # echo "Done"
 
 # (3) Create directories to contain files needed in training and testing:
+echo "DATADIR is: $DATADIR"
 for L in $LANGUAGES; do
   grep "^$L" $eval_enroll_list | cut -f2- | tr ' ' '\n' \
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/eval_enroll_spk
@@ -129,16 +130,18 @@ for L in $LANGUAGES; do
       are you trying to use all of them for evaluation and testing?";
   fi
   
-  printf "Language - ${L}: formatting train/test data ... "
+  echo "Language - ${L}: formatting train/test data."
   for x in train eval_test eval_enroll; do
+    echo $x
+
     mkdir -p $DATADIR/$L/$x
     rm -f $DATADIR/$L/$x/wav.scp $DATADIR/$L/$x/spk2utt $DATADIR/$L/$x/utt2spk
-
-    for spk in `cat "${x}_spk"`; do
-      echo $spk
-      grep -o "$spk" $WAVDIR/$L/lists/wav.scp >> $DATADIR/$L/$x/wav.scp
-      grep -o "$spk" $WAVDIR/$L/lists/spk2utt >> $DATADIR/$L/$x/spk2utt
-      grep -o "$spk" $WAVDIR/$L/lists/utt2spk >> $DATADIR/$L/$x/utt2spk
+    
+    for spk in `cat $tmpdir/${x}_spk`; do
+      echo "SPK: $spk"
+      grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $DATADIR/$L/$x/wav.scp
+      grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $DATADIR/$L/$x/spk2utt
+      grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $DATADIR/$L/$x/utt2spk
       # cp $DATADIR/$L/local/data/${x}_${L}_wav.scp $DATADIR/$L/$x/wav.scp
       # cp $DATADIR/$L/local/data/${x}_${L}.spk2utt $DATADIR/$L/$x/spk2utt
       # cp $DATADIR/$L/local/data/${x}_${L}.utt2spk $DATADIR/$L/$x/utt2spk
@@ -147,7 +150,6 @@ for L in $LANGUAGES; do
   echo "Done"
 done
 
-exit
 
 # (4) Combine data from all languages into big piles
 train_dirs=()
