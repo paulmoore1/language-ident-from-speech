@@ -83,7 +83,7 @@ for L in $LANGUAGES; do
     | grep -ohE "[0-9]+" | sort | uniq -u > $LISTDIR/spk
 
   rm $LISTDIR/basenames_wav
-  ) &
+  ) > $WAVDIR/${L}_log &
 done
 wait;
 exit

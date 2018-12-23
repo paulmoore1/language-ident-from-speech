@@ -1,0 +1,22 @@
+AR	OK
+BL	OK
+CM  OK (Chinese Mandarin)
+CR	OK
+CZ	OK
+FR	OK
+GE	OK
+HA  must go to Hausa/Hausa/Data/adc, then OK
+JA	OK
+KO	OK
+PL	OK
+PO	OK
+RU	OK
+SP	OK
+SV	OK (Swedish)
+SW  OK (Swahili)
+TA	need to omit the adc/ level and work with files like ta01001d.wav.shn
+TH	OK
+TU	OK
+UA  OK (Ukrainian)
+VN	OK
+WU	(Chinese) must go to Chinese-Shanghai/Chinese-Shanghai/Wu/adc, then OK

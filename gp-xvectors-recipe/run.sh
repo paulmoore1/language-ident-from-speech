@@ -130,7 +130,8 @@ else
   exp_dir=$DATADIR/exp
 fi
 
-GP_LANGUAGES="GE SW KO" # Set the languages that will actually be processed
+# Set the languages that will actually be processed
+GP_LANGUAGES="AR BL CM CR CZ FR JA PL PO RU SP SV SW TH TU UA VN"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
