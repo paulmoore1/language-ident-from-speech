@@ -78,7 +78,7 @@ percent_counter=0
 percent_marker=$(bc <<< "scale=10; $num_files / 100")
 
 while read line; do
-  [[ "$line" =~ ^.*/.*\.adc.shn$ ]] || { echo "Bad line: '$line'"; exit 1; }
+  # [[ "$line" =~ ^.*/.*\.adc.shn$ ]] || { echo "Bad line: '$line'"; exit 1; }
   set +e  # Don't want script to die if conversion fails.
   b=`basename $line .adc.shn`; 
   shorten -x $line $ODIR/raw/${b}.raw;

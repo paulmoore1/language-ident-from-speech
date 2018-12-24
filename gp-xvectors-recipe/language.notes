@@ -5,7 +5,7 @@ CR	OK
 CZ	OK
 FR	OK
 GE	OK
-HA  must go to Hausa/Hausa/Data/adc, then OK
+HA  ADC must go to Hausa/Hausa/Data/adc, and leave out the ".shn" suffix
 JA	OK
 KO	OK
 PL	OK
@@ -13,10 +13,10 @@ PO	OK
 RU	OK
 SP	OK
 SW	OK (Swedish)
-SA  (Swahili) all files lack the .shn suffix, otherwise OK
-TA	need to omit the adc/ level and work with files like ta01001d.wav.shn
+SA  ADC (Swahili) all files lack the .shn suffix, otherwise OK
+TA	?? need to omit the adc/ level and work with files like ta01001d.wav.shn
 TH	OK
 TU	OK
-UA  (Ukrainian) all files lack the .shn suffix, otherwise OK
+UA  ADC (Ukrainian) all files lack the .shn suffix, otherwise OK
 VN	OK
-WU	(Chinese) must go to Chinese-Shanghai/Chinese-Shanghai/Wu/adc, then OK
+WU	OK (Chinese) must go to Chinese-Shanghai/Chinese-Shanghai/Wu/adc, then OK
