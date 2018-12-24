@@ -1,22 +1,23 @@
-AR	OK
-BG	OK
-CH  OK (Chinese Mandarin)
-CR	OK
-CZ	OK
-FR	OK
-GE	OK
-HA  ADC must go to Hausa/Hausa/Data/adc, and leave out the ".shn" suffix
-JA	OK
-KO	OK
-PL	OK
-PO	OK
-RU	OK
-SP	OK
-SW	OK (Swedish)
-SA  ADC (Swahili) all files lack the .shn suffix, otherwise OK
-TA	?? need to omit the adc/ level and work with files like ta01001d.wav.shn
-TH	OK
-TU	OK
-UA  ADC (Ukrainian) all files lack the .shn suffix, otherwise OK
-VN	OK
-WU	OK (Chinese) must go to Chinese-Shanghai/Chinese-Shanghai/Wu/adc, then OK
+XX	??	converted		note	
+AR	OK	4908/4908
+BG	OK	8682/8683
+CH  OK	10181/10181
+CR	OK	4499/4499
+CZ	OK	12425/12425
+FR	OK	10478/10478
+GE	OK	10084/10085
+HA  NO					all files seem to be corrupt (shorten: 'No magic number'). SHNs in Hausa/Hausa/Data/adc, without ".shn"
+JA	OK	13067/13067
+KO	OK	8107/8107
+PL	OK	10130/10130
+PO	OK	11243/10417
+RU	OK	13155/12204
+SA  NO					all files lack .shn suffix AND seem to be corrupt (shorten: 'No magic number')
+SP	OK	6898/6898
+SW	OK	11816/11816
+TA	OK	47/47 			need to omit the adc/ level and work with files like ta01001d.wav.shn
+TH	OK	14039/14039
+TU	OK	6949/6950
+UA  NO					all files lack .shn suffix AND seem to be corrupt (shorten: 'No magic number')
+VN	OK	18841/18842
+WU	OK	995/995 		SHNs in Chinese-Shanghai/Chinese-Shanghai/Wu/adc
