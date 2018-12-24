@@ -13,7 +13,7 @@ PO	OK
 RU	OK
 SP	OK
 SW	OK (Swedish)
-SA  OK (Swahili)
+SA  (Swahili) all files lack the .shn suffix, otherwise OK
 TA	need to omit the adc/ level and work with files like ta01001d.wav.shn
 TH	OK
 TU	OK

@@ -59,7 +59,24 @@ for L in $LANGUAGES; do
   FILEDIR=$WAVDIR/$L/files # Directory to write wav files
   mkdir -p $LISTDIR $FILEDIR
 
-  find $GPDIR/$LNAME/adc -name "${L}*\.adc\.shn" > $LISTDIR/shn.list
+  shn_dir=$GPDIR/$LNAME/adc
+  shn_file_pattern="${L}*\.adc\.shn"
+  if [ $L = HA ]; then
+    shn_dir=$GPDIR/Hausa/Hausa/Data/adc
+  elif [ $L = SA ]; then
+    shn_file_pattern="${L}*\.adc"
+  elif [ $L = TA ]; then
+    # shn_dir=$GPDIR/$LNAME/adc
+    # File names are like taXXYYYd.wav.shn, e.g. ta02013d.wav.shn,
+    # where XX is speaker number and YYY is utterance number
+    shn_file_pattern="ta*\.wav\.shn"
+  elif [ $L = UA ]; then
+    shn_file_pattern="${L}*\.adc"
+  elif [ $L = WU ]; then
+    shn_dir=$GPDIR/Chinese-Shanghai/Chinese-Shanghai/Wu/adc
+  fi
+
+  find $shn_dir -name "$shn_file_pattern" > $LISTDIR/shn.list
   
   gp_convert_audio.sh \
     --input-list=$LISTDIR/shn.list \
@@ -83,7 +100,7 @@ for L in $LANGUAGES; do
     | grep -ohE "[0-9]+" | sort | uniq -u > $LISTDIR/spk
 
   rm $LISTDIR/basenames_wav
-  ) > $WAVDIR/${L}_log &
+  ) > $WAVDIR/${L}_log &  
 done
 wait;
 exit
