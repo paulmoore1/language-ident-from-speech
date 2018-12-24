@@ -63,12 +63,12 @@ OLIST=${OLIST:-/dev/null}  # Default for output list
 which shorten > /dev/null
 which sox > /dev/null
 
-tmpdir=$(mktemp -d /tmp/kaldi.XXXX);
-trap 'rm -rf "$tmpdir"' EXIT
+# tmpdir=$(mktemp -d /tmp/kaldi.XXXX);
+# trap 'rm -rf "$tmpdir"' EXIT
 
-mkdir -p $tmpdir/raw $ODIR
-shnerr=$tmpdir/shnerr;
-soxerr=$tmpdir/soxerr;
+mkdir -p $ODIR/raw
+shnerr=$ODIR/shnerr;
+soxerr=$ODIR/soxerr;
 nshnerr=0;
 nsoxerr=0;
 
@@ -81,15 +81,15 @@ while read line; do
   [[ "$line" =~ ^.*/.*\.adc.shn$ ]] || { echo "Bad line: '$line'"; exit 1; }
   set +e  # Don't want script to die if conversion fails.
   b=`basename $line .adc.shn`; 
-  shorten -x $line $tmpdir/raw/${b}.raw;
+  shorten -x $line $ODIR/raw/${b}.raw;
   if [ $? -ne 0 ]; then
     echo "$line" >> $shnerr;
     let "nshnerr+=1"
   else
-    sox -t raw -r 16000 -e signed-integer -b 16 $tmpdir/raw/${b}.raw \
+    sox -t raw -r 16000 -e signed-integer -b 16 $ODIR/raw/${b}.raw \
       -t wav $ODIR/${b}.wav
     if [ $? -ne 0 ]; then
-      echo "$tmpdir/raw/${b}.raw: exit status = $?" >> $soxerr;
+      echo "$ODIR/raw/${b}.raw: exit status = $?" >> $soxerr;
       let "nsoxerr+=1"
     else
       # Just in case there are empty files! Setting the cutoff at 1000 samples,
@@ -98,10 +98,11 @@ while read line; do
       if [[ "$nsamples" -gt 1000 ]]; then 
 	      echo "$ODIR/${b}.wav" >> $OLIST;
       else
-	      echo "$tmpdir/raw/${b}.raw: #samples = $nsamples" >> $soxerr;
+	      echo "$ODIR/raw/${b}.raw: #samples = $nsamples" >> $soxerr;
 	      let "nsoxerr+=1"
       fi
     fi
+    rm -f $ODIR/raw/${b}.raw
   fi
   counter=$(expr $counter + 1)
   if [ $(bc <<< "scale=5; $counter / $percent_marker > $percent_counter") -eq 1 ]; then
