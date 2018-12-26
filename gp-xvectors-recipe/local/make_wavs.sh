@@ -63,6 +63,7 @@ for L in $LANGUAGES; do
   shn_file_pattern="${L}*\.adc\.shn"
   if [ $L = HA ]; then
     shn_dir=$GPDIR/Hausa/Hausa/Data/adc
+    shn_file_pattern="${L}*\.adc"
   elif [ $L = SA ]; then
     shn_file_pattern="${L}*\.adc"
   elif [ $L = TA ]; then

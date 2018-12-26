@@ -131,13 +131,7 @@ else
 fi
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="AR CR CZ FR JA PL PO RU SP SW TH TU VN"
-
-# Languages yet to be converted to WAV
-# GP_LANGUAGES="BG CH SW SA"
-
-# Languages that need to be treated in a special way while converting to WAV
-# GP_LANGUAGES="HA TA UA WU"
+#GP_LANGUAGES="AR BG CH CR CZ"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
@@ -145,7 +139,7 @@ if [ $stage -eq 47 ]; then
   echo "#### STAGE 47: Converting all SHN files to WAV files. ####"
   ./local/make_wavs.sh \
     --corpus-dir=$GP_CORPUS \
-    --wav-dir=/disk/scratch/lid/wav \
+    --wav-dir=$HOME/lid/wav \
     --lang-map=$PWD/conf/lang_codes.txt \
     --languages="$GP_LANGUAGES"
 fi
