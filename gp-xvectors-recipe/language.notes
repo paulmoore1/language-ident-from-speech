@@ -1,23 +1,25 @@
-XX	??	converted		note	
-AR	OK	4908/4908
-BG	OK	8682/8683		bad utterance 095_29
-CH  OK	10181/10181
-CR	OK	4499/4499
-CZ	OK	12425/12425
-FR	OK	10478/10478
-GE	OK	10084/10085		bad utterance 003_2
-HA  NO					all files seem to be corrupt (shorten: 'No magic number'). SHNs in Hausa/Hausa/Data/adc, without ".shn"
-JA	OK	13067/13067
-KO	OK	8107/8107
-PL	OK	10130/10130
-PO	OK	11243/10417		very problematic speakers are 015, 136 (DO NOT USE), up to 3 SHNs bad for speakers 014, 017, 021, 022, 024, 026, 031, 036, 058, 139 (SAFE TO USE)
-RU	OK	13155/12204		bad utterance 087_102
-SA  NO					all files lack .shn suffix AND seem to be corrupt (shorten: 'No magic number')
-SP	OK	6898/6898
-SW	OK	11816/11816
-TA	OK	47/47 			need to omit the adc/ level and work with files like ta01001d.wav.shn
-TH	OK	14039/14039
-TU	OK	6949/6950		bad utternce 007_77
-UA  NO					all files lack .shn suffix AND seem to be corrupt (shorten: 'No magic number')
-VN	OK	18841/18842		bad utterance 084_122
-WU	OK	995/995 		SHNs in Chinese-Shanghai/Chinese-Shanghai/Wu/adc
+#spk only takes into account speakers that are safe to use
+
+XX	??	converted		#spk	#dev	#eval	note	
+AR	OK	4908/4908		78		X		X
+BG	OK	8682/8683		77 		7		7		bad utterance 095_29
+CH	OK	10181/10181		132		11		10
+CR	OK	4499/4499		92		10		10
+CZ	OK	12425/12425		102		10		10
+FR	OK	10478/10478		100		8		8
+GE	OK	10084/10085		77		6		6		bad utterance 003_2
+HA	BROKEN				X		X		X		all files seem to be corrupt (shorten: 'No magic number'). SHNs in Hausa/Hausa/Data/adc, without ".shn"
+JA	OK	13067/13067		144		X		X
+KO	OK	8107/8107		100		10		10
+PL	OK	10130/10130		99		10		10
+PO	OK	11243/10417		100		10		8		broken speakers 015, 136 (DON'T USE), <= 3 SHNs bad for speakers 014 017 021 022 024 026 031 036 058 139 (SAFE TO USE)
+RU	OK	13155/12204		115		10		10		bad utterance 087_102
+SA	BROKEN				X		X		X		all files lack .shn suffix AND seem to be corrupt (shorten: 'No magic number')
+SP	OK	6898/6898		100		10		8
+SW	OK	11816/11816		98		9		10
+TA	OK	47/47 			47		X		X		need to omit the adc/ level and work with files like ta01001d.wav.shn
+TH	OK	14039/14039		98		8		8
+TU	OK	6949/6950		100		11		10		bad utterance 007_77
+UA  BROKEN						X		X		all files lack .shn suffix AND seem to be corrupt (shorten: 'No magic number')
+VN	OK	18841/18842		129		10		9		bad utterance 084_122
+WU	OK	995/995 		41		X		X		SHNs in Chinese-Shanghai/Chinese-Shanghai/Wu/adc
