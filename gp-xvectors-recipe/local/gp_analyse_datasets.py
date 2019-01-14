@@ -106,6 +106,8 @@ if __name__ == "__main__":
             num_enroll = int(ceil(0.1*num_spks[L]))
             num_test = num_enroll
             num_eval = num_enroll
+            print("Choosing {} speakers for each small set (from {} spks).".format(num_enroll, num_spks[L]))
+            print("Available ({}): {}.".format(len(available_spks), available_spks))
 
             if L in langs_with_spk_data:
                 print("Spk metadata found for {}. Using it for the split.".format(L))
@@ -143,7 +145,7 @@ if __name__ == "__main__":
                     overlap = len(test_articles) + len(eval_articles) + len(enroll_articles) + len(train_articles) \
                               - len(train_articles.intersection(test_articles, eval_articles, enroll_articles))
 
-                    if len(overlap) <= threshold:
+                    if overlap <= threshold:
                         print("\nVALID SPLIT FOUND ({})\nTest: {}\nEval: {}\nEnroll: {}\nTrain: {}\nVALID SPLIT FOUND\n"\
                               .format(attempt_counter, spks_test, spks_eval, spks_enroll, spks_train))
                         break
