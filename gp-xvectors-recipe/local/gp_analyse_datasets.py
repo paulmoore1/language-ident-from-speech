@@ -114,7 +114,27 @@ if __name__ == "__main__":
             if L in langs_with_spk_data:
                 print("Spk metadata found for {}. Using it for the split.".format(L))
                 # The complicated case: 2 non-random sets
-                continue
+                sets_valid = False
+                while not sets_valid:
+                    spks_enroll = random.sample(available_spks, num_enroll)
+                    spks_train = [spk_id for spk_id in available_spks if spk_id not in spks_enroll]
+                    
+                    enroll_articles = []
+                    for spk_id in spks_enroll:
+                        enroll_articles = enroll_articles + [spk_article_dict[L][spk_id]]
+                    enroll_articles = set(enroll_articles)
+                    
+                    train_articles = []
+                    for spk_id in spks_train:
+                        train_articles = train_articles + [spk_article_dict[L][spk_id]]
+                    train_articles = set(train_articles)
+
+                    overlap = list(train_articles.intersection(enroll_articles))
+                    if len(overlap) == 0:
+                        print("\nVALID SPLIT FOUND\nTrain: {}\nEnroll: {}\nVALID SPLIT FOUND\n".format(spks_train, spks_enroll))
+                        continue
+                    else:
+                        print("Invalid split (overlap: {}).".format(len(overlap)))
             else:
                 print("No spk metadata found for {}. Doing random split.".format(L))
                 # The easiest case: 2 random sets
