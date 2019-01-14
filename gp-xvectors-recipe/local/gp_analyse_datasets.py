@@ -1,3 +1,4 @@
+import re
 
 def load_speaker_data(langs):
     spk_dict = {}
@@ -36,26 +37,26 @@ def load_all_speakers(langs):
 
 def load_original_datasets(langs):
     datasets_dict = {L: {"eval": [], "test": []} for L in langs}
-    
+
     try:
         with open("conf/gp_original_dev_spk.list", "r") as spk_file:
             for line in spk_file.readlines():
-                line_split = [x.strip() for x in line.split(",")]
-                
+                line_split = [x.strip() for x in re.split('\t| ', line)]
                 # In case there is no split (lines like "AR TBA")
                 if len(line_split) <= 2:
                     continue
 
                 language = line_split[0]
                 spk_ids = line_split[1:]
-                datasets_dict[language]["eval"] = spk_ids
+                for spk_id in spk_ids:
+                    datasets_dict[language]["eval"].append(spk_id)
     except:
         pass
 
     try:
         with open("conf/gp_original_eval_spk.list", "r") as spk_file:
             for line in spk_file.readlines():
-                line_split = [x.strip() for x in line.split(",")]
+                line_split = [x.strip() for x in re.split('\t| ', line)]
                 
                 # In case there is no split (lines like "AR TBA")
                 if len(line_split) <= 2:
@@ -63,7 +64,8 @@ def load_original_datasets(langs):
 
                 language = line_split[0]
                 spk_ids = line_split[1:]
-                datasets_dict[language]["test"] = spk_ids
+                for spk_id in spk_ids:
+                    datasets_dict[language]["test"].append(spk_id)
     except:
         pass
 
@@ -83,6 +85,7 @@ if __name__ == "__main__":
     all_spk_lists = load_all_speakers(all_langs)
 
     gp_original_sets = load_original_datasets(all_langs)
+    print(gp_original_sets)
 
     for L in all_langs:
         eval_set = gp_original_sets[L]["eval"]
@@ -95,5 +98,5 @@ if __name__ == "__main__":
 
         if L in langs_with_spk_data:
             print("Spk metadata found for {}. Using it for the split.".format(L))
-        else
+        else:
             print("No spk metadata found for {}. Doing random split.".format(L))
