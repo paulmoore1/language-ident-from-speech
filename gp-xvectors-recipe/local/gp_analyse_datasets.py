@@ -87,7 +87,6 @@ if __name__ == "__main__":
     all_spk_lists = load_all_speakers(all_langs)
 
     gp_original_sets = load_original_datasets(all_langs)
-    print(gp_original_sets)
 
     for L in all_langs:
         print("Language {}".format(L))
@@ -95,7 +94,7 @@ if __name__ == "__main__":
         test_set = gp_original_sets[L]["test"]
         available_spks = [spk_id for spk_id in all_spk_lists[L] if \
                           (spk_id not in eval_set and spk_id not in test_set)]
-        print("Choosing from speakers: {}".format(available_spks))
+        # print("Choosing from speakers: {}".format(available_spks))
 
         if (len(eval_set) + len(test_set)) == 0:
             print("No original split found for {}. Creating all four datasets.".format(L))
