@@ -115,26 +115,39 @@ if __name__ == "__main__":
                 print("Spk metadata found for {}. Using it for the split.".format(L))
                 # The complicated case: 2 non-random sets
                 sets_valid = False
+                attempt_counter = 0
+                threshold = 0
+                max_iter = 1000
                 while not sets_valid:
                     spks_enroll = random.sample(available_spks, num_enroll)
                     spks_train = [spk_id for spk_id in available_spks if spk_id not in spks_enroll]
                     
                     enroll_articles = []
                     for spk_id in spks_enroll:
-                        enroll_articles = enroll_articles + [spk_article_dict[L][spk_id]]
+                        enroll_articles = enroll_articles + spk_article_dict[L][spk_id]
+                    
                     enroll_articles = set(enroll_articles)
                     
                     train_articles = []
                     for spk_id in spks_train:
-                        train_articles = train_articles + [spk_article_dict[L][spk_id]]
+                        train_articles = train_articles + spk_article_dict[L][spk_id]
                     train_articles = set(train_articles)
 
                     overlap = list(train_articles.intersection(enroll_articles))
-                    if len(overlap) == 0:
-                        print("\nVALID SPLIT FOUND\nTrain: {}\nEnroll: {}\nVALID SPLIT FOUND\n".format(spks_train, spks_enroll))
-                        continue
+                    if len(overlap) <= threshold:
+                        print("\nVALID SPLIT FOUND ({})\nTrain: {}\nEnroll: {}\nVALID SPLIT FOUND\n".format(attempt_counter, spks_train, spks_enroll))
+                        with open("speakers/{}_enroll".format(L), "w") as f:
+                            f.write(' '.join(spks_enroll))
+                        with open("speakers/{}_train".format(L), "w") as f:
+                            f.write(' '.join(spks_train))
+                        break
                     else:
-                        print("Invalid split (overlap: {}).".format(len(overlap)))
+                        attempt_counter += 1
+                        if attempt_counter % max_iter == 0:
+                            threshold += 1
+                            print("Looking for splits with <= {} overlaps.".format(threshold))
+                        pass
+                        # print("Invalid split (overlap: {}).".format(len(overlap)))
             else:
                 print("No spk metadata found for {}. Doing random split.".format(L))
                 # The easiest case: 2 random sets
