@@ -54,7 +54,7 @@ for L in AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU VN WU; do
 			# no articles for spk
 			continue
 		else
-			echo "${spk_num}|${gender}|${articles}" >> speakers/$L
+			echo "${spk_num}|${gender}|${articles}" >> speakers/$L_spk_metadata
 		fi
 	done
 done
