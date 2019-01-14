@@ -80,8 +80,6 @@ if [ -f train_spk.list ]; then
   train_list=$CONFDIR/train_spk.list
 fi
 
-[ -f lang_codes.txt ] || error_exit "$PROG: Mapping for language name to 2-letter code not found.";
-
 popd > /dev/null
 [ -f path.sh ] && . ./path.sh  # Sets the PATH to contain necessary executables
 

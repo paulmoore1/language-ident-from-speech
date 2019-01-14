@@ -1,14 +1,16 @@
 #!/bin/bash -u
 
 # Copyright 2012  Arnab Ghoshal
-
 #
 # Copyright 2016 by Idiap Research Institute, http://www.idiap.ch
+# 
+# Copyright 2018/2019 by Sam Sucik and Paul Moore
 #
 # See the file COPYING for the licence associated with this software.
 #
 # Author(s):
 #   Bogdan Vlasenko, February 2016
+#   Sam Sucik and Paul Moore, 2018/2019
 #
 
 
