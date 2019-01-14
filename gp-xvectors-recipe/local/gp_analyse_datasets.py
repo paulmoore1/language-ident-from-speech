@@ -1,4 +1,6 @@
 import re
+from math import ceil
+import random
 
 def load_speaker_data(langs):
     spk_dict = {}
@@ -88,15 +90,37 @@ if __name__ == "__main__":
     print(gp_original_sets)
 
     for L in all_langs:
+        print("Language {}".format(L))
         eval_set = gp_original_sets[L]["eval"]
         test_set = gp_original_sets[L]["test"]
+        available_spks = [spk_id for spk_id in all_spk_lists[L] if \
+                          (spk_id not in eval_set and spk_id not in test_set)]
+        print("Choosing from speakers: {}".format(available_spks))
 
         if (len(eval_set) + len(test_set)) == 0:
             print("No original split found for {}. Creating all four datasets.".format(L))
+
+            if L in langs_with_spk_data:
+                print("Spk metadata found for {}. Using it for the split.".format(L))
+                # The most complicated case: 4 non-random sets
+                continue
+            else:
+                print("No spk metadata found for {}. Doing random split.".format(L))
+                # The easy case: 4 random sets
+                continue
         else:
             print("Original split found for {}. Creating only the train and enroll datasets.".format(L))
-
-        if L in langs_with_spk_data:
-            print("Spk metadata found for {}. Using it for the split.".format(L))
-        else:
-            print("No spk metadata found for {}. Doing random split.".format(L))
+            num_enroll = int(ceil(0.1*num_spks[L]))
+            print("Choosing {} enrollment speakers.".format(num_enroll))
+            if L in langs_with_spk_data:
+                print("Spk metadata found for {}. Using it for the split.".format(L))
+                # The complicated case: 2 non-random sets
+                continue
+            else:
+                print("No spk metadata found for {}. Doing random split.".format(L))
+                # The easiest case: 2 random sets
+                spks_enroll = random.sample(available_spks, num_enroll)
+                spks_train = [spk_id for spk_id in available_spks if spk_id not in spks_enroll]
+                print("Enrollment speakers: {}".format(spks_enroll))
+                print("Training speakers: {}".format(spks_train))
+                
