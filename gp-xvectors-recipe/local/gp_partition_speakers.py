@@ -131,8 +131,6 @@ if __name__ == "__main__":
                                   and (spk_id not in spks_eval) \
                                   and (spk_id not in spks_enroll)]
 
-                    print(spk_article_dict[L])
-                    
                     test_articles = []
                     for spk_id in spks_test:
                         test_articles = test_articles + spk_article_dict[L].get(spk_id, [])
