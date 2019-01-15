@@ -60,7 +60,7 @@ The partitioning for each language is stored in `speakers/` as `XX_test`, `XX_ev
 Finally, to combine lists in the same format as inthe original Global Phone recipe, run:
 ```bash
 for X in train enroll eval test; do
-	touch ${X}_spk.list
+	:> speakers/${X}_spk.list
 	for L in AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU VN WU; do
 		speakers=$(cat speakers/${L}_${X})
 		echo "$L $speakers" >> speakers/${X}_spk.list
@@ -68,3 +68,27 @@ for X in train enroll eval test; do
 done
 ```
 and copy the four lists to wherever you need them (typically the `conf/` directory).
+
+## Notes on current splitting ([from evening January 15th](https://github.com/samsucik/language-ident-from-speech/commit/cf1fbe82527670ff9881b6f722adb7b1772683b5))
+Article overlaps:
+```
+AR: 385
+BG: ?
+CH: 0
+CR: 0
+CZ: 0
+FR: ?
+GE: ?
+JA: 0
+KO: 0
+PL: ?
+PO: 0
+RU: 9
+SP: 0
+SW: 0
+TA: ?
+TH: ?
+TU: 16
+VN: ?
+WU: 49
+```
