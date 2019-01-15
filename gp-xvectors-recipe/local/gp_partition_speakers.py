@@ -117,7 +117,7 @@ if __name__ == "__main__":
                 sets_valid = False
                 attempt_counter = 0
                 threshold = 0
-                max_iter = 10000
+                max_iter = 1000
 
                 while not sets_valid:
                     spks_test = random.sample(available_spks, num_test)
@@ -192,7 +192,7 @@ if __name__ == "__main__":
                 sets_valid = False
                 attempt_counter = 0
                 threshold = 0
-                max_iter = 100000
+                max_iter = 10000
                 
                 while not sets_valid:
                     spks_enroll = random.sample(available_spks, num_enroll)
