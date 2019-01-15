@@ -115,7 +115,7 @@ if __name__ == "__main__":
                 sets_valid = False
                 attempt_counter = 0
                 threshold = 0
-                max_iter = 100
+                max_iter = 10000
                 while not sets_valid:
                     spks_test = random.sample(available_spks, num_test)
                     spks_eval = random.sample([spk_id for spk_id in available_spks if spk_id not in spks_test], num_eval)
@@ -188,7 +188,7 @@ if __name__ == "__main__":
                 sets_valid = False
                 attempt_counter = 0
                 threshold = 0
-                max_iter = 1000
+                max_iter = 100000
                 while not sets_valid:
                     spks_enroll = random.sample(available_spks, num_enroll)
                     spks_train = [spk_id for spk_id in available_spks if spk_id not in spks_enroll]
