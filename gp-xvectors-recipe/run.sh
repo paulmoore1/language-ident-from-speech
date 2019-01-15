@@ -147,11 +147,12 @@ if [ $stage -eq 47 ]; then
 fi
 
 if [ $stage -eq 48 ]; then
+  # NOTE: The wav-dir as it is right now only works in the cluster!
   echo "#### STAGE 48: Organising speakers into sets. ####"
   ./local/gp_data_organise.sh \
     --config-dir=$PWD/conf \
     --corpus-dir=$GP_CORPUS \
-    --wav-dir=/disk/scratch/lid/wav \
+    --wav-dir=/mnt/mscteach_home/s1513472/lid/wav \
     --languages="$GP_LANGUAGES" \
     --data-dir=$DATADIR \
     || exit 1;
