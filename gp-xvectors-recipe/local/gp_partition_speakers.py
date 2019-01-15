@@ -135,22 +135,22 @@ if __name__ == "__main__":
                     
                     test_articles = []
                     for spk_id in spks_test:
-                        test_articles = test_articles + spk_article_dict[L][spk_id]                    
+                        test_articles = test_articles + spk_article_dict[L].get(spk_id, [])
                     test_articles = set(test_articles)
                     
                     eval_articles = []
                     for spk_id in spks_eval:
-                        eval_articles = eval_articles + spk_article_dict[L][spk_id]                    
+                        eval_articles = eval_articles + spk_article_dict[L].get(spk_id, [])
                     eval_articles = set(eval_articles)
 
                     enroll_articles = []
                     for spk_id in spks_enroll:
-                        enroll_articles = enroll_articles + spk_article_dict[L][spk_id]                    
+                        enroll_articles = enroll_articles + spk_article_dict[L].get(spk_id, [])
                     enroll_articles = set(enroll_articles)
 
                     train_articles = []
                     for spk_id in spks_train:
-                        train_articles = train_articles + spk_article_dict[L][spk_id]
+                        train_articles = train_articles + spk_article_dict[L].get(spk_id, [])
                     train_articles = set(train_articles)
 
                     overlap = len(test_articles) + len(eval_articles) + len(enroll_articles) + len(train_articles) \
@@ -202,13 +202,13 @@ if __name__ == "__main__":
                     
                     enroll_articles = []
                     for spk_id in spks_enroll:
-                        enroll_articles = enroll_articles + spk_article_dict[L][spk_id]
+                        enroll_articles = enroll_articles + spk_article_dict[L].get(spk_id, [])
                     
                     enroll_articles = set(enroll_articles)
                     
                     train_articles = []
                     for spk_id in spks_train:
-                        train_articles = train_articles + spk_article_dict[L][spk_id]
+                        train_articles = train_articles + spk_article_dict[L].get(spk_id, [])
                     train_articles = set(train_articles)
 
                     overlap = list(train_articles.intersection(enroll_articles))
