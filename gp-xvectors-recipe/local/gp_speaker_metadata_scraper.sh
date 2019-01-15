@@ -62,6 +62,7 @@ for L in AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU VN WU; do
 		articles=$(cat $spk_file | grep -E ';ARTICLE READORDER:' | \
 				   sed -En "s/(;ARTICLE READORDER:|\n)//p" | tr -d '\012\015')
 		
+		echo ">$articles<"
 		if [[ -z "$articles" || "$articles" == "Unknown"* ]]; then
 			# no articles for spk
 			continue

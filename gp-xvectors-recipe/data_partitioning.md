@@ -44,12 +44,6 @@ for L in AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU VN WU; do
 done
 ```
 
-And for Tamil, which uses a weird file naming, do:
-```bash
-cat ~/lid/wav/TA/lists/wav.list | sed -E "s/.*ta[0-9]{2}([0-9]+)d.*/\1/p" | \
-	uniq | sort > speakers/TA_all_spk
-```
-
 ### Split speakers for each language into datasets
 Execute like this:
 ```bash
