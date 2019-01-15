@@ -18,9 +18,6 @@ old-path.sh
 
 # User-specific files
 ## Train/dev/eval splits changed for development purposes
-dev_spk.list
-eval_spk.list
-train_spk.list
 unlabelled_spk.list
 eval_enroll_spk.list
 eval_test_spk.list

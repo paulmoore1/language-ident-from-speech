@@ -60,9 +60,9 @@ for L in AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU VN WU; do
 	for spk_file in $spk_path/*.spk; do
 		spk_num=$(echo "$spk_file" | sed -En "s/.*[A-Z]+([0-9]+)\..*/\1/p")
 		articles=$(cat $spk_file | grep -E ';ARTICLE READORDER:' | \
-				   sed -En "s/(;ARTICLE READORDER:|\n)//p" | tr -d '\012\015')
+				   sed -En "s/(;ARTICLE READORDER:|\n)//p" | \
+                                   tr -d '\012\015' | awk '{$1=$1};1')
 		
-		echo ">$articles<"
 		if [[ -z "$articles" || "$articles" == "Unknown"* ]]; then
 			# no articles for spk
 			continue
