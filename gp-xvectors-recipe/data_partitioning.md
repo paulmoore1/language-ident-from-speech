@@ -63,7 +63,7 @@ for X in train enroll eval test; do
 	:> speakers/${X}_spk.list
 	for L in AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU VN WU; do
 		speakers=$(cat speakers/${L}_${X})
-		echo "$L $speakers" >> speakers/${X}_spk.list
+		echo -e "$L\t$speakers" >> speakers/${X}_spk.list
 	done
 done
 ```
