@@ -70,7 +70,7 @@ for L in $LANGUAGES; do
   elif [ $L = UA ]; then
     shn_file_pattern="${L}*\.adc"
   elif [ $L = WU ]; then
-    shn_dir=$GPDIR/Chinese-Shanghai/Chinese-Shanghai/Wu/adc
+    shn_dir=$GPDIR/Chinese-Shanghai/Wu/adc
   fi
 
   find $shn_dir -name "$shn_file_pattern" > $LISTDIR/shn.list
