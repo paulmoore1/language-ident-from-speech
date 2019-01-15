@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import re
-from math import ceil
+from math import floor, ceil
 import random
 
 def load_speaker_data(langs):
@@ -104,7 +104,7 @@ if __name__ == "__main__":
         spks_train = []
 
         if (len(eval_set) + len(test_set)) == 0:
-            num_enroll = int(ceil(0.1*num_spks[L]))
+            num_enroll = int(floor(0.1*num_spks[L]))
             num_test = num_enroll
             num_eval = num_enroll
             print("No original partitioning found. Creating all four datasets: {} = {} + {} + {} + rest."\
@@ -181,7 +181,7 @@ if __name__ == "__main__":
                               and (spk_id not in spks_enroll)]
 
         else:
-            num_enroll = int(ceil(0.1*num_spks[L]))
+            num_enroll = int(floor(0.1*num_spks[L]))
             print("Original partitioning found. Creating train/enroll datasets: {} = {} + {}."\
                   .format(len(available_spks), num_enroll, len(available_spks) - num_enroll))
             

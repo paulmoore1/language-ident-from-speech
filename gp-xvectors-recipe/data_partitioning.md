@@ -44,6 +44,12 @@ for L in AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU VN WU; do
 done
 ```
 
+And for Tamil, which uses a weird file naming, do:
+```bash
+cat ~/lid/wav/TA/lists/wav.list | sed -E "s/.*ta[0-9]{2}([0-9]+)d.*/\1/p" | \
+	uniq | sort > speakers/TA_all_spk
+```
+
 ### Split speakers for each language into datasets
 Execute like this:
 ```bash
@@ -55,3 +61,16 @@ This script loads the original splittings from `conf/gp_original_dev_spk.list` a
 For languages that lack the information on articles read by speakers, the datasets are constructed randomly (and yes, if you run the script repeatedly, they will differ!). For the other languages, the main trick used to create the splitting is, well, brute force: Random splitting is created and the amount of article overlaps is checked (speaker overlap *never happens*). If the overlap is acceptable (ideally none), the splitting is returned. If the algorithm tries too many times (e.g. 100000) and cannot find a valid splitting, the number of acceptable article overlaps is increased from the initial 0 to 1, 2, etc. This way, the script will *always* find a partitioning. If you wanna push hard, increase the `max_iter` parameters inside the script to try harder and maybe find a partitioning with fewer overlaps.
 
 The partitioning for each language is stored in `speakers/` as `XX_test`, `XX_eval`, `XX_enroll` and `XX_train`.
+
+
+Finally, to combine lists in the same format as inthe original Global Phone recipe, run:
+```bash
+for X in train enroll eval test; do
+	touch ${X}_spk.list
+	for L in AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU VN WU; do
+		speakers=$(cat speakers/${L}_${X})
+		echo "$L $speakers" >> speakers/${X}_spk.list
+	done
+done
+```
+and copy the four lists to wherever you need them (typically the `conf/` directory).
