@@ -110,8 +110,9 @@ if [[ $(whichMachine) == cluster* ]]; then
   home_prefix=$HOME/lid
 
   train_data=$home_prefix/train
-  eval_test_dir=$home_prefix/eval_test
-  eval_enroll_dir=$home_prefix/eval_enroll
+  enroll_data=$home_prefix/enroll
+  eval_data=$home_prefix/eval
+  test_data=$home_prefix/test
   log_dir=$home_prefix/log
   mfccdir=$home_prefix/mfcc
   vaddir=$home_prefix/mfcc
@@ -121,8 +122,9 @@ if [[ $(whichMachine) == cluster* ]]; then
   exp_dir=$home_prefix/exp
 else
   train_data=$DATADIR/train
-  eval_test_dir=$DATADIR/eval_test
-  eval_enroll_dir=$DATADIR/eval_enroll
+  enroll_data=$DATADIR/enroll
+  eval_data=$DATADIR/eval
+  test_data=$DATADIR/test
   log_dir=$DATADIR/log
   mfccdir=$DATADIR/mfcc
   vaddir=$DATADIR/mfcc
@@ -133,7 +135,7 @@ else
 fi
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="TA"
+GP_LANGUAGES="TA WU"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
@@ -181,7 +183,7 @@ if [ $stage -eq 1 ]; then
   echo "#### STAGE 1: MFCC and VAD. ####"
   # Make MFCCs and compute the energy-based VAD for each dataset
   
-  for name in train eval_test eval_enroll; do
+  for name in train enroll eval test; do
     # TO-DO: Review the MFCC config (lre07 recipe uses interesting parameters 
     # which may be more suitable than those used by the GP recipe for ASR.)
     steps/make_mfcc.sh \
@@ -281,29 +283,32 @@ if [ $stage -eq 7 ]; then
     use_gpu=false
   fi
 
+  # X-vectors for training the classifier
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     $nnet_dir \
-    $eval_enroll_dir \
-    $exp_dir/xvectors_eval_enroll &
+    $enroll_dir \
+    $exp_dir/xvectors_enroll &
 
+  # X-vectors for end-to-end evaluation
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     $nnet_dir \
-    $eval_test_dir \
-    $exp_dir/xvectors_eval_test &
+    $eval_dir \
+    $exp_dir/xvectors_eval &
 
+  # X-vectors for testing (final evaluation)
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     $nnet_dir \
-    $train_data \
-    $exp_dir/xvectors_train &
+    $test_dir \
+    $exp_dir/xvectors_test &
 
   wait;
   echo "Done"
@@ -335,12 +340,12 @@ if [ $stage -eq 8 ]; then
   ./local/run_logistic_regression.sh \
     --prior-scale 0.70 \
     --conf conf/logistic-regression.conf \
-    --train-dir $exp_dir/xvectors_eval_enroll \
-    --test-dir $exp_dir/xvectors_eval_test \
+    --train-dir $exp_dir/xvectors_enroll \
+    --test-dir $exp_dir/xvectors_eval \
     --model-dir $exp_dir/classifier \
     --classification-file $exp_dir/results/classification \
-    --train-utt2lang $DATADIR/eval_enroll/utt2lang \
-    --test-utt2lang $DATADIR/eval_test/utt2lang \
+    --train-utt2lang $DATADIR/enroll/utt2lang \
+    --test-utt2lang $DATADIR/eval/utt2lang \
     --languages conf/test_languages.list \
     > $exp_dir/classifier/logistic-regression.log
 
