@@ -133,7 +133,7 @@ else
 fi
 
 # Set the languages that will actually be processed
-#GP_LANGUAGES="AR BG CH CR CZ"
+GP_LANGUAGES="TA"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
