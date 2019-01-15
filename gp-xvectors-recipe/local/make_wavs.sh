@@ -21,10 +21,6 @@ Required arguments:\n
   --languages=STR\tString of space-separated language codes, e.g. 'FR RU'\n
 ";
 
-# LANGUAGES=""
-# GPDIR="/disk/scratch/lid/global_phone"
-# WAVDIR="disk/scratch/lid/wav"
-
 while [ $# -gt 0 ];
 do
   case "$1" in
@@ -83,6 +79,20 @@ for L in $LANGUAGES; do
     --input-list=$LISTDIR/shn.list \
     --output-dir=$FILEDIR \
     --output-list=$LISTDIR/wav.list
+
+  if [ "$L" = "TA" ]; then
+    # from ta01007d.wav.shn.wav to TA007_01.wav
+    for f in $FILEDIR/*.wav; do
+      spk_id=$(echo $f | sed -E 's/.*ta[0-9]{2}([0-9]{3}).*/\1/')
+      utt_id=$(echo $f | sed -E 's/.*ta([0-9]{2}).*/\1/')
+      # echo "$FILEDIR/TA${spk_id}_${utt_id}.wav"
+      mv $f "$FILEDIR/TA${spk_id}_${utt_id}.wav"
+      
+      mv $LISTDIR/wav.list $LISTDIR/wav.list.bak
+      cat $LISTDIR/wav.list.bak | sed -E 's/(.*)ta([0-9]{2})([0-9]{3})d.wav.shn.wav/\1TA\3_\2.wav/g' \
+        > $LISTDIR/wav.list
+    done
+  fi
 
   # Get the utterance IDs for the audio files successfully converted to WAV
   sed -e "s?.*/??" -e 's?.wav$??' $LISTDIR/wav.list > $LISTDIR/basenames_wav

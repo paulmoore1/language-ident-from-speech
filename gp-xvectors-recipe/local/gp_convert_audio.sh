@@ -32,12 +32,12 @@ Converts GlobalPhone audio files from shorten to WAV with error checking.\n
 Required arguments:\n
   --input-list=FILE\tList of shorten-compressed files to process.\n
   --output-dir=DIR\tDirectory to write the WAV files to.\n
-Options:\n
   --output-list=FILE\tWrite list of converted files.\n
+Options:\n
   --help\t\t\tPrint this help and exit.\n
 ";
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 3 ]; then
   echo -e $usage; exit 1;
 fi
 
@@ -56,7 +56,6 @@ do
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
-OLIST=${OLIST:-/dev/null}  # Default for output list
 
 # Checking for shorten and sox. Since 'errexit' option is set, the script will
 # terminate if shorten and sox are not found.
