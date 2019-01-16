@@ -14,7 +14,8 @@ The basic (and only) constraints desirable across the datasets are (following th
 1. "No speaker appears in more than one group"
 1. "No article was read by two speakers from different groups"
 
-Where possible, the original sets from the `gp v5` Kaldi recipe are re-used (with the original `eval` here used as the testing data, and `dev` used as the evaluation data). These are heavily based on the splitting presented in the Global Phone documentation. 
+Where possible, the original sets from the `gp v5` Kaldi recipe are re-used (with the original `eval` here used as the testing data, and `dev` used as the evaluation data). These are heavily based on the splitting presented in the Global Phone documentation.
+**NOTE**: Some speakers were discarded from the original splittings because no data of these speakers made it through the SHN-to-WAV conversion phase: 065 & 073 (eval), 136 (test) for Portuguese and 209 (eval), 107, 92, 94, 96, 98 (test) for Vietnamese.
 
 At the very least, the splitting of the original `train` speakers into training and enrollment speakers needs to be carried out. For languages where no original splitting was present in the `gp v5` recipe (Arabic, Wu and Tamil), all four datasets need to be constructed.
 
@@ -45,9 +46,9 @@ done
 ```
 
 ### Split speakers for each language into datasets
-Execute like this:
+Execute like this (optionally, with the `langs` option to only work over a subset of languages):
 ```bash
-local/gp_partition_speakers.py
+local/gp_partition_speakers.py --langs="PO VN"
 ```
 
 This script loads the original splittings from `conf/gp_original_dev_spk.list` and `conf/gp_original_eval_spk.list`, speaker metadata from `speakers/XX_spk_metadata`, lists of all speakers per language from `speakers/XX_all_spk` and in the code is stored also the number of speakers per language.

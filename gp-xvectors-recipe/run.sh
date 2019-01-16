@@ -239,6 +239,7 @@ fi
 # TO-DO: Add data augmentation with MUSAN as stage 2?
 
 # Now we prepare the features to generate examples for xvector training.
+# Runtime: ~2 mins
 if [ $stage -eq 3 ]; then
   # NOTE silence not being removed
   echo "#### STAGE 3: Preprocessing for X-vector training examples. ####"
@@ -281,6 +282,7 @@ if [ $stage -eq 4 ]; then
   ./local/run_xvector.sh \
     --stage 4 \
     --train-stage -1 \
+    --max-num-jobs $MAXNUMJOBS \
     --data $nnet_train_data \
     --nnet-dir $nnet_dir \
     --egs-dir $nnet_dir/egs

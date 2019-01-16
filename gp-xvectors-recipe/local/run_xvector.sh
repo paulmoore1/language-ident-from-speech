@@ -18,6 +18,7 @@ remove_egs=false
 data=data/train
 nnet_dir=exp/xvector_nnet_1a/
 egs_dir=exp/xvector_nnet_1a/egs
+max_num_jobs=8
 
 . ./path.sh
 . ./cmd.sh
@@ -60,7 +61,7 @@ if [ $stage -le 4 ]; then
   # TO-DO: Look into the num-repeats parameter (also discussed here:
   # https://groups.google.com/forum/#!searchin/kaldi-help/classification%7Csort:date/kaldi-help/JksAYC4YiNQ/nNmI7KurAQAJ)
   ./local/get_egs.sh --cmd "$train_cmd" \
-    --nj 8 \
+    --nj $max_num_jobs \
     --stage 0 \
     --frames-per-iter 50000000 \
     --frames-per-iter-diagnostic 100000 \
