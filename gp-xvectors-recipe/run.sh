@@ -146,8 +146,7 @@ else
 fi
 
 # Set the languages that will actually be processed
-# Something weird with Portugueseand Vietnamese...
-GP_LANGUAGES="PO" # AR BG CH CR CZ FR GE JA KO PL RU SP SW TA TH TU WU"
+GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 

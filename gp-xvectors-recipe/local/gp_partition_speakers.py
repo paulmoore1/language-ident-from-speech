@@ -50,10 +50,12 @@ def load_original_datasets(langs):
                     continue
 
                 language = line_split[0]
-                spk_ids = line_split[1:]
-                for spk_id in spk_ids:
-                    datasets_dict[language]["eval"].append(spk_id)
+                if language in langs:
+                    spk_ids = line_split[1:]
+                    for spk_id in spk_ids:
+                        datasets_dict[language]["eval"].append(spk_id)
     except:
+        print("Couldn't open the dev spk original list.")
         pass
 
     try:
@@ -66,10 +68,12 @@ def load_original_datasets(langs):
                     continue
 
                 language = line_split[0]
-                spk_ids = line_split[1:]
-                for spk_id in spk_ids:
-                    datasets_dict[language]["test"].append(spk_id)
+                if language in langs:   
+                    spk_ids = line_split[1:]
+                    for spk_id in spk_ids:
+                        datasets_dict[language]["test"].append(spk_id)
     except:
+        print("Couldn't	open the eval spk original list.")
         pass
 
     return datasets_dict
@@ -101,6 +105,8 @@ if __name__ == "__main__":
     all_spk_lists = load_all_speakers(all_langs)
 
     gp_original_sets = load_original_datasets(all_langs)
+
+    print(gp_original_sets)
 
     for L in all_langs:
         print("Partitioning {} speakers.".format(L))
