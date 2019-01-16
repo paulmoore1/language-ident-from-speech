@@ -189,10 +189,17 @@ if [ $stage -eq 1 ]; then
   
   for name in train enroll eval test; do
     (
+    num_speakers=$(cat $DATADIR/${name}/spk2utt | wc -l)
+    if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
+      num_jobs=$MAXNUMJOBS
+    else
+      num_jobs=$num_speakers
+    fi
+
     steps/make_mfcc.sh \
       --write-utt2num-frames false \
       --mfcc-config conf/mfcc.conf \
-      --nj $MAXNUMJOBS \
+      --nj $num_jobs \
       --cmd "$preprocess_cmd" \
       $DATADIR/${name} \
       $log_dir/make_mfcc \
@@ -203,7 +210,7 @@ if [ $stage -eq 1 ]; then
     utils/fix_data_dir.sh $DATADIR/${name}
 
     ./local/compute_vad_decision.sh \
-      --nj $MAXNUMJOBS \
+      --nj $num_jobs \
       --cmd "$preprocess_cmd" \
       $DATADIR/${name} \
       $log_dir/make_vad \
