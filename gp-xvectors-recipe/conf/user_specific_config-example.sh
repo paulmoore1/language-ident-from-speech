@@ -4,7 +4,6 @@
 # as the preprocessing and feature extraction run.
 DATADIR=~/gp-data
 
-
 KALDI_ROOT=~/kaldi
 
 [ -f $KALDI_ROOT/tools/env.sh ] && . $KALDI_ROOT/tools/env.sh

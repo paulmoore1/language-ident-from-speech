@@ -187,6 +187,7 @@ if [ $stage -eq 1 ]; then
   echo "#### STAGE 1: MFCC and VAD. ####"
   
   for name in train enroll eval test; do
+    (
     steps/make_mfcc.sh \
       --write-utt2num-frames false \
       --mfcc-config conf/mfcc.conf \
@@ -208,9 +209,15 @@ if [ $stage -eq 1 ]; then
       $vaddir
 
     utils/fix_data_dir.sh $DATADIR/${name}
+    ) > $log_dir/mfcc_${name} & 
   done
-	#utils/combine_data.sh --extra-files 'utt2num_frames' $DATADIR/
+  wait;
+
   utils/fix_data_dir.sh $train_data
+  utils/fix_data_dir.sh $enroll_data
+  utils/fix_data_dir.sh $eval_data
+  utils/fix_data_dir.sh $test_data
+  
   if [ "$run_all" = true ]; then
     # NOTE this is set to 2 since we're skipping stage 2 at the moment.
     stage=`expr $stage + 2`
