@@ -33,13 +33,19 @@ usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \t       Use like this: $0 <options>\n
 \t       --stage=INT\t\tStage from which to start\n
 \t       --run-all=(false|true)\tWhether to run all stages\n
-\t       \t\t\tor just the specified one\n\n
+\t       \t\t\tor just the specified one\n
+\t       --experiment=STR\tExperiment name (also name of directory \n
+\t       \t\t\twhere all files will be stored).\n
+\t       \t\t\tDefault: 'baseline'.\n\n
 \t       If no stage number is provided, either all stages\n
 \t       will be run (--run-all=true) or no stages at all.\n
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
+# Default option values
+EXP_NAME="/baseline"
 stage=-1
 run_all=false
+
 while [ $# -gt 0 ];
 do
   case "$1" in
@@ -48,6 +54,8 @@ do
   run_all=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --stage=*)
   stage=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --experiment=*)
+  EXP_NAME=/`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
@@ -105,6 +113,7 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
+DATADIR="${DATADIR}${EXP_NAME}"
 
 if [[ $(whichMachine) == cluster* ]]; then
   home_prefix=$HOME/lid
@@ -139,8 +148,11 @@ GP_LANGUAGES="TA WU"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
-if [ $stage -eq 47 ]; then
-  echo "#### STAGE 47: Converting all SHN files to WAV files. ####"
+
+# The most time-consuming stage: Converting SHNs to WAVs. Should be done only once; 
+# then, this script can be run from stage 0 onwards.
+if [ $stage -eq 42 ]; then
+  echo "#### SPECIAL STAGE 42: Converting all SHN files to WAV files. ####"
   ./local/make_wavs.sh \
     --corpus-dir=$GP_CORPUS \
     --wav-dir=$HOME/lid/wav \
@@ -148,9 +160,12 @@ if [ $stage -eq 47 ]; then
     --languages="$GP_LANGUAGES"
 fi
 
-if [ $stage -eq 48 ]; then
+# Preparing lists of utterances (and a couple other auxiliary lists) based 
+# on the train/enroll/eval/test splitting. The lists refer to the WAVs 
+# generated in the previous stage.
+if [ $stage -eq 0 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
-  echo "#### STAGE 48: Organising speakers into sets. ####"
+  echo "#### STAGE 0: Organising speakers into sets. ####"
   ./local/gp_data_organise.sh \
     --config-dir=$PWD/conf \
     --corpus-dir=$GP_CORPUS \
@@ -158,19 +173,7 @@ if [ $stage -eq 48 ]; then
     --languages="$GP_LANGUAGES" \
     --data-dir=$DATADIR \
     || exit 1;
-fi
-
-# The following data preparation step actually converts the audio files from
-# shorten to WAV to take out the empty files and those with compression errors.
-if [ $stage -eq 0 ]; then
-  echo "#### STAGE 0: Data preparation. ####"
-	./local/gp_data_prep.sh \
-		--config-dir=$PWD/conf \
-		--corpus-dir=$GP_CORPUS \
-		--languages="$GP_LANGUAGES" \
-		--data-dir=$DATADIR \
-		|| exit 1;
-
+  
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
@@ -178,14 +181,11 @@ if [ $stage -eq 0 ]; then
   fi
 fi
 
-# Now make MFCC features.
+# Make MFCCs and compute the energy-based VAD for each dataset
 if [ $stage -eq 1 ]; then
   echo "#### STAGE 1: MFCC and VAD. ####"
-  # Make MFCCs and compute the energy-based VAD for each dataset
   
   for name in train enroll eval test; do
-    # TO-DO: Review the MFCC config (lre07 recipe uses interesting parameters 
-    # which may be more suitable than those used by the GP recipe for ASR.)
     steps/make_mfcc.sh \
       --write-utt2num-frames false \
       --mfcc-config conf/mfcc.conf \
