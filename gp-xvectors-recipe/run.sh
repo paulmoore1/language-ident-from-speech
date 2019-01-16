@@ -289,7 +289,7 @@ if [ $stage -eq 7 ]; then
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     $nnet_dir \
-    $enroll_dir \
+    $enroll_data \
     $exp_dir/xvectors_enroll &
 
   # X-vectors for end-to-end evaluation
@@ -298,7 +298,7 @@ if [ $stage -eq 7 ]; then
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     $nnet_dir \
-    $eval_dir \
+    $eval_data \
     $exp_dir/xvectors_eval &
 
   # X-vectors for testing (final evaluation)
@@ -307,7 +307,7 @@ if [ $stage -eq 7 ]; then
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     $nnet_dir \
-    $test_dir \
+    $test_data \
     $exp_dir/xvectors_test &
 
   wait;
