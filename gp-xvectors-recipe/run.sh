@@ -166,6 +166,7 @@ fi
 # Preparing lists of utterances (and a couple other auxiliary lists) based 
 # on the train/enroll/eval/test splitting. The lists refer to the WAVs 
 # generated in the previous stage.
+# Runtime: Under 5 mins
 if [ $stage -eq 0 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
   echo "#### STAGE 0: Organising speakers into sets. ####"
@@ -185,6 +186,7 @@ if [ $stage -eq 0 ]; then
 fi
 
 # Make MFCCs and compute the energy-based VAD for each dataset
+# Runtime: ~12 mins
 if [ $stage -eq 1 ]; then
   echo "#### STAGE 1: MFCC and VAD. ####"
   

@@ -3,6 +3,7 @@
 import re
 from math import floor, ceil
 import random
+import argparse, sys
 
 def load_speaker_data(langs):
     spk_dict = {}
@@ -80,6 +81,16 @@ if __name__ == "__main__":
                 "SW": 98, "TA": 47, "TH": 98, "TU": 100, "VN": 129, "WU": 41}
     all_langs = ["AR", "BG", "CH", "CR", "CZ", "FR", "GE", "JA", "KO", "PL", 
                  "PO", "RU", "SP", "SW", "TA", "TH", "TU", "VN", "WU"]
+
+
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--langs', help='List of language codes to work with (default: all languages)')
+    args=parser.parse_args()
+    if args.langs is not None:
+        all_langs = args.langs.split()
+
+    print("Partitioning spekaers for languages: {}.".format(", ".join(all_langs)))
+
     
     spk_article_dict = load_speaker_data(all_langs)
     langs_with_spk_data = list(spk_article_dict.keys())
