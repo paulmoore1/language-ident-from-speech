@@ -60,6 +60,8 @@ do
   esac
 done
 
+echo "DATADIR in data_organise: $DATADIR"
+
 # Use the default lists unless a 'proper' one is found (same name, without the "example")
 test_list=$CONFDIR/test_spk.list
 eval_list=$CONFDIR/eval_spk.list

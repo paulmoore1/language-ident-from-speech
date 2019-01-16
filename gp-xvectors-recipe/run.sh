@@ -114,6 +114,7 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
 DATADIR="${DATADIR}${EXP_NAME}"
+echo $DATADIR
 
 if [[ $(whichMachine) == cluster* ]]; then
   home_prefix=$HOME/lid
