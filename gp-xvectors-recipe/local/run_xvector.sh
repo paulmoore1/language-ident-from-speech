@@ -62,7 +62,7 @@ if [ $stage -le 4 ]; then
   ./local/get_egs.sh --cmd "$train_cmd" \
     --nj 8 \
     --stage 0 \
-    --frames-per-iter 10000000 \
+    --frames-per-iter 50000000 \
     --frames-per-iter-diagnostic 100000 \
     --min-frames-per-chunk 200 \
     --max-frames-per-chunk 400 \
