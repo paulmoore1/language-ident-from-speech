@@ -114,10 +114,11 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
 DATADIR="${DATADIR}${EXP_NAME}"
-echo $DATADIR
+mkdir -p $DATADIR
+mkdir -p $DATADIR/log
 
 if [[ $(whichMachine) == cluster* ]]; then
-  home_prefix=$HOME/lid
+  home_prefix=$DATADIR
 
   train_data=$home_prefix/train
   enroll_data=$home_prefix/enroll
@@ -145,7 +146,7 @@ else
 fi
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="TA WU"
+GP_LANGUAGES="GE JA TA WU"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
