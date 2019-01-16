@@ -19,3 +19,6 @@ old-path.sh
 # User-specific files
 user_specific_config.sh
 conf/test_languages.list
+
+#Log files
+nohup.out

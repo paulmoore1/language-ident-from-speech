@@ -126,9 +126,13 @@ for L in $LANGUAGES; do
     rm -f $datadir/$L/$x/wav.scp $datadir/$L/$x/spk2utt $datadir/$L/$x/utt2spk
     
     for spk in `cat $tmpdir/${x}_spk`; do
+      echo $spk
       grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/$x/wav.scp
+      echo "wav"
       grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/$x/spk2utt
+      echo "spk2utt"
       grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/$x/utt2spk
+      echo "utt2spk"
     done
   done
   echo "Done"
