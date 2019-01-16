@@ -53,7 +53,7 @@ do
   --languages=*)
   LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --data-dir=*)
-  DATADIR=`read_dirname $1`; shift ;;
+  datadir=`read_dirname $1`; shift ;;
   --wav-dir=*)
   WAVDIR=`read_dirname $1`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
@@ -94,14 +94,14 @@ popd > /dev/null
 
 # Make data folders to contain all the language files.
 for x in train enroll eval test; do
-  mkdir -p $DATADIR/${x}
+  mkdir -p $datadir/${x}
 done
 
 tmpdir=$(mktemp -d /tmp/kaldi.XXXX);
 trap 'rm -rf "$tmpdir"' EXIT
 
 # Create directories to contain files needed in training and testing:
-echo "DATADIR is: $DATADIR"
+echo "datadir is: $datadir"
 for L in $LANGUAGES; do
   grep "^$L" $test_list | cut -f2- | tr ' ' '\n' \
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/test_spk
@@ -124,13 +124,13 @@ for L in $LANGUAGES; do
   for x in train enroll eval test; do
     echo "$x speakers"
 
-    mkdir -p $DATADIR/$L/$x
-    rm -f $DATADIR/$L/$x/wav.scp $DATADIR/$L/$x/spk2utt $DATADIR/$L/$x/utt2spk
+    mkdir -p $datadir/$L/$x
+    rm -f $datadir/$L/$x/wav.scp $datadir/$L/$x/spk2utt $datadir/$L/$x/utt2spk
     
     for spk in `cat $tmpdir/${x}_spk`; do
-      grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $DATADIR/$L/$x/wav.scp
-      grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $DATADIR/$L/$x/spk2utt
-      grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $DATADIR/$L/$x/utt2spk
+      grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/$x/wav.scp
+      grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/$x/spk2utt
+      grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/$x/utt2spk
     done
   done
   echo "Done"
@@ -143,33 +143,33 @@ enroll_dirs=()
 test_dirs=()
 
 for L in $LANGUAGES; do
-  train_dirs+=($DATADIR/$L/train)
-  enroll_dirs+=($DATADIR/$L/enroll)
-  eval_dirs+=($DATADIR/$L/eval)
-  test_dirs+=($DATADIR/$L/test)
+  train_dirs+=($datadir/$L/train)
+  enroll_dirs+=($datadir/$L/enroll)
+  eval_dirs+=($datadir/$L/eval)
+  test_dirs+=($datadir/$L/test)
 done
 
-echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${DATADIR}||g")"
-utils/combine_data.sh $DATADIR/train ${train_dirs[@]}
+echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${datadir}||g")"
+utils/combine_data.sh $datadir/train ${train_dirs[@]}
 
-echo "Combining enrollment directories: $(echo ${enroll_dirs[@]} | sed -e "s|${DATADIR}||g")"
-utils/combine_data.sh $DATADIR/enroll ${enroll_dirs[@]}
+echo "Combining enrollment directories: $(echo ${enroll_dirs[@]} | sed -e "s|${datadir}||g")"
+utils/combine_data.sh $datadir/enroll ${enroll_dirs[@]}
 
-echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${DATADIR}||g")"
-utils/combine_data.sh $DATADIR/eval ${eval_dirs[@]}
+echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${datadir}||g")"
+utils/combine_data.sh $datadir/eval ${eval_dirs[@]}
 
-echo "Combining testing directories: $(echo ${test_dirs[@]} | sed -e "s|${DATADIR}||g")"
-utils/combine_data.sh $DATADIR/test ${test_dirs[@]}
+echo "Combining testing directories: $(echo ${test_dirs[@]} | sed -e "s|${datadir}||g")"
+utils/combine_data.sh $datadir/test ${test_dirs[@]}
 
 
 # Add utt2lang and lang2utt files for the collected languages
 # Don't bother with test data
 for x in train enroll eval test; do
-  sed -e 's?[0-9]*$??' $DATADIR/${x}/utt2spk \
-  > $DATADIR/${x}/utt2lang
+  sed -e 's?[0-9]*$??' $datadir/${x}/utt2spk \
+  > $datadir/${x}/utt2lang
 
-  local/utt2lang_to_lang2utt.pl $DATADIR/${x}/utt2lang \
-  > $DATADIR/${x}/lang2utt
+  local/utt2lang_to_lang2utt.pl $datadir/${x}/utt2lang \
+  > $datadir/${x}/lang2utt
 
 done
 
