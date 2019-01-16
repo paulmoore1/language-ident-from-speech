@@ -11,8 +11,8 @@
 nj=4
 cmd=run.pl
 scale_opts="--transition-scale=1.0 --acoustic-scale=0.1 --self-loop-scale=0.1"
-num_iters=10 #40    # Number of iterations of training
-max_iter_inc=7 #30 # Last iter to increase #Gauss on.
+num_iters=40    # Number of iterations of training
+max_iter_inc=30 # Last iter to increase #Gauss on.
 totgauss=1000 # Target #Gaussians.
 careful=false
 boost_silence=1.0 # Factor by which to boost silence likelihoods in alignment
