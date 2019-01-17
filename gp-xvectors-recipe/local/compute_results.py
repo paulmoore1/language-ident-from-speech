@@ -20,6 +20,47 @@ def get_args():
     args = parser.parse_args()
     return args
 
+# Sums all the p_miss for target languages in the matrix, using efficient matrix operations
+# Separate to p_miss function in case that is used for something else e.g. Equation (5)
+def find_sum_p_miss(conf_matrix):
+    accurate = np.diag(conf_matrix)
+    ideal = np.sum(conf_matrix, axis=1)
+    return np.sum((ideal - accurate) / ideal)
+
+def find_sum_p_fa(conf_matrix):
+    n = conf_matrix.shape[0]
+    p_fa_sum = 0
+    # Swapping i and j simply since j refers to columns, and i to rows
+    for j in range(n):
+        num_predicted = np.sum(conf_matrix[:, j])
+        if num_predicted == 0:
+            print("WARNING:")
+            print("No predictions for language at column {} in the confusion matrix.".format(j))
+            continue
+        for i in range(n):
+            if i == j:
+                # skip if it's the correct value (not a false positive)
+                continue
+            num_fa = conf_matrix[i][j]
+            p_fa = num_fa/num_predicted
+            p_fa_sum += p_fa
+    return p_fa_sum
+
+# From Equation(6) in the LRE paper
+def find_c_avg(beta, n, sum_p_miss, sum_p_fa):
+    return float(1)/n * (sum_p_miss + (float(1)/(n-1)) * (beta * sum_p_fa))
+
+def find_c_primary(conf_matrix):
+    n = conf_matrix.shape[0]
+    p_target_values = [0.5, 0.1]
+    sum_p_fa = find_sum_p_fa(conf_matrix)
+    sum_p_miss = find_sum_p_miss(conf_matrix)
+    c_sum = 0
+    for p_target in p_target_values:
+        beta = (c_fa * (1 - p_target)) / (c_miss * p_target)
+        c_sum += find_c_avg(beta, n, sum_p_miss, sum_p_fa)
+    return c_sum/2
+
 def make_stats(classification_file, output_file, languages):
     with open(classification_file, "r") as f:
         # From lines like "GE001_33 KO" make simple pairs (true, predicted) like [GE, KO]
@@ -35,7 +76,7 @@ def make_stats(classification_file, output_file, languages):
         print(acc_msg)
 
         # Pretty-printing the conf. matrix
-        n = 4        
+        n = 4
         conf_matrix_nice = [languages[i].ljust(n) + " ".join([str(e).ljust(n) for e in row]) \
             for i, row in enumerate(conf_matrix)]
         conf_mtrx_msg = "Confusion matrix:\n{}{}\n{}".format(
@@ -44,10 +85,15 @@ def make_stats(classification_file, output_file, languages):
                             "\n".join(conf_matrix_nice))
         print(conf_mtrx_msg)
 
+        # C primary calculation
+        c_primary = find_c_primary(conf_matrix)
+        c_primary_msg = "C_primary value: {:.3f}".format(c_primary)
+
         # Write results to file
         with open(output_file, "w") as o:
             o.write("{}\n".format(acc_msg))
             o.write("{}\n".format(conf_mtrx_msg))
+            o.write("{}\n".format(c_primary_msg))
 
 if __name__ == "__main__":
     args = get_args()
