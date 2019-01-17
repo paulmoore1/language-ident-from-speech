@@ -277,6 +277,7 @@ if [ $stage -eq 3 ]; then
 fi
 
 #NOTE main things we need to work on are the num-repeats and num-jobs parameters
+# Runtime: ~8 hours
 if [ $stage -eq 4 ]; then
   echo "#### STAGE 4: Training the X-vector DNN. ####"
   ./local/run_xvector.sh \
@@ -294,6 +295,7 @@ if [ $stage -eq 4 ]; then
   fi
 fi
 
+# Runtime: ~1:05h
 if [ $stage -eq 7 ]; then
   echo "#### STAGE 7: Extracting X-vectors from the trained DNN. ####"
 
@@ -342,6 +344,7 @@ fi
 
 # Using logistic regression as a classifier (adapted from egs/lre07,
 # described in https://arxiv.org/pdf/1804.05000.pdf)
+# Runtime: ~1min
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####"
   
@@ -376,6 +379,7 @@ if [ $stage -eq 8 ]; then
   fi
 fi
 
+# Runtime: <1min
 if [ $stage -eq 9 ]; then
   echo "#### STAGE 9: Calculating results. ####"
 
