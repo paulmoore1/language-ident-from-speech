@@ -27,7 +27,7 @@ def find_sum_p_miss(conf_matrix):
     ideal = np.sum(conf_matrix, axis=1)
     return np.sum((ideal - accurate) / ideal)
 
-def find_sum_p_fa(conf_matrix):
+def find_sum_p_fa(conf_matrix, languages):
     n = conf_matrix.shape[0]
     p_fa_sum = 0
     # Swapping i and j simply since j refers to columns, and i to rows
@@ -35,7 +35,7 @@ def find_sum_p_fa(conf_matrix):
         num_predicted = np.sum(conf_matrix[:, j])
         if num_predicted == 0:
             print("WARNING:")
-            print("No predictions for language at column {} in the confusion matrix.".format(j))
+            print("No predictions for language {} in the confusion matrix.".format(languages[j]))
             continue
         for i in range(n):
             if i == j:
@@ -50,10 +50,10 @@ def find_sum_p_fa(conf_matrix):
 def find_c_avg(beta, n, sum_p_miss, sum_p_fa):
     return float(1)/n * (sum_p_miss + (float(1)/(n-1)) * (beta * sum_p_fa))
 
-def find_c_primary(conf_matrix):
+def find_c_primary(conf_matrix, languages):
     n = conf_matrix.shape[0]
     p_target_values = [0.5, 0.1]
-    sum_p_fa = find_sum_p_fa(conf_matrix)
+    sum_p_fa = find_sum_p_fa(conf_matrix, languages)
     sum_p_miss = find_sum_p_miss(conf_matrix)
     c_sum = 0
     for p_target in p_target_values:
@@ -86,7 +86,7 @@ def make_stats(classification_file, output_file, languages):
         print(conf_mtrx_msg)
 
         # C primary calculation
-        c_primary = find_c_primary(conf_matrix)
+        c_primary = find_c_primary(conf_matrix, languages)
         c_primary_msg = "C_primary value: {:.3f}".format(c_primary)
 
         # Write results to file

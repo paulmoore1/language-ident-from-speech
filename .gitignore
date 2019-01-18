@@ -9,6 +9,7 @@ kaldi/*
 
 venv/*
 src/logs/
+gp-xvectors-recipe/c_primary_calculator.py
 
 #######################################
 # C++ GITIGNORE
