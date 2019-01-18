@@ -8,6 +8,10 @@ import numpy as np
 from collections import OrderedDict
 from sklearn.metrics import confusion_matrix
 
+# Cost values from https://www.nist.gov/sites/default/files/documents/2017/06/01/lre17_eval_plan-2017-05-31_v2.pdf
+c_fa = 1
+c_miss = 1
+
 def get_args():
     parser = argparse.ArgumentParser(description="Calculates score for each language",
                                  epilog="Called by run.sh")
@@ -88,6 +92,8 @@ def make_stats(classification_file, output_file, languages):
         # C primary calculation
         c_primary = find_c_primary(conf_matrix, languages)
         c_primary_msg = "C_primary value: {:.3f}".format(c_primary)
+
+        print(c_primary_msg)
 
         # Write results to file
         with open(output_file, "w") as o:

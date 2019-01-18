@@ -3,7 +3,7 @@
 # Copyright 2012  Arnab Ghoshal
 #
 # Copyright 2016 by Idiap Research Institute, http://www.idiap.ch
-# 
+#
 # Copyright 2018/2019 by Sam Sucik and Paul Moore
 #
 # See the file COPYING for the licence associated with this software.
@@ -42,7 +42,7 @@ usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 # Default option values
-EXP_NAME="/baseline"
+EXP_NAME="baseline"
 stage=-1
 run_all=false
 
@@ -113,7 +113,7 @@ local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
-DATADIR="${DATADIR}${EXP_NAME}"
+DATADIR="${DATADIR}/${EXP_NAME}"
 mkdir -p $DATADIR
 mkdir -p $DATADIR/log
 
@@ -150,8 +150,7 @@ GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
-
-# The most time-consuming stage: Converting SHNs to WAVs. Should be done only once; 
+# The most time-consuming stage: Converting SHNs to WAVs. Should be done only once;
 # then, this script can be run from stage 0 onwards.
 if [ $stage -eq 42 ]; then
   echo "#### SPECIAL STAGE 42: Converting all SHN files to WAV files. ####"
@@ -162,8 +161,8 @@ if [ $stage -eq 42 ]; then
     --languages="$GP_LANGUAGES"
 fi
 
-# Preparing lists of utterances (and a couple other auxiliary lists) based 
-# on the train/enroll/eval/test splitting. The lists refer to the WAVs 
+# Preparing lists of utterances (and a couple other auxiliary lists) based
+# on the train/enroll/eval/test splitting. The lists refer to the WAVs
 # generated in the previous stage.
 # Runtime: Under 5 mins
 if [ $stage -eq 0 ]; then
@@ -176,7 +175,7 @@ if [ $stage -eq 0 ]; then
     --languages="$GP_LANGUAGES" \
     --data-dir=$DATADIR \
     || exit 1;
-  
+
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
@@ -188,7 +187,7 @@ fi
 # Runtime: ~12 mins
 if [ $stage -eq 1 ]; then
   echo "#### STAGE 1: MFCC and VAD. ####"
-  
+
   for name in train enroll eval test; do
     (
     num_speakers=$(cat $DATADIR/${name}/spk2utt | wc -l)
@@ -206,7 +205,7 @@ if [ $stage -eq 1 ]; then
       $DATADIR/${name} \
       $log_dir/make_mfcc \
       $mfccdir
-		
+
     # Have to calculate this separately, since make_mfcc.sh isn't writing properly
 		utils/data/get_utt2num_frames.sh $DATADIR/${name}
     utils/fix_data_dir.sh $DATADIR/${name}
@@ -219,7 +218,7 @@ if [ $stage -eq 1 ]; then
       $vaddir
 
     utils/fix_data_dir.sh $DATADIR/${name}
-    ) > $log_dir/mfcc_${name} & 
+    ) > $log_dir/mfcc_${name} &
   done
   wait;
 
@@ -227,7 +226,7 @@ if [ $stage -eq 1 ]; then
   utils/fix_data_dir.sh $enroll_data
   utils/fix_data_dir.sh $eval_data
   utils/fix_data_dir.sh $test_data
-  
+
   if [ "$run_all" = true ]; then
     # NOTE this is set to 2 since we're skipping stage 2 at the moment.
     stage=`expr $stage + 2`
@@ -347,7 +346,6 @@ fi
 # Runtime: ~1min
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####"
-  
   # Make language-int map (essentially just indexing the languages 0 to L)
   langs=($GP_LANGUAGES)
   i=0
