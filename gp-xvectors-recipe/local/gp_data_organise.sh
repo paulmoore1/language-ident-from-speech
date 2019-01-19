@@ -95,6 +95,7 @@ trap 'rm -rf "$tmpdir"' EXIT
 # Create directories to contain files needed in training and testing:
 echo "datadir is: $datadir"
 for L in $LANGUAGES; do
+  (
   grep "^$L" $test_list | cut -f2- | tr ' ' '\n' \
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/test_spk
   grep "^$L" $eval_list | cut -f2- | tr ' ' '\n' \
@@ -126,8 +127,10 @@ for L in $LANGUAGES; do
       grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/$x/utt2len
     done
   done
-  echo "Done"
+  ) &
 done
+wait;
+echo "Done"
 
 # Combine data from all languages into big piles
 train_dirs=()
