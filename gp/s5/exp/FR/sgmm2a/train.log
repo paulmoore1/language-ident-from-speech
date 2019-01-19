@@ -1,2 +1,0 @@
-steps/train_sgmm2.sh --cmd run.pl --cluster-thresh 100 --spk-dim 0 3100 10000 data/FR/train data/FR/lang exp/FR/tri1_ali exp/FR/ubm2a/final.ubm exp/FR/sgmm2a
-steps/train_sgmm2.sh: invalid option --cluster-thresh
