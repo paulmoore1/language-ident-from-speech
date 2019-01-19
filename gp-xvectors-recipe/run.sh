@@ -178,18 +178,18 @@ if [ $stage -eq 1 ]; then
 
   # Split training data into segments of length < 4s
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 2-4s)
-  ./local/split_long_utts.sh \
-    --max-utt-len 4 \
-    $train_data \
-    $train_data
+#  ./local/split_long_utts.sh \
+#    --max-utt-len 4 \
+#    $train_data \
+#    ${train_data}1
   
   # Split enroll data into segments of < 30s.
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
   ./local/split_long_utts.sh \
     --max-utt-len 30 \
     $enroll_data \
-    $enroll_data
-
+    ${enroll_data}1
+exit
   # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
   # TO-DO: Allow for some variation, or do strictly this length?
   ./local/split_long_utts.sh \
