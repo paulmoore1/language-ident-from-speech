@@ -54,3 +54,9 @@ To check the job queue use `squeue`.
 1. Ensure environment is activated and everything is installed
 1. Move data to head node
 1. Run script from head node
+
+## Longjobbing
+```
+(echo "YourDicePassword" | nohup longjob -28day -c 'nice yourCommandHere' ) &
+(echo 'YourDicePassword' | nohup longjob -28day -c './run.sh --experiment=baseline --stage=1' ) &
+```
