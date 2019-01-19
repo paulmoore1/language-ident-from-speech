@@ -176,6 +176,32 @@ if [ $stage -eq 1 ]; then
     --data-dir=$DATADIR \
     || exit 1;
 
+  # Split training data into segments of length < 4s
+  # TO-DO: Split into segments of various lengths (LID X-vector paper has 2-4s)
+  ./local/split_long_utts.sh \
+    --max-utt-len 4 \
+    $train_data \
+    $train_data
+  
+  # Split enroll data into segments of < 30s.
+  # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
+  ./local/split_long_utts.sh \
+    --max-utt-len 30 \
+    $enroll_data \
+    $enroll_data
+
+  # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
+  # TO-DO: Allow for some variation, or do strictly this length?
+  ./local/split_long_utts.sh \
+    --max-utt-len 10 \
+    $eval_data \
+    $eval_data
+
+  ./local/split_long_utts.sh \
+    --max-utt-len 10 \
+    $test_data \
+    $test_data
+
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
@@ -228,8 +254,7 @@ if [ $stage -eq 2 ]; then
   utils/fix_data_dir.sh $test_data
 
   if [ "$run_all" = true ]; then
-    # NOTE this is set to 2 since we're skipping stage 2 at the moment.
-    stage=`expr $stage + 2`
+    stage=`expr $stage + 1`
   else
     exit
   fi
@@ -271,7 +296,7 @@ if [ $stage -eq 3 ]; then
   fi
 fi
 
-#NOTE main things we need to work on are the num-repeats and num-jobs parameters
+# NOTE main things we need to work on are the num-repeats and num-jobs parameters
 # Runtime: ~8 hours
 if [ $stage -eq 4 ]; then
   echo "#### STAGE 4: Training the X-vector DNN. ####"
@@ -337,7 +362,7 @@ if [ $stage -eq 7 ]; then
   fi
 fi
 
-# Using logistic regression as a classifier (adapted from egs/lre07,
+# Using logistic regression as a classifier (adapted from egs/lre07/v2,
 # described in https://arxiv.org/pdf/1804.05000.pdf)
 # Runtime: ~1min
 if [ $stage -eq 8 ]; then
