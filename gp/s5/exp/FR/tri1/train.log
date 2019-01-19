@@ -1,2 +1,0 @@
-steps/train_deltas.sh --cmd run.pl --cluster-thresh 100 3100 50000 data/FR/train data/FR/lang exp/FR/mono_ali exp/FR/tri1
-train_deltas.sh: no such file exp/FR/mono_ali/final.mdl

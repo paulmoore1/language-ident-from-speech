@@ -1,2 +1,0 @@
-steps/train_mono.sh --nj 10 --cmd run.pl data/FR/train data/FR/lang exp/FR/mono
-cat: data/FR/lang/oov.int: No such file or directory
