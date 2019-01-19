@@ -76,6 +76,6 @@ fi
 
 cp $in_dir/wav.scp $out_dir/
 utils/utt2spk_to_spk2utt.pl $out_dir/utt2spk > $out_dir/spk2utt
-utils/validate_data_dir.sh --no-text --no-feats $out_dir || exit 1;
+./local/validate_data_dir.sh --no-text --no-feats $out_dir || exit 1;
 
 exit 0;
