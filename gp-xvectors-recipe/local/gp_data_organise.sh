@@ -60,34 +60,28 @@ do
   esac
 done
 
-# Use the default lists unless a 'proper' one is found (same name, without the "example")
-test_list=$CONFDIR/test_spk.list
-eval_list=$CONFDIR/eval_spk.list
-enroll_list=$CONFDIR/enroll_spk.list
-train_list=$CONFDIR/train_spk.list
-
 # Check if the config files are in place:
 pushd $CONFDIR > /dev/null
 if [ -f test_spk.list ]; then
   test_list=$CONFDIR/test_spk.list
 else
-  echo "Test-set speaker list not found. Using default list"
+  echo "Test-set speaker list not found."; exit 1
 fi
 if [ -f eval_spk.list ]; then
   eval_list=$CONFDIR/eval_spk.list
 else
-  echo "Eval-set speaker list not found. Using default list"
+  echo "Eval-set speaker list not found."; exit 1
 fi
 if [ -f enroll_spk.list ]; then
   enroll_list=$CONFDIR/enroll_spk.list
 else
-  echo "Enrollment-set speaker list not found. Using default list"
+  echo "Enrollment-set speaker list not found."; exit 1
 fi
 if [ -f train_spk.list ]; then
   train_list=$CONFDIR/train_spk.list
 fi
-
 popd > /dev/null
+
 [ -f path.sh ] && . ./path.sh  # Sets the PATH to contain necessary executables
 
 # Make data folders to contain all the language files.
@@ -129,6 +123,7 @@ for L in $LANGUAGES; do
       grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/$x/wav.scp
       grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/$x/spk2utt
       grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/$x/utt2spk
+      grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/$x/utt2len
     done
   done
   echo "Done"
@@ -166,7 +161,7 @@ for x in train enroll eval test; do
   sed -e 's?[0-9]*$??' $datadir/${x}/utt2spk \
   > $datadir/${x}/utt2lang
 
-  local/utt2lang_to_lang2utt.pl $datadir/${x}/utt2lang \
+  ./local/utt2lang_to_lang2utt.pl $datadir/${x}/utt2lang \
   > $datadir/${x}/lang2utt
 
 done

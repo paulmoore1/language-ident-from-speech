@@ -100,6 +100,13 @@ for L in $LANGUAGES; do
   paste $LISTDIR/basenames_wav $LISTDIR/wav.list | sort -k1,1 \
     > $LISTDIR/wav.scp
 
+  (
+    while read -r name; do
+      utt=$(echo $name | grep -Po '([A-Z0-9_]+)(?=.wav)')
+      echo $utt $(sox $name -n stat 2>&1 | grep -Po 'seconds.:\s+\K[0-9.]+');
+    done < $LISTDIR/wav.list
+  ) > $LISTDIR/utt2len
+
   sed -e 's?_.*$??' $LISTDIR/basenames_wav \
     | paste -d' ' $LISTDIR/basenames_wav - \
     > $LISTDIR/utt2spk
@@ -111,7 +118,7 @@ for L in $LANGUAGES; do
     | grep -ohE "[0-9]+" | sort | uniq -u > $LISTDIR/spk
 
   rm $LISTDIR/basenames_wav
-  ) > $WAVDIR/${L}_log &  
+  ) > $WAVDIR/${L}_log &
 done
 wait;
 exit
