@@ -4,7 +4,7 @@
 # by Sam Sucik
 
 max_utt_len=60 # 60 seconds.
-stage=0
+stage=1
 cleanup=true
 
 . utils/parse_options.sh
@@ -28,53 +28,20 @@ for f in $in_dir/{utt2spk,spk2utt,wav.scp,utt2lang}; do
   fi
 done
 
-
-if [ $stage -le 0 ]; then
-  utils/validate_data_dir.sh --no-text --no-feats $in_dir || exit 1;
-
-  mkdir -p $out_dir/temp || exit 1;
-
-  cat $in_dir/wav.scp | perl -ane '
-    $_ =~ m:(^\S+) .* (\S+\.wav): || die "bad line $_";
-    $utt=$1; $wav=$2;
-    open (F, "<$wav") || die "Could not open wav file $wav";
-    $samp_count = -1;
-    while (<F>) {
-      if (m/sample_rate -i (\d+)/) { $1 == 16000 || die "bad sample rate for $sph: $_"; }
-      if (m/sample_count -i (\d+)/) { $samp_count = $1; }
-      if (m/end_head/) { last; }
-    }
-    close(F);
-    $samp_count > 0 || die "Could not get sample count for wav file $wav\n";
-    $secs = $samp_count / 16000;
-    print "$utt $secs\n";
-  ' > $out_dir/temp/utt2len
-fi
-
-if [ $(cat $out_dir/temp/utt2len | wc -l) -ne $(cat $in_dir/utt2spk | wc -l) ]; then
-  echo "utt2spk and utt2len files have mismatched lengths";
-  exit 1;
-fi
-if [ $(cat $out_dir/temp/utt2len | wc -l) -ne $(cat $in_dir/utt2lang | wc -l) ]; then
-  echo "utt2spk and utt2lang files have mismatched lengths";
-  exit 1;
-fi
-
-
 if [ $stage -le 1 ]; then
 
-if [ "$in_dir" == "$out_dir" ]; then
-  echo "Input and output directory are the same one. Backing up original utt2spk," \
-  "spk2utt, utt2lang and wav.scp files (with the '.unsplit' suffix)."
-  for f in utt2spk spk2utt utt2lang wav.scp; do
-    cp $in_dir/$f $in_dir/${f}.unsplit
-  done
-fi
+  if [ "$in_dir" == "$out_dir" ]; then
+    echo "Input and output directory are the same one. Backing up original utt2spk," \
+    "spk2utt, utt2lang, utt2len and wav.scp files (with the '.unsplit' suffix)."
+    for f in utt2spk spk2utt utt2lang wav.scp; do
+      cp $in_dir/$f $in_dir/${f}.unsplit
+    done
+  fi
 
-# Create, in a pipe, a file with lines
-# <utt-id> <length> <speaker-id> <language-id>
-# and pipe it into a perl script that outputs the segments file.
-  awk '{print $2}' $in_dir/utt2spk | paste $out_dir/temp/utt2len -  | \
+  # Create, in a pipe, a file with lines
+  # <utt-id> <length> <speaker-id> <language-id>
+  # and pipe it into a perl script that outputs the segments file.
+  awk '{print $2}' $in_dir/utt2spk | paste $in_dir/utt2len -  | \
    paste -  <(awk '{print $2}' $in_dir/utt2lang) | perl -e '
   ($max_utt_len, $out_dir) = @ARGV;
   open(UTT2SPK, ">$out_dir/utt2spk") || die "opening utt2spk file $out_dir/utt2spk";
@@ -110,9 +77,5 @@ fi
 cp $in_dir/wav.scp $out_dir/
 utils/utt2spk_to_spk2utt.pl $out_dir/utt2spk > $out_dir/spk2utt
 utils/validate_data_dir.sh --no-text --no-feats $out_dir || exit 1;
-
-if [ "$in_dir" != "$out_dir" ]; then
-  $cleanup && rm -r $out_dir/temp
-fi
 
 exit 0;
