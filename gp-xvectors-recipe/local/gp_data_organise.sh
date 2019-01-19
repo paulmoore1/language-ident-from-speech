@@ -96,6 +96,7 @@ trap 'rm -rf "$tmpdir"' EXIT
 echo "datadir is: $datadir"
 for L in $LANGUAGES; do
   (
+  mkdir $tmpdir/$L
   grep "^$L" $test_list | cut -f2- | tr ' ' '\n' \
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/test_spk
   grep "^$L" $eval_list | cut -f2- | tr ' ' '\n' \
@@ -115,10 +116,9 @@ for L in $LANGUAGES; do
   
   echo "Language - ${L}: formatting train/enroll/eval/test data."
   for x in train enroll eval test; do
-    echo "$x speakers"
-
     mkdir -p $datadir/$L/$x
-    rm -f $datadir/$L/$x/wav.scp $datadir/$L/$x/spk2utt $datadir/$L/$x/utt2spk
+    rm -f $datadir/$L/$x/wav.scp $datadir/$L/$x/spk2utt \
+          $datadir/$L/$x/utt2spk $datadir/$L/$x/utt2len
     
     for spk in `cat $tmpdir/$L/${x}_spk`; do
       grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/$x/wav.scp
@@ -146,16 +146,16 @@ for L in $LANGUAGES; do
 done
 
 echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $datadir/train ${train_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2len' $datadir/train ${train_dirs[@]}
 
 echo "Combining enrollment directories: $(echo ${enroll_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $datadir/enroll ${enroll_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2len' $datadir/enroll ${enroll_dirs[@]}
 
 echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $datadir/eval ${eval_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2len' $datadir/eval ${eval_dirs[@]}
 
 echo "Combining testing directories: $(echo ${test_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $datadir/test ${test_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2len' $datadir/test ${test_dirs[@]}
 
 
 # Add utt2lang and lang2utt files for the collected languages

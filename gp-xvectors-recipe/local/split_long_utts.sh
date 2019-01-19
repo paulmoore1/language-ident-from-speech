@@ -29,6 +29,7 @@ for f in $in_dir/{utt2spk,spk2utt,wav.scp,utt2lang}; do
 done
 
 if [ $stage -le 1 ]; then
+  mkdir -p $out_dir
 
   if [ "$in_dir" == "$out_dir" ]; then
     echo "Input and output directory are the same one. Backing up original utt2spk," \

@@ -55,7 +55,7 @@ do
   --stage=*)
   stage=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --experiment=*)
-  EXP_NAME=/`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  EXP_NAME=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
