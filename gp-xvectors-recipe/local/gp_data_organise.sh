@@ -97,18 +97,18 @@ echo "datadir is: $datadir"
 for L in $LANGUAGES; do
   (
   grep "^$L" $test_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/test_spk
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/test_spk
   grep "^$L" $eval_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/eval_spk
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/eval_spk
   grep "^$L" $enroll_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/enroll_spk
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/enroll_spk
   if [ -f $CONFDIR/train_spk.list ]; then
     grep "^$L" $train_list | cut -f2- | tr ' ' '\n' \
-      | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/train_spk
+      | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/train_spk
   else
     echo "Train-set speaker list not found. Using all speakers not in eval set."
-    grep -v -f $tmpdir/test_spk -f $tmpdir/eval_spk -f $tmpdir/enroll_spk \
-      $WAVDIR/$L/lists/spk > $tmpdir/train_spk || \
+    grep -v -f $tmpdir/$L/test_spk -f $tmpdir/$L/eval_spk -f $tmpdir/$L/enroll_spk \
+      $WAVDIR/$L/lists/spk > $tmpdir/$L/train_spk || \
       echo "Could not find any training set speakers; \
       are you trying to use all of them for evaluation and testing?";
   fi
@@ -120,7 +120,7 @@ for L in $LANGUAGES; do
     mkdir -p $datadir/$L/$x
     rm -f $datadir/$L/$x/wav.scp $datadir/$L/$x/spk2utt $datadir/$L/$x/utt2spk
     
-    for spk in `cat $tmpdir/${x}_spk`; do
+    for spk in `cat $tmpdir/$L/${x}_spk`; do
       grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/$x/wav.scp
       grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/$x/spk2utt
       grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/$x/utt2spk
