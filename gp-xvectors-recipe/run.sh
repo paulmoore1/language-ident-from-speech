@@ -109,7 +109,7 @@ fi
 # CHECKING FOR AND INSTALLING REQUIRED TOOLS:
 #  This recipe requires shorten (3.6.1) and sox (14.3.2).
 #  If they are not found, the local/gp_install.sh script will install them.
-local/gp_check_tools.sh $PWD path.sh || exit 1;
+./local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
@@ -165,9 +165,9 @@ fi
 # on the train/enroll/eval/test splitting. The lists refer to the WAVs
 # generated in the previous stage.
 # Runtime: Under 5 mins
-if [ $stage -eq 0 ]; then
+if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
-  echo "#### STAGE 0: Organising speakers into sets. ####"
+  echo "#### STAGE 1: Organising speakers into sets. ####"
   ./local/gp_data_organise.sh \
     --config-dir=$PWD/conf \
     --corpus-dir=$GP_CORPUS \
@@ -185,8 +185,8 @@ fi
 
 # Make MFCCs and compute the energy-based VAD for each dataset
 # Runtime: ~12 mins
-if [ $stage -eq 1 ]; then
-  echo "#### STAGE 1: MFCC and VAD. ####"
+if [ $stage -eq 2 ]; then
+  echo "#### STAGE 2: MFCC and VAD. ####"
 
   for name in train enroll eval test; do
     (
@@ -235,8 +235,6 @@ if [ $stage -eq 1 ]; then
   fi
 fi
 
-# TO-DO: Add data augmentation with MUSAN as stage 2?
-
 # Now we prepare the features to generate examples for xvector training.
 # Runtime: ~2 mins
 if [ $stage -eq 3 ]; then
@@ -245,7 +243,7 @@ if [ $stage -eq 3 ]; then
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
-  local/prepare_feats_for_egs.sh \
+  ./local/prepare_feats_for_egs.sh \
     --nj $MAXNUMJOBS \
     --cmd "$preprocess_cmd" \
     $train_data \
@@ -266,8 +264,6 @@ if [ $stage -eq 3 ]; then
   utils/fix_data_dir.sh $nnet_train_data
 	echo "Done"
 
-  # Now we're ready to create training examples.
-  #utils/fix_data_dir.sh $nnet_train_data
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
@@ -381,7 +377,7 @@ fi
 if [ $stage -eq 9 ]; then
   echo "#### STAGE 9: Calculating results. ####"
 
-  python ./local/compute_results.py \
+  ./local/compute_results.py \
     --classification-file $exp_dir/results/classification \
     --output-file $exp_dir/results/results \
     --language-list "$GP_LANGUAGES" \

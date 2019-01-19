@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 A very simple error calculator.
 Takes the scores file as input, prints the error rate for each language.
