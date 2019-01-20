@@ -215,7 +215,7 @@ fi
 if [ $stage -eq 2 ]; then
   echo "#### STAGE 2: MFCC and VAD. ####"
 
-  for name in train enroll eval test; do
+  for name in enroll eval test; do
     (
     num_speakers=$(cat $DATADIR/${name}/spk2utt | wc -l)
     if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
@@ -245,7 +245,7 @@ if [ $stage -eq 2 ]; then
       $vaddir
 
     utils/fix_data_dir.sh $DATADIR/${name}
-    ) > $log_dir/mfcc_${name} &
+    ) > $log_dir/mfcc_${name}
   done
   wait;
 

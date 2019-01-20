@@ -159,14 +159,12 @@ utils/combine_data.sh --extra-files 'utt2len' $datadir/test ${test_dirs[@]}
 
 
 # Add utt2lang and lang2utt files for the collected languages
-# Don't bother with test data
 for x in train enroll eval test; do
   sed -e 's?[0-9]*$??' $datadir/${x}/utt2spk \
   > $datadir/${x}/utt2lang
 
   ./local/utt2lang_to_lang2utt.pl $datadir/${x}/utt2lang \
   > $datadir/${x}/lang2utt
-
 done
 
 echo "Finished data preparation."

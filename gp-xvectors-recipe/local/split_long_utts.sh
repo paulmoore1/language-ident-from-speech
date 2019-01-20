@@ -33,9 +33,10 @@ if [ $stage -le 1 ]; then
 
   if [ "$in_dir" == "$out_dir" ]; then
     echo "Input and output directory are the same one. Backing up original utt2spk," \
-    "spk2utt, utt2lang, utt2len and wav.scp files (with the '.unsplit' suffix)."
-    for f in utt2spk spk2utt utt2lang wav.scp; do
-      cp $in_dir/$f $in_dir/${f}.unsplit
+    "spk2utt, utt2lang, lang2utt, utt2len and wav.scp files (with the '.unsplit' suffix)."
+    for f in utt2spk spk2utt utt2lang lang2utt wav.scp; do
+      # Do copying that doesn't fail if the file doesn't exist
+      cp $in_dir/$f $in_dir/${f}.unsplit 2>/dev/null || :
     done
   fi
 
@@ -80,6 +81,8 @@ if [ "$in_dir" != "$out_dir" ]; then
 fi
 
 utils/utt2spk_to_spk2utt.pl $out_dir/utt2spk > $out_dir/spk2utt
+./local/utt2lang_to_lang2utt.pl $out_dir/utt2lang
+
 utils/validate_data_dir.sh --no-text --no-feats $out_dir || exit 1;
 
 exit 0;
