@@ -366,7 +366,7 @@ fi
 
 # Using logistic regression as a classifier (adapted from egs/lre07/v2,
 # described in https://arxiv.org/pdf/1804.05000.pdf)
-# Runtime: ~1min
+# Runtime: < 1min
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####"
   # Make language-int map (essentially just indexing the languages 0 to L)
@@ -400,7 +400,7 @@ if [ $stage -eq 8 ]; then
   fi
 fi
 
-# Runtime: <1min
+# Runtime: < 10s
 if [ $stage -eq 9 ]; then
   echo "#### STAGE 9: Calculating results. ####"
 
