@@ -75,7 +75,10 @@ if [ $stage -le 1 ]; then
   close(SEGMENTS)||die; close(UTT2SPK)||die; close(UTT2LANG)||die; ' $max_utt_len $out_dir
 fi
 
-cp $in_dir/wav.scp $out_dir/
+if [ "$in_dir" != "$out_dir" ]; then
+  cp $in_dir/wav.scp $out_dir/
+fi
+
 utils/utt2spk_to_spk2utt.pl $out_dir/utt2spk > $out_dir/spk2utt
 ./local/validate_data_dir.sh --no-text --no-feats $out_dir || exit 1;
 

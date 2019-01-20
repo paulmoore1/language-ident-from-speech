@@ -89,8 +89,8 @@ for L in $LANGUAGES; do
       mv $f "$FILEDIR/TA${spk_id}_${utt_id}.wav"
       
       mv $LISTDIR/wav.list $LISTDIR/wav.list.bak
-      cat $LISTDIR/wav.list.bak | sed -E 's/(.*)ta([0-9]{2})([0-9]{3})d.wav.shn.wav/\1TA\3_\2.wav/g' \
-        > $LISTDIR/wav.list
+      cat $LISTDIR/wav.list.bak | sed -E 's/(.*)ta([0-9]{2})([0-9]{3})d.wav.shn.wav/\1TA\3_\2.wav/g' |\
+        sort | uniq > $LISTDIR/wav.list
     done
   fi
 

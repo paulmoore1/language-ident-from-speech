@@ -176,31 +176,32 @@ if [ $stage -eq 1 ]; then
     --data-dir=$DATADIR \
     || exit 1;
 
-  # Split training data into segments of length < 4s
-  # TO-DO: Split into segments of various lengths (LID X-vector paper has 2-4s)
-#  ./local/split_long_utts.sh \
-#    --max-utt-len 4 \
-#    $train_data \
-#    ${train_data}1
+  # Don't split training data into segments. It will be split anyway when
+  # preparing the training examples for the DNN. Note that the LID X-vector 
+  # paper has training segments of 2-4s.
+  #  ./local/split_long_utts.sh \
+  #    --max-utt-len 4 \
+  #    $train_data \
+  #    ${train_data}
   
   # Split enroll data into segments of < 30s.
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
   ./local/split_long_utts.sh \
     --max-utt-len 30 \
     $enroll_data \
-    ${enroll_data}1
-exit
+    ${enroll_data}
+
   # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
   # TO-DO: Allow for some variation, or do strictly this length?
   ./local/split_long_utts.sh \
     --max-utt-len 10 \
     $eval_data \
-    $eval_data
+    ${eval_data}
 
   ./local/split_long_utts.sh \
     --max-utt-len 10 \
     $test_data \
-    $test_data
+    ${test_data}
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
