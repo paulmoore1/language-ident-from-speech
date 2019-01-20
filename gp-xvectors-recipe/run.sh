@@ -298,7 +298,8 @@ if [ $stage -eq 3 ]; then
 fi
 
 # NOTE main things we need to work on are the num-repeats and num-jobs parameters
-# Runtime: ~8 hours
+# Runtime: ~8.5 hours
+# TO-DO: Find out the runtime without using GPUs.
 if [ $stage -eq 4 ]; then
   echo "#### STAGE 4: Training the X-vector DNN. ####"
   ./local/run_xvector.sh \

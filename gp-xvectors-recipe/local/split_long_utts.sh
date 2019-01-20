@@ -53,7 +53,7 @@ if [ $stage -le 1 ]; then
     defined $speaker || die "Bad line $_";
     $reco = $utt; # old utt-id becomes recording-id.
     if ($len <= $max_utt_len) {
-      print SEGMENTS "${utt}-1 ${utt} 0 -1\n";
+      print SEGMENTS "${utt}-1 ${utt} 0 $len\n";
       print UTT2SPK "${utt}-1 $speaker\n";
       print UTT2LANG "${utt}-1 $language\n";
     } else {
