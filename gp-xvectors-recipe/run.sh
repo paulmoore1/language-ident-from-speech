@@ -245,7 +245,7 @@ if [ $stage -eq 2 ]; then
       $vaddir
 
     utils/fix_data_dir.sh $DATADIR/${name}
-    ) > $log_dir/mfcc_${name} &
+    ) > $log_dir/mfcc_${name}
   done
   wait;
 
@@ -332,6 +332,7 @@ if [ $stage -eq 7 ]; then
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
+    --stage 0 \
     $nnet_dir \
     $enroll_data \
     $exp_dir/xvectors_enroll &
@@ -341,6 +342,7 @@ if [ $stage -eq 7 ]; then
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
+    --stage 0 \
     $nnet_dir \
     $eval_data \
     $exp_dir/xvectors_eval &
@@ -350,6 +352,7 @@ if [ $stage -eq 7 ]; then
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
+    --stage 0 \
     $nnet_dir \
     $test_data \
     $exp_dir/xvectors_test &
