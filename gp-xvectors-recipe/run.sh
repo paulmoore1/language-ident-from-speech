@@ -215,7 +215,7 @@ fi
 if [ $stage -eq 2 ]; then
   echo "#### STAGE 2: MFCC and VAD. ####"
 
-  for name in enroll eval test; do
+  for name in train enroll eval test; do
     (
     num_speakers=$(cat $DATADIR/${name}/spk2utt | wc -l)
     if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
@@ -332,6 +332,7 @@ if [ $stage -eq 7 ]; then
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
+    --stage 0 \
     $nnet_dir \
     $enroll_data \
     $exp_dir/xvectors_enroll &
@@ -341,6 +342,7 @@ if [ $stage -eq 7 ]; then
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
+    --stage 0 \
     $nnet_dir \
     $eval_data \
     $exp_dir/xvectors_eval &
@@ -350,6 +352,7 @@ if [ $stage -eq 7 ]; then
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
+    --stage 0 \
     $nnet_dir \
     $test_data \
     $exp_dir/xvectors_test &

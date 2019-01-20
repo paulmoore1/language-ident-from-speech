@@ -81,7 +81,7 @@ if [ "$in_dir" != "$out_dir" ]; then
 fi
 
 utils/utt2spk_to_spk2utt.pl $out_dir/utt2spk > $out_dir/spk2utt
-./local/utt2lang_to_lang2utt.pl $out_dir/utt2lang
+./local/utt2lang_to_lang2utt.pl $out_dir/utt2lang > $out_dir/lang2utt
 
 utils/validate_data_dir.sh --no-text --no-feats $out_dir || exit 1;
 
