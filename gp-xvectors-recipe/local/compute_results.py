@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 A very simple error calculator.
 Takes the scores file as input, prints the error rate for each language.
@@ -38,8 +40,8 @@ def find_sum_p_fa(conf_matrix, languages):
     for j in range(n):
         num_predicted = np.sum(conf_matrix[:, j])
         if num_predicted == 0:
-            print("WARNING:")
-            print("No predictions for language {} in the confusion matrix.".format(languages[j]))
+            # print("WARNING:")
+            # print("No predictions for language {} in the confusion matrix.".format(languages[j]))
             continue
         for i in range(n):
             if i == j:
@@ -92,7 +94,6 @@ def make_stats(classification_file, output_file, languages):
         # C primary calculation
         c_primary = find_c_primary(conf_matrix, languages)
         c_primary_msg = "C_primary value: {:.3f}".format(c_primary)
-
         print(c_primary_msg)
 
         # Write results to file

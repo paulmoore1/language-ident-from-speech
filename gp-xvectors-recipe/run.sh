@@ -55,7 +55,7 @@ do
   --stage=*)
   stage=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --experiment=*)
-  EXP_NAME=/`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  EXP_NAME=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
@@ -109,7 +109,7 @@ fi
 # CHECKING FOR AND INSTALLING REQUIRED TOOLS:
 #  This recipe requires shorten (3.6.1) and sox (14.3.2).
 #  If they are not found, the local/gp_install.sh script will install them.
-local/gp_check_tools.sh $PWD path.sh || exit 1;
+./local/gp_check_tools.sh $PWD path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
@@ -169,9 +169,9 @@ fi
 # on the train/enroll/eval/test splitting. The lists refer to the WAVs
 # generated in the previous stage.
 # Runtime: Under 5 mins
-if [ $stage -eq 0 ]; then
+if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
-  echo "#### STAGE 0: Organising speakers into sets. ####"
+  echo "#### STAGE 1: Organising speakers into sets. ####"
   ./local/gp_data_organise.sh \
     --config-dir=$PWD/conf \
     --corpus-dir=$GP_CORPUS \
@@ -179,6 +179,33 @@ if [ $stage -eq 0 ]; then
     --languages="$GP_LANGUAGES" \
     --data-dir=$DATADIR \
     || exit 1;
+
+  # Don't split training data into segments. It will be split anyway when
+  # preparing the training examples for the DNN. Note that the LID X-vector 
+  # paper has training segments of 2-4s.
+  #  ./local/split_long_utts.sh \
+  #    --max-utt-len 4 \
+  #    $train_data \
+  #    ${train_data}
+  
+  # Split enroll data into segments of < 30s.
+  # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
+  ./local/split_long_utts.sh \
+    --max-utt-len 30 \
+    $enroll_data \
+    ${enroll_data}
+
+  # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
+  # TO-DO: Allow for some variation, or do strictly this length?
+  ./local/split_long_utts.sh \
+    --max-utt-len 10 \
+    $eval_data \
+    ${eval_data}
+
+  ./local/split_long_utts.sh \
+    --max-utt-len 10 \
+    $test_data \
+    ${test_data}
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
@@ -189,8 +216,8 @@ fi
 
 # Make MFCCs and compute the energy-based VAD for each dataset
 # Runtime: ~12 mins
-if [ $stage -eq 1 ]; then
-  echo "#### STAGE 1: MFCC and VAD. ####"
+if [ $stage -eq 2 ]; then
+  echo "#### STAGE 2: MFCC and VAD. ####"
 
   for name in train enroll eval test; do
     (
@@ -222,7 +249,7 @@ if [ $stage -eq 1 ]; then
       $vaddir
 
     utils/fix_data_dir.sh $DATADIR/${name}
-    ) > $log_dir/mfcc_${name} &
+    ) > $log_dir/mfcc_${name}
   done
   wait;
 
@@ -232,14 +259,11 @@ if [ $stage -eq 1 ]; then
   utils/fix_data_dir.sh $test_data
 
   if [ "$run_all" = true ]; then
-    # NOTE this is set to 2 since we're skipping stage 2 at the moment.
-    stage=`expr $stage + 2`
+    stage=`expr $stage + 1`
   else
     exit
   fi
 fi
-
-# TO-DO: Add data augmentation with MUSAN as stage 2?
 
 # Now we prepare the features to generate examples for xvector training.
 # Runtime: ~2 mins
@@ -249,7 +273,7 @@ if [ $stage -eq 3 ]; then
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
-  local/prepare_feats_for_egs.sh \
+  ./local/prepare_feats_for_egs.sh \
     --nj $MAXNUMJOBS \
     --cmd "$preprocess_cmd" \
     $train_data \
@@ -270,8 +294,6 @@ if [ $stage -eq 3 ]; then
   utils/fix_data_dir.sh $nnet_train_data
 	echo "Done"
 
-  # Now we're ready to create training examples.
-  #utils/fix_data_dir.sh $nnet_train_data
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
@@ -279,8 +301,9 @@ if [ $stage -eq 3 ]; then
   fi
 fi
 
-#NOTE main things we need to work on are the num-repeats and num-jobs parameters
-# Runtime: ~8 hours
+# NOTE main things we need to work on are the num-repeats and num-jobs parameters
+# Runtime: ~8.5 hours
+# TO-DO: Find out the runtime without using GPUs.
 if [ $stage -eq 4 ]; then
   echo "#### STAGE 4: Training the X-vector DNN. ####"
   ./local/run_xvector.sh \
@@ -313,6 +336,7 @@ if [ $stage -eq 7 ]; then
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
+    --stage 0 \
     $nnet_dir \
     $enroll_data \
     $exp_dir/xvectors_enroll &
@@ -322,6 +346,7 @@ if [ $stage -eq 7 ]; then
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
+    --stage 0 \
     $nnet_dir \
     $eval_data \
     $exp_dir/xvectors_eval &
@@ -331,6 +356,7 @@ if [ $stage -eq 7 ]; then
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
+    --stage 0 \
     $nnet_dir \
     $test_data \
     $exp_dir/xvectors_test &
@@ -345,9 +371,9 @@ if [ $stage -eq 7 ]; then
   fi
 fi
 
-# Using logistic regression as a classifier (adapted from egs/lre07,
+# Using logistic regression as a classifier (adapted from egs/lre07/v2,
 # described in https://arxiv.org/pdf/1804.05000.pdf)
-# Runtime: ~1min
+# Runtime: < 1min
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####"
   # Make language-int map (essentially just indexing the languages 0 to L)
@@ -381,11 +407,11 @@ if [ $stage -eq 8 ]; then
   fi
 fi
 
-# Runtime: <1min
+# Runtime: < 10s
 if [ $stage -eq 9 ]; then
   echo "#### STAGE 9: Calculating results. ####"
 
-  python ./local/compute_results.py \
+  ./local/compute_results.py \
     --classification-file $exp_dir/results/classification \
     --output-file $exp_dir/results/results \
     --language-list "$GP_LANGUAGES" \

@@ -89,8 +89,8 @@ for L in $LANGUAGES; do
       mv $f "$FILEDIR/TA${spk_id}_${utt_id}.wav"
       
       mv $LISTDIR/wav.list $LISTDIR/wav.list.bak
-      cat $LISTDIR/wav.list.bak | sed -E 's/(.*)ta([0-9]{2})([0-9]{3})d.wav.shn.wav/\1TA\3_\2.wav/g' \
-        > $LISTDIR/wav.list
+      cat $LISTDIR/wav.list.bak | sed -E 's/(.*)ta([0-9]{2})([0-9]{3})d.wav.shn.wav/\1TA\3_\2.wav/g' |\
+        sort | uniq > $LISTDIR/wav.list
     done
   fi
 
@@ -99,6 +99,13 @@ for L in $LANGUAGES; do
 
   paste $LISTDIR/basenames_wav $LISTDIR/wav.list | sort -k1,1 \
     > $LISTDIR/wav.scp
+
+  (
+    while read -r name; do
+      utt=$(echo $name | grep -Po '([A-Z0-9_]+)(?=.wav)')
+      echo $utt $(sox $name -n stat 2>&1 | grep -Po 'seconds.:\s+\K[0-9.]+');
+    done < $LISTDIR/wav.list
+  ) > $LISTDIR/utt2len
 
   sed -e 's?_.*$??' $LISTDIR/basenames_wav \
     | paste -d' ' $LISTDIR/basenames_wav - \
@@ -111,7 +118,7 @@ for L in $LANGUAGES; do
     | grep -ohE "[0-9]+" | sort | uniq -u > $LISTDIR/spk
 
   rm $LISTDIR/basenames_wav
-  ) > $WAVDIR/${L}_log &  
+  ) > $WAVDIR/${L}_log &
 done
 wait;
 exit

@@ -60,34 +60,28 @@ do
   esac
 done
 
-# Use the default lists unless a 'proper' one is found (same name, without the "example")
-test_list=$CONFDIR/test_spk.list
-eval_list=$CONFDIR/eval_spk.list
-enroll_list=$CONFDIR/enroll_spk.list
-train_list=$CONFDIR/train_spk.list
-
 # Check if the config files are in place:
 pushd $CONFDIR > /dev/null
 if [ -f test_spk.list ]; then
   test_list=$CONFDIR/test_spk.list
 else
-  echo "Test-set speaker list not found. Using default list"
+  echo "Test-set speaker list not found."; exit 1
 fi
 if [ -f eval_spk.list ]; then
   eval_list=$CONFDIR/eval_spk.list
 else
-  echo "Eval-set speaker list not found. Using default list"
+  echo "Eval-set speaker list not found."; exit 1
 fi
 if [ -f enroll_spk.list ]; then
   enroll_list=$CONFDIR/enroll_spk.list
 else
-  echo "Enrollment-set speaker list not found. Using default list"
+  echo "Enrollment-set speaker list not found."; exit 1
 fi
 if [ -f train_spk.list ]; then
   train_list=$CONFDIR/train_spk.list
 fi
-
 popd > /dev/null
+
 [ -f path.sh ] && . ./path.sh  # Sets the PATH to contain necessary executables
 
 # Make data folders to contain all the language files.
@@ -101,38 +95,42 @@ trap 'rm -rf "$tmpdir"' EXIT
 # Create directories to contain files needed in training and testing:
 echo "datadir is: $datadir"
 for L in $LANGUAGES; do
+  (
+  mkdir $tmpdir/$L
   grep "^$L" $test_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/test_spk
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/test_spk
   grep "^$L" $eval_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/eval_spk
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/eval_spk
   grep "^$L" $enroll_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/enroll_spk
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/enroll_spk
   if [ -f $CONFDIR/train_spk.list ]; then
     grep "^$L" $train_list | cut -f2- | tr ' ' '\n' \
-      | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/train_spk
+      | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/train_spk
   else
     echo "Train-set speaker list not found. Using all speakers not in eval set."
-    grep -v -f $tmpdir/test_spk -f $tmpdir/eval_spk -f $tmpdir/enroll_spk \
-      $WAVDIR/$L/lists/spk > $tmpdir/train_spk || \
+    grep -v -f $tmpdir/$L/test_spk -f $tmpdir/$L/eval_spk -f $tmpdir/$L/enroll_spk \
+      $WAVDIR/$L/lists/spk > $tmpdir/$L/train_spk || \
       echo "Could not find any training set speakers; \
       are you trying to use all of them for evaluation and testing?";
   fi
   
   echo "Language - ${L}: formatting train/enroll/eval/test data."
   for x in train enroll eval test; do
-    echo "$x speakers"
-
     mkdir -p $datadir/$L/$x
-    rm -f $datadir/$L/$x/wav.scp $datadir/$L/$x/spk2utt $datadir/$L/$x/utt2spk
+    rm -f $datadir/$L/$x/wav.scp $datadir/$L/$x/spk2utt \
+          $datadir/$L/$x/utt2spk $datadir/$L/$x/utt2len
     
-    for spk in `cat $tmpdir/${x}_spk`; do
+    for spk in `cat $tmpdir/$L/${x}_spk`; do
       grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/$x/wav.scp
       grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/$x/spk2utt
       grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/$x/utt2spk
+      grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/$x/utt2len
     done
   done
-  echo "Done"
+  ) &
 done
+wait;
+echo "Done"
 
 # Combine data from all languages into big piles
 train_dirs=()
@@ -148,27 +146,25 @@ for L in $LANGUAGES; do
 done
 
 echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $datadir/train ${train_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2len' $datadir/train ${train_dirs[@]}
 
 echo "Combining enrollment directories: $(echo ${enroll_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $datadir/enroll ${enroll_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2len' $datadir/enroll ${enroll_dirs[@]}
 
 echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $datadir/eval ${eval_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2len' $datadir/eval ${eval_dirs[@]}
 
 echo "Combining testing directories: $(echo ${test_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $datadir/test ${test_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2len' $datadir/test ${test_dirs[@]}
 
 
 # Add utt2lang and lang2utt files for the collected languages
-# Don't bother with test data
 for x in train enroll eval test; do
   sed -e 's?[0-9]*$??' $datadir/${x}/utt2spk \
   > $datadir/${x}/utt2lang
 
-  local/utt2lang_to_lang2utt.pl $datadir/${x}/utt2lang \
+  ./local/utt2lang_to_lang2utt.pl $datadir/${x}/utt2lang \
   > $datadir/${x}/lang2utt
-
 done
 
 echo "Finished data preparation."

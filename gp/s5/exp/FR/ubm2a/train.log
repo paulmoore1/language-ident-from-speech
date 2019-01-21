@@ -1,2 +1,0 @@
-steps/train_ubm.sh --cmd run.pl 400 data/FR/train data/FR/lang exp/FR/tri1_ali exp/FR/ubm2a
-No such file data/FR/train/feats.scp
