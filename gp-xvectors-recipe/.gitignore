@@ -22,3 +22,6 @@ conf/test_languages.list
 
 #Log files
 nohup.out
+
+# Sam's local directories
+gp_s5
