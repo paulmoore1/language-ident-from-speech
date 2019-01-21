@@ -72,8 +72,8 @@ logistic-regression-copy \
 # logistic-regression-eval --apply-log=$apply_log $model \
 #   "$train_xvectors" ark,t:$train_dir/posteriors
 # cat $train_dir/posteriors | \
-#   awk '{max=$3; argmax=3; for(f=3;f<NF;f++) { if ($f>max) 
-#                           { max=$f; argmax=f; }}  
+#   awk '{max=$3; argmax=3; for(f=3;f<NF;f++) { if ($f>max)
+#                           { max=$f; argmax=f; }}
 #                           print $1, (argmax - 3); }' | \
 #   utils/int2sym.pl -f 2 $languages \
 #     >$train_dir/output
@@ -92,8 +92,8 @@ logistic-regression-eval \
   2>$model_dir/logistic-regression-eval.log
 
 cat $test_dir/posteriors | \
-  awk '{max=$3; argmax=3; for(f=3;f<NF;f++) { if ($f>max) 
-                          { max=$f; argmax=f; }}  
+  awk '{max=$3; argmax=3; for(f=3;f<NF;f++) { if ($f>max)
+                          { max=$f; argmax=f; }}
                           print $1, (argmax - 3); }' | \
   utils/int2sym.pl -f 2 $languages \
     >$classification_file

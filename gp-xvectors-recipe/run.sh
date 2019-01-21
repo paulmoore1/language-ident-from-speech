@@ -145,6 +145,10 @@ else
   exp_dir=$DATADIR/exp
 fi
 
+#
+echo $exp_dir
+exit
+
 # Set the languages that will actually be processed
 GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
 
