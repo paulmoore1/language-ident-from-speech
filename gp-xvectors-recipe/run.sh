@@ -172,7 +172,7 @@ if [ "$use_preprocessed" = true ]; then
   baseline_dir="$home_data_dir/baseline"
 
   if [ ! -d $baseline_dir ]; then
-    "$baseline_dir"
+    echo "ERROR: $baseline_dir not found"
     exit 1
   fi
 
@@ -188,7 +188,7 @@ fi
 # Set the languages that will actually be processed
 GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
 
-echo "Running with languages: ${GP_LANGUAGES}"
+echo "Running with languages: ${GP_LANGUAGES}"echo $DATADIR
 
 # The most time-consuming stage: Converting SHNs to WAVs. Should be done only once;
 # then, this script can be run from stage 0 onwards.
