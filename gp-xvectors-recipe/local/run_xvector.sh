@@ -19,6 +19,7 @@ data=data/train
 nnet_dir=exp/xvector_nnet_1a/
 egs_dir=exp/xvector_nnet_1a/egs
 max_num_jobs=8
+num_epochs=3
 
 . ./path.sh
 . ./cmd.sh
@@ -44,14 +45,13 @@ num_pdfs=$(awk '{print $2}' $data/utt2spk | sort | uniq -c | wc -l)
 #    100304-f-sre2006-kacg-A 1 2 4079 881 23
 
 # If you're satisfied with the number of archives (e.g., 50-150 archives is
-# reasonable) and with the number of examples per speaker (e.g., 1000-5000
+# reasonable) and with the number of examples per language (e.g., 1000-5000
 # is reasonable) then you can let the script continue to the later stages.
 # Otherwise, try increasing or decreasing the --num-repeats option.  You might
 # need to fiddle with --frames-per-iter.  Increasing this value decreases the
 # the number of archives and increases the number of examples per archive.
 # Decreasing this value increases the number of archives, while decreasing the
 # number of examples per archive.
-
 echo "$data"
 echo $egs_dir
 
@@ -135,6 +135,7 @@ if [[ $(whichMachine) == cluster* ]]; then
 else
   use_gpu=false
 fi
+exit
 
 dropout_schedule='0,0@0.20,0.1@0.50,0'
 srand=123
@@ -152,7 +153,7 @@ if [ $stage -le 6 ]; then
     --trainer.optimization.minibatch-size=64 \
     --trainer.srand=$srand \
     --trainer.max-param-change=2 \
-    --trainer.num-epochs=3 \
+    --trainer.num-epochs=$num_epochs \
     --trainer.dropout-schedule="$dropout_schedule" \
     --trainer.shuffle-buffer-size=1000 \
     --egs.frames-per-eg=1 \

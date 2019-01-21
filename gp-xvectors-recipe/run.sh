@@ -46,6 +46,18 @@ EXP_NAME="baseline"
 stage=-1
 run_all=false
 
+CONFIG_DIR=$PWD/conf
+
+if [ ! -f $CONFIG_DIR/exp.conf ]; then
+  echo "Configuration file not found for this experiment"
+  exit
+fi
+
+. $CONFIG_DIR/exp.conf
+
+echo "Running experiment: $expname"
+
+:<<'OLD' # Think this may be unneeded if we're using config files to run the experiment
 while [ $# -gt 0 ];
 do
   case "$1" in
@@ -60,7 +72,9 @@ do
   esac
 done
 
-echo -e $usage
+
+#echo -e $usage
+OLD
 
 if [ $stage -eq -1 ]; then
   if [ "$run_all" = true ]; then
@@ -113,7 +127,14 @@ fi
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
-DATADIR="${DATADIR}/${EXP_NAME}"
+DATADIR="${DATADIR}/$expname"
+echo $DATADIR
+if [ -d $DATADIR ]; then
+  echo "Experiment with this name already exists. Continuing will overwrite it." \
+      "Rename this experiment or backup/delete the old experiment directory"
+  exit 1
+fi
+
 mkdir -p $DATADIR
 mkdir -p $DATADIR/log
 
@@ -145,9 +166,24 @@ else
   exp_dir=$DATADIR/exp
 fi
 
-#
-echo $exp_dir
-exit
+# If using preprocessed data, change appropriate directories to the baseline
+if [ "$use_preprocessed" = true ]; then
+  home_data_dir=${DATADIR%/$expname}
+  baseline_dir="$home_data_dir/baseline"
+
+  if [ ! -d $baseline_dir ]; then
+    "$baseline_dir"
+    exit 1
+  fi
+
+  train_data=$baseline_dir/train
+  enroll_data=$baseline_dir/enroll
+  eval_data=$baseline_dir/eval
+  test_data=$baseline_dir/test
+  mfccdir=$baseline_dir/mfcc
+  vaddir=$baseline_dir/mfcc
+  nnet_train_data=$baseline_dir/nnet_train_data
+fi
 
 # Set the languages that will actually be processed
 GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
@@ -181,13 +217,13 @@ if [ $stage -eq 1 ]; then
     || exit 1;
 
   # Don't split training data into segments. It will be split anyway when
-  # preparing the training examples for the DNN. Note that the LID X-vector 
+  # preparing the training examples for the DNN. Note that the LID X-vector
   # paper has training segments of 2-4s.
   #  ./local/split_long_utts.sh \
   #    --max-utt-len 4 \
   #    $train_data \
   #    ${train_data}
-  
+
   # Split enroll data into segments of < 30s.
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
   ./local/split_long_utts.sh \
@@ -219,9 +255,9 @@ fi
 if [ $stage -eq 2 ]; then
   echo "#### STAGE 2: MFCC and VAD. ####"
 
-  for name in train enroll eval test; do
+  for data_subset in train enroll eval test; do
     (
-    num_speakers=$(cat $DATADIR/${name}/spk2utt | wc -l)
+    num_speakers=$(cat $DATADIR/${data_subset}/spk2utt | wc -l)
     if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
       num_jobs=$MAXNUMJOBS
     else
@@ -233,23 +269,23 @@ if [ $stage -eq 2 ]; then
       --mfcc-config conf/mfcc.conf \
       --nj $num_jobs \
       --cmd "$preprocess_cmd" \
-      $DATADIR/${name} \
+      $DATADIR/${data_subset} \
       $log_dir/make_mfcc \
       $mfccdir
 
     # Have to calculate this separately, since make_mfcc.sh isn't writing properly
-		utils/data/get_utt2num_frames.sh $DATADIR/${name}
-    utils/fix_data_dir.sh $DATADIR/${name}
+		utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
+    utils/fix_data_dir.sh $DATADIR/${data_subset}
 
     ./local/compute_vad_decision.sh \
       --nj $num_jobs \
       --cmd "$preprocess_cmd" \
-      $DATADIR/${name} \
+      $DATADIR/${data_subset} \
       $log_dir/make_vad \
       $vaddir
 
-    utils/fix_data_dir.sh $DATADIR/${name}
-    ) > $log_dir/mfcc_${name}
+    utils/fix_data_dir.sh $DATADIR/${data_subset}
+    ) > $log_dir/mfcc_${data_subset}
   done
   wait;
 
@@ -306,13 +342,26 @@ fi
 # TO-DO: Find out the runtime without using GPUs.
 if [ $stage -eq 4 ]; then
   echo "#### STAGE 4: Training the X-vector DNN. ####"
-  ./local/run_xvector.sh \
-    --stage 4 \
-    --train-stage -1 \
-    --max-num-jobs $MAXNUMJOBS \
-    --data $nnet_train_data \
-    --nnet-dir $nnet_dir \
-    --egs-dir $nnet_dir/egs
+  if [ "$use_preprocessed" = true ]; then
+    ./local/run_xvector.sh \
+      --stage 5 \
+      --train-stage -1 \
+      --num-epochs $num_epochs \
+      --max-num-jobs $MAXNUMJOBS \
+      --data $nnet_train_data \
+      --nnet-dir $nnet_dir \
+      --egs-dir $baseline_dir/nnet/egs
+  else
+    ./local/run_xvector.sh \
+      --stage 4 \
+      --train-stage -1 \
+      --num-epochs $num_epochs \
+      --max-num-jobs $MAXNUMJOBS \
+      --data $nnet_train_data \
+      --nnet-dir $nnet_dir \
+      --egs-dir $nnet_dir/egs
+  fi
+
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 3`
