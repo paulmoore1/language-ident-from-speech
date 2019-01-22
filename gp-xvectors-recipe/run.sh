@@ -140,8 +140,10 @@ enroll_data=$home_prefix/enroll
 eval_data=$home_prefix/eval
 test_data=$home_prefix/test
 log_dir=$home_prefix/log
-mfccdir=$home_prefix/mfcc
-vaddir=$home_prefix/mfcc
+mfcc_dir=$home_prefix/mfcc
+mfcc_sdc_dir=$home_prefix/mfcc_sdc
+sdc_dir=$home_prefix/mfcc_sdc
+vaddir=$home_prefix/vad
 feat_dir=$home_prefix/x_vector_features
 nnet_train_data=$home_prefix/nnet_train_data
 nnet_dir=$home_prefix/nnet
@@ -236,10 +238,10 @@ if [ $stage -eq 1 ]; then
   fi
 fi
 
-# Make MFCCs and compute the energy-based VAD for each dataset
+# Make features and compute the energy-based VAD for each dataset
 # Runtime: ~12 mins
 if [ $stage -eq 2 ]; then
-  echo "#### STAGE 2: MFCC and VAD. ####"
+  echo "#### STAGE 2: features (MFCC, SDC, etc) and VAD. ####"
   
   for data_subset in train enroll eval test; do
     (
@@ -250,17 +252,40 @@ if [ $stage -eq 2 ]; then
       num_jobs=$num_speakers
     fi
 
-    steps/make_mfcc.sh \
-      --write-utt2num-frames false \
-      --mfcc-config conf/mfcc.conf \
-      --nj $num_jobs \
-      --cmd "$preprocess_cmd" \
-      $DATADIR/${data_subset} \
-      $log_dir/make_mfcc \
-      $mfccdir
+    if [ "$feature_type" == "mfcc" ]; then
+      steps/make_mfcc.sh \
+        --write-utt2num-frames false \
+        --mfcc-config conf/mfcc.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_mfcc \
+        $mfcc_dir
+    elif [ "$feature_type" == "sdc" ]; then
+      steps/make_mfcc.sh \
+        --write-utt2num-frames false \
+        --mfcc-config conf/mfcc_sdc.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_mfcc_sdc \
+        $mfcc_sdc_dir
 
+      ./local/make_sdc.sh \
+        --write-utt2num-frames false \
+        --sdc-config conf/sdc.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_sdc \
+        $sdc_dir
+    fi
+    
     # Have to calculate this separately, since make_mfcc.sh isn't writing properly
-		utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
+  	utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
     utils/fix_data_dir.sh $DATADIR/${data_subset}
 
     ./local/compute_vad_decision.sh \
@@ -271,14 +296,14 @@ if [ $stage -eq 2 ]; then
       $vaddir
 
     utils/fix_data_dir.sh $DATADIR/${data_subset}
-    ) > $log_dir/mfcc_${data_subset}
+    ) > $log_dir/${feature_type}_${data_subset}
   done
-  wait;
+  # wait;
 
-  utils/fix_data_dir.sh $train_data
-  utils/fix_data_dir.sh $enroll_data
-  utils/fix_data_dir.sh $eval_data
-  utils/fix_data_dir.sh $test_data
+  # utils/fix_data_dir.sh $train_data
+  # utils/fix_data_dir.sh $enroll_data
+  # utils/fix_data_dir.sh $eval_data
+  # utils/fix_data_dir.sh $test_data
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
