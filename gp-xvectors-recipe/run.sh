@@ -150,6 +150,7 @@ exp_dir=$home_prefix/exp
 # If using existing preprocessed data for computing x-vectors
 if [ ! -z "$use_dnn_egs_from" ]; then
   home_prefix=$DATADIR/$use_dnn_egs_from
+  echo "Using preprocessed data	from: $home_prefix"
 
   if [ ! -d $home_prefix ]; then
     echo "ERROR: directory containging preprocessed data not found: '$home_prefix'"
@@ -173,8 +174,6 @@ echo "The experiment directory is: $DATADIR"
 GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
 
 echo "Running with languages: ${GP_LANGUAGES}"
-
-exit
 
 # The most time-consuming stage: Converting SHNs to WAVs. Should be done only once;
 # then, this script can be run from stage 0 onwards.
