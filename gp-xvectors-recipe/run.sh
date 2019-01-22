@@ -36,28 +36,21 @@ usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \t       \t\t\tor just the specified one\n
 \t       --experiment=STR\tExperiment name (also name of directory \n
 \t       \t\t\twhere all files will be stored).\n
-\t       \t\t\tDefault: 'baseline'.\n\n
+\t       \t\t\tDefault: 'baseline'.\n
+\t       --exp-config=FILE\tConfig file with all kinds of options,\n
+\t       \t\t\tsee conf/exp_default.conf for an example.\n\n
 \t       If no stage number is provided, either all stages\n
 \t       will be run (--run-all=true) or no stages at all.\n
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 # Default option values
-EXP_NAME="baseline"
+exp_name="baseline"
 stage=-1
 run_all=false
+exp_config=NONE
+num_epochs=3
+feature_type=mfcc
 
-CONFIG_DIR=$PWD/conf
-
-if [ ! -f $CONFIG_DIR/exp.conf ]; then
-  echo "Configuration file not found for this experiment"
-  exit
-fi
-
-. $CONFIG_DIR/exp.conf
-
-echo "Running experiment: $expname"
-
-:<<'OLD' # Think this may be unneeded if we're using config files to run the experiment
 while [ $# -gt 0 ];
 do
   case "$1" in
@@ -66,15 +59,23 @@ do
   run_all=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --stage=*)
   stage=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
-  --experiment=*)
-  EXP_NAME=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --exp-name=*)
+  exp_name=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --exp-config=*)
+  exp_config=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
+echo -e $usage
 
+if [ ! "$exp_config" == "NONE" ] && [ ! -f $exp_config ]; then
+  echo "Configuration file '${exp_config}' not found for this experiment."
+  exit 1;
+fi
 
-#echo -e $usage
-OLD
+source $exp_config || echo "Problems sourcing the experiment config file: $exp_config"
+
+echo "Running experiment: '$exp_name'"
 
 if [ $stage -eq -1 ]; then
   if [ "$run_all" = true ]; then
@@ -119,7 +120,6 @@ fi
 
 [ -f cmd.sh ] && source ./cmd.sh || echo "cmd.sh not found. Jobs may not execute properly."
 
-
 # CHECKING FOR AND INSTALLING REQUIRED TOOLS:
 #  This recipe requires shorten (3.6.1) and sox (14.3.2).
 #  If they are not found, the local/gp_install.sh script will install them.
@@ -127,68 +127,54 @@ fi
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
-DATADIR="${DATADIR}/$expname"
-echo $DATADIR
-if [ -d $DATADIR ]; then
-  echo "Experiment with this name already exists. Continuing will overwrite it." \
-      "Rename this experiment or backup/delete the old experiment directory"
+if [ -d $DATADIR/$exp_name ]; then
+  echo "Experiment with name '$exp_name' already exists." \
+       "Continuing would overwrite it. Rename this experiment" \
+       "or backup/delete the old experiment directory '$DATADIR'."
   exit 1
 fi
 
-mkdir -p $DATADIR
-mkdir -p $DATADIR/log
+home_prefix=$DATADIR/$exp_name
+train_data=$home_prefix/train
+enroll_data=$home_prefix/enroll
+eval_data=$home_prefix/eval
+test_data=$home_prefix/test
+log_dir=$home_prefix/log
+mfccdir=$home_prefix/mfcc
+vaddir=$home_prefix/mfcc
+feat_dir=$home_prefix/x_vector_features
+nnet_train_data=$home_prefix/nnet_train_data
+nnet_dir=$home_prefix/nnet
+exp_dir=$home_prefix/exp
 
-if [[ $(whichMachine) == cluster* ]]; then
-  home_prefix=$DATADIR
+# If using existing preprocessed data for computing x-vectors
+if [ ! -z "$use_dnn_egs_from" ]; then
+  home_prefix=$DATADIR/$use_dnn_egs_from
+
+  if [ ! -d $home_prefix ]; then
+    echo "ERROR: directory containging preprocessed data not found: '$home_prefix'"
+    exit 1
+  fi
 
   train_data=$home_prefix/train
   enroll_data=$home_prefix/enroll
   eval_data=$home_prefix/eval
   test_data=$home_prefix/test
-  log_dir=$home_prefix/log
-  mfccdir=$home_prefix/mfcc
-  vaddir=$home_prefix/mfcc
-  feat_dir=$home_prefix/x_vector_features
   nnet_train_data=$home_prefix/nnet_train_data
-  nnet_dir=$home_prefix/nnet
-  exp_dir=$home_prefix/exp
-else
-  train_data=$DATADIR/train
-  enroll_data=$DATADIR/enroll
-  eval_data=$DATADIR/eval
-  test_data=$DATADIR/test
-  log_dir=$DATADIR/log
-  mfccdir=$DATADIR/mfcc
-  vaddir=$DATADIR/mfcc
-  feat_dir=$DATADIR/x_vector_features
-  nnet_train_data=$train_data/combined_no_sil
-  nnet_dir=$DATADIR/nnet
-  exp_dir=$DATADIR/exp
+  preprocessed_data_dir=$DATADIR/$use_dnn_egs_from
 fi
 
-# If using preprocessed data, change appropriate directories to the baseline
-if [ "$use_preprocessed" = true ]; then
-  home_data_dir=${DATADIR%/$expname}
-  baseline_dir="$home_data_dir/baseline"
-
-  if [ ! -d $baseline_dir ]; then
-    echo "ERROR: $baseline_dir not found"
-    exit 1
-  fi
-
-  train_data=$baseline_dir/train
-  enroll_data=$baseline_dir/enroll
-  eval_data=$baseline_dir/eval
-  test_data=$baseline_dir/test
-  mfccdir=$baseline_dir/mfcc
-  vaddir=$baseline_dir/mfcc
-  nnet_train_data=$baseline_dir/nnet_train_data
-fi
+DATADIR="${DATADIR}/$exp_name"
+mkdir -p $DATADIR
+mkdir -p $DATADIR/log
+echo "The experiment directory is: $DATADIR"
 
 # Set the languages that will actually be processed
 GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
 
-echo "Running with languages: ${GP_LANGUAGES}"echo $DATADIR
+echo "Running with languages: ${GP_LANGUAGES}"
+
+exit
 
 # The most time-consuming stage: Converting SHNs to WAVs. Should be done only once;
 # then, this script can be run from stage 0 onwards.
@@ -254,7 +240,7 @@ fi
 # Runtime: ~12 mins
 if [ $stage -eq 2 ]; then
   echo "#### STAGE 2: MFCC and VAD. ####"
-
+  
   for data_subset in train enroll eval test; do
     (
     num_speakers=$(cat $DATADIR/${data_subset}/spk2utt | wc -l)
@@ -342,7 +328,7 @@ fi
 # TO-DO: Find out the runtime without using GPUs.
 if [ $stage -eq 4 ]; then
   echo "#### STAGE 4: Training the X-vector DNN. ####"
-  if [ "$use_preprocessed" = true ]; then
+  if [ ! -z "$use_dnn_egs_from" ]; then
     ./local/run_xvector.sh \
       --stage 5 \
       --train-stage -1 \
@@ -350,7 +336,7 @@ if [ $stage -eq 4 ]; then
       --max-num-jobs $MAXNUMJOBS \
       --data $nnet_train_data \
       --nnet-dir $nnet_dir \
-      --egs-dir $baseline_dir/nnet/egs
+      --egs-dir $preprocessed_data_dir/nnet/egs
   else
     ./local/run_xvector.sh \
       --stage 4 \
