@@ -135,7 +135,6 @@ if [[ $(whichMachine) == cluster* ]]; then
 else
   use_gpu=false
 fi
-exit
 
 dropout_schedule='0,0@0.20,0.1@0.50,0'
 srand=123
