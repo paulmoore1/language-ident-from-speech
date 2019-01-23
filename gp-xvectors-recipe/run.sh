@@ -201,6 +201,8 @@ if [ $stage -eq 42 ]; then
     --wav-dir=$HOME/lid/wav \
     --lang-map=$PWD/conf/lang_codes.txt \
     --languages="$GP_LANGUAGES"
+
+  echo "Finished stage 42."
 fi
 
 # Preparing lists of utterances (and a couple other auxiliary lists) based
@@ -244,6 +246,8 @@ if [ $stage -eq 1 ]; then
     --max-utt-len 10 \
     $test_data \
     ${test_data}
+
+  echo "Finished stage 1."
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
@@ -319,12 +323,8 @@ if [ $stage -eq 2 ]; then
     utils/fix_data_dir.sh $DATADIR/${data_subset}
     ) > $log_dir/${feature_type}_${data_subset}
   done
-  # wait;
 
-  # utils/fix_data_dir.sh $train_data
-  # utils/fix_data_dir.sh $enroll_data
-  # utils/fix_data_dir.sh $eval_data
-  # utils/fix_data_dir.sh $test_data
+  echo "Finished stage 2."
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
@@ -360,7 +360,8 @@ if [ $stage -eq 3 ]; then
   utils/filter_scp.pl $nnet_train_data/utt2num_frames $nnet_train_data/utt2spk > $nnet_train_data/utt2spk.new
   mv $nnet_train_data/utt2spk.new $nnet_train_data/utt2spk
   utils/fix_data_dir.sh $nnet_train_data
-	echo "Done"
+
+  echo "Finished stage 3."
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
@@ -394,6 +395,7 @@ if [ $stage -eq 4 ]; then
       --egs-dir $nnet_dir/egs
   fi
 
+  echo "Finished stage 4."
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 3`
@@ -433,17 +435,18 @@ if [ $stage -eq 7 ]; then
     $exp_dir/xvectors_eval &
 
   # X-vectors for testing (final evaluation)
-  ./local/extract_xvectors.sh \
-    --cmd "$extract_cmd --mem 6G" \
-    --use-gpu $use_gpu \
-    --nj $MAXNUMJOBS \
-    --stage 0 \
-    $nnet_dir \
-    $test_data \
-    $exp_dir/xvectors_test &
+#  ./local/extract_xvectors.sh \
+#    --cmd "$extract_cmd --mem 6G" \
+#    --use-gpu $use_gpu \
+#    --nj $MAXNUMJOBS \
+#    --stage 0 \
+#    $nnet_dir \
+#    $test_data \
+#    $exp_dir/xvectors_test &
 
   wait;
-  echo "Done"
+
+  echo "Finished stage 7."
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
@@ -481,6 +484,8 @@ if [ $stage -eq 8 ]; then
     --languages conf/test_languages.list \
     > $exp_dir/classifier/logistic-regression.log
 
+  echo "Finished stage 8."
+
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
@@ -497,4 +502,6 @@ if [ $stage -eq 9 ]; then
     --output-file $exp_dir/results/results \
     --language-list "$GP_LANGUAGES" \
     2>$exp_dir/results/compute_results.log
+
+  echo "Finished stage 9."
 fi
