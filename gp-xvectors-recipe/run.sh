@@ -38,7 +38,9 @@ usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \t       \t\t\twhere all files will be stored).\n
 \t       \t\t\tDefault: 'baseline'.\n
 \t       --exp-config=FILE\tConfig file with all kinds of options,\n
-\t       \t\t\tsee conf/exp_default.conf for an example.\n\n
+\t       \t\t\tsee conf/exp_default.conf for an example.\n
+\t       \t\t\tNOTE: Where arguments are passed on the command line,\n
+\t       \t\t\tthe values overwrite those found in the config file.\n\n
 \t       If no stage number is provided, either all stages\n
 \t       will be run (--run-all=true) or no stages at all.\n
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -56,11 +58,11 @@ do
   case "$1" in
   --help) echo -e $usage; exit 0 ;;
   --run-all=*)
-  run_all=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  run_all_cl=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --stage=*)
-  stage=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  stage_cl=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --exp-name=*)
-  exp_name=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  exp_name_cl=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --exp-config=*)
   exp_config=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
@@ -73,7 +75,20 @@ if [ ! "$exp_config" == "NONE" ] && [ ! -f $exp_config ]; then
   exit 1;
 fi
 
+# Source some variables from the experiment-specific config file
 source $exp_config || echo "Problems sourcing the experiment config file: $exp_config"
+
+# Use arguments passed to this script on the command line 
+# to overwrite the values sourced from the experiment-specific config.
+command_line_options="run_all stage exp_name"
+for cl_opt in $command_line_options; do
+  var="${cl_opt}_cl"
+  if [[ -v $var ]]; then
+    echo "Overwriting the experiment config value of ${cl_opt}=${!cl_opt}"\
+      "using the value '${!var}' passed as a command-line argument."
+    declare $cl_opt="${!var}"
+  fi
+done
 
 echo "Running experiment: '$exp_name'"
 
@@ -140,8 +155,10 @@ enroll_data=$home_prefix/enroll
 eval_data=$home_prefix/eval
 test_data=$home_prefix/test
 log_dir=$home_prefix/log
-mfccdir=$home_prefix/mfcc
-vaddir=$home_prefix/mfcc
+mfcc_dir=$home_prefix/mfcc
+mfcc_sdc_dir=$home_prefix/mfcc_sdc
+sdc_dir=$home_prefix/mfcc_sdc
+vaddir=$home_prefix/vad
 feat_dir=$home_prefix/x_vector_features
 nnet_train_data=$home_prefix/nnet_train_data
 nnet_dir=$home_prefix/nnet
@@ -235,10 +252,10 @@ if [ $stage -eq 1 ]; then
   fi
 fi
 
-# Make MFCCs and compute the energy-based VAD for each dataset
+# Make features and compute the energy-based VAD for each dataset
 # Runtime: ~12 mins
 if [ $stage -eq 2 ]; then
-  echo "#### STAGE 2: MFCC and VAD. ####"
+  echo "#### STAGE 2: features (MFCC, SDC, etc) and VAD. ####"
   
   for data_subset in train enroll eval test; do
     (
@@ -249,17 +266,40 @@ if [ $stage -eq 2 ]; then
       num_jobs=$num_speakers
     fi
 
-    steps/make_mfcc.sh \
-      --write-utt2num-frames false \
-      --mfcc-config conf/mfcc.conf \
-      --nj $num_jobs \
-      --cmd "$preprocess_cmd" \
-      $DATADIR/${data_subset} \
-      $log_dir/make_mfcc \
-      $mfccdir
+    if [ "$feature_type" == "mfcc" ]; then
+      steps/make_mfcc.sh \
+        --write-utt2num-frames false \
+        --mfcc-config conf/mfcc.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_mfcc \
+        $mfcc_dir
+    elif [ "$feature_type" == "sdc" ]; then
+      steps/make_mfcc.sh \
+        --write-utt2num-frames false \
+        --mfcc-config conf/mfcc_sdc.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_mfcc_sdc \
+        $mfcc_sdc_dir
 
+      ./local/make_sdc.sh \
+        --write-utt2num-frames false \
+        --sdc-config conf/sdc.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_sdc \
+        $sdc_dir
+    fi
+    
     # Have to calculate this separately, since make_mfcc.sh isn't writing properly
-		utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
+  	utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
     utils/fix_data_dir.sh $DATADIR/${data_subset}
 
     ./local/compute_vad_decision.sh \
@@ -270,14 +310,14 @@ if [ $stage -eq 2 ]; then
       $vaddir
 
     utils/fix_data_dir.sh $DATADIR/${data_subset}
-    ) > $log_dir/mfcc_${data_subset}
+    ) > $log_dir/${feature_type}_${data_subset}
   done
-  wait;
+  # wait;
 
-  utils/fix_data_dir.sh $train_data
-  utils/fix_data_dir.sh $enroll_data
-  utils/fix_data_dir.sh $eval_data
-  utils/fix_data_dir.sh $test_data
+  # utils/fix_data_dir.sh $train_data
+  # utils/fix_data_dir.sh $enroll_data
+  # utils/fix_data_dir.sh $eval_data
+  # utils/fix_data_dir.sh $test_data
 
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
