@@ -142,12 +142,12 @@ fi
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
-if [ -d $DATADIR/$exp_name ]; then
-  echo "Experiment with name '$exp_name' already exists." \
-       "Continuing would overwrite it. Rename this experiment" \
-       "or backup/delete the old experiment directory '$DATADIR'."
-  exit 1
-fi
+#if [ -d $DATADIR/$exp_name ]; then
+#  echo "Experiment with name '$exp_name' already exists." \
+#       "Continuing would overwrite it. Rename this experiment" \
+#       "or backup/delete the old experiment directory '$DATADIR'."
+#  exit 1
+#fi
 
 home_prefix=$DATADIR/$exp_name
 train_data=$home_prefix/train
@@ -267,6 +267,7 @@ if [ $stage -eq 2 ]; then
     fi
 
     if [ "$feature_type" == "mfcc" ]; then
+      echo "Creating full MFCC features."
       steps/make_mfcc.sh \
         --write-utt2num-frames false \
         --mfcc-config conf/mfcc.conf \
@@ -277,6 +278,7 @@ if [ $stage -eq 2 ]; then
         $log_dir/make_mfcc \
         $mfcc_dir
     elif [ "$feature_type" == "sdc" ]; then
+      echo "Creating 7D MFCC features for SDC features."
       steps/make_mfcc.sh \
         --write-utt2num-frames false \
         --mfcc-config conf/mfcc_sdc.conf \
@@ -287,6 +289,9 @@ if [ $stage -eq 2 ]; then
         $log_dir/make_mfcc_sdc \
         $mfcc_sdc_dir
 
+      utils/fix_data_dir.sh $DATADIR/${data_subset}
+
+      echo "Creating SDC features on top of 7D MFCC features."
       ./local/make_sdc.sh \
         --write-utt2num-frames false \
         --sdc-config conf/sdc.conf \
@@ -297,9 +302,11 @@ if [ $stage -eq 2 ]; then
         $log_dir/make_sdc \
         $sdc_dir
     fi
+
+    echo "Computing utt2num_frames and fixing the directory."
     
     # Have to calculate this separately, since make_mfcc.sh isn't writing properly
-  	utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
+    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
     utils/fix_data_dir.sh $DATADIR/${data_subset}
 
     ./local/compute_vad_decision.sh \

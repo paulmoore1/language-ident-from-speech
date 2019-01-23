@@ -52,10 +52,10 @@ mkdir -p $logdir || exit 1;
 if [ -f $data_in/feats.scp ]; then
   mkdir -p $data_in/.backup
   echo "$0: moving $data_in/feats.scp to $data_in/.backup"
-  mv $data_in/feats.scp $data_in/.backup
+  cp $data_in/feats.scp $data_in/.backup
 fi
 
-scp=$data_in/feats.scp
+scp=$data_in/.backup/feats.scp
 required="$scp $sdc_config"
 
 for f in $required; do
@@ -89,7 +89,7 @@ fi
 
 # concatenate the .scp files together.
 for n in $(seq $nj); do
-  cat $sdc_dir/raw_sdc_${name}.$n.scp || exit 1;
+  cat $sdc_dir/sdc_${name}.$n.scp || exit 1;
 done > $data_in/feats.scp || exit 1
 
 if $write_utt2num_frames; then
