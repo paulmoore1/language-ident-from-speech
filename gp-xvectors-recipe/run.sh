@@ -441,7 +441,7 @@ fi
 
 # Using logistic regression as a classifier (adapted from egs/lre07/v2,
 # described in https://arxiv.org/pdf/1804.05000.pdf)
-# Runtime: < 1min
+# Runtime: ~ 3min
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####"
   # Make language-int map (essentially just indexing the languages 0 to L)
@@ -463,8 +463,8 @@ if [ $stage -eq 8 ]; then
     --test-dir $exp_dir/xvectors_eval \
     --model-dir $exp_dir/classifier \
     --classification-file $exp_dir/results/classification \
-    --train-utt2lang $DATADIR/enroll/utt2lang \
-    --test-utt2lang $DATADIR/eval/utt2lang \
+    --train-utt2lang $enroll_data/utt2lang \
+    --test-utt2lang $eval_data/utt2lang \
     --languages conf/test_languages.list \
     > $exp_dir/classifier/logistic-regression.log
 
