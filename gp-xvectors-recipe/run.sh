@@ -110,22 +110,6 @@ fi
 [ -f helper_functions.sh ] && source ./helper_functions.sh \
   || echo "helper_functions.sh not found. Won't be able to set environment variables and similar."
 
-if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
-  if [[ $(whichMachine) == cluster* ]]; then
-    echo "Conda environment not activated, sourcing ~/.bashrc and activating the 'lid' env."
-    source ~/.bashrc
-    conda activate lid || exit
-  elif [[ $(whichMachine) == dice* ]]; then
-    echo "Conda environment not activated, trying to activate it."
-    source activate lid || exit
-  else
-    echo "Conda environment not activated, trying to activate it."
-    conda activate lid || exit
-  fi
-else
-  echo "Conda environment '$CONDA_DEFAULT_ENV' active."
-fi
-
 [ -f conf/general_config.sh ] && source ./conf/general_config.sh \
   || echo "conf/general_config.sh not found or contains errors!"
 
