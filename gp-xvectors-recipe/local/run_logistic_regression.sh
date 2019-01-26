@@ -88,10 +88,11 @@ logistic-regression-eval \
   --apply-log=$apply_log \
   --print-args=false \
   $model_rebalanced \
-  "$test_xvectors" ark,t:$test_dir/posteriors \
+  "$test_xvectors" \
+  ark,t:$model_dir/posteriors \
   2>$model_dir/logistic-regression-eval.log
 
-cat $test_dir/posteriors | \
+cat $model_dir/posteriors | \
   awk '{max=$3; argmax=3; for(f=3;f<NF;f++) { if ($f>max)
                           { max=$f; argmax=f; }}
                           print $1, (argmax - 3); }' | \
