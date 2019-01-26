@@ -75,7 +75,7 @@ for max_steps in ${max_steps_vals[@]}; do
       EXPNAME="max_steps=${max_steps}_normalizer=${normalizer}_mix_up=${mix_up}"
       test_dir=$DATADIR/logreg_tuning/$EXPNAME
       acc=$(cat $test_dir/results/results | grep "Accuracy" | sed -E "s/[^0-9]+([0-9.]+).*/\1/")
-      c_primary=c=$(cat $test_dir/results/results | grep "C_primary" | sed -E "s/[^0-9]*([0-9.]+).*/\1/")
+      c_primary=$(cat $test_dir/results/results | grep "C_primary" | sed -E "s/[^0-9]*([0-9.]+).*/\1/")
       echo "max-steps=${max_steps}, normalizer=${normalizer}, mix-up=${mix_up}, acc=${acc}, c_prim=${c_primary}" >> $log_dir/results.log
     done
   done
