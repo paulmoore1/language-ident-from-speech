@@ -36,9 +36,10 @@ for max_steps in ${max_steps_vals[@]}; do
       mkdir -p $test_dir/results
       mkdir -p $test_dir/classifier
 
-      logistic_regression_conf_text="--max-steps=${max_steps}\n--normalizer=${normalizer}\n--mix-up=200\n--power=0.15"
+      logistic_regression_conf_text="--max-steps=${max_steps}\n--normalizer=${normalizer}\n--mix-up=${mix_up}\n--power=0.15"
       echo -e $logistic_regression_conf_text > $test_dir/logistic-regression.conf
-
+      
+      (
       # Training the log reg model and classifying test set samples
       ./local/run_logistic_regression.sh \
         --prior-scale 0.70 \
@@ -52,13 +53,12 @@ for max_steps in ${max_steps_vals[@]}; do
         --languages conf/test_languages.list \
         > $test_dir/classifier/logistic-regression.log
 
-      echo "#### Calculating results. ####"
-
       ./local/compute_results.py \
         --classification-file $test_dir/results/classification \
         --output-file $test_dir/results/results \
         --language-list "$GP_LANGUAGES" \
         2>$test_dir/results/compute_results.log
+      ) &
     done
   done
 done
@@ -66,6 +66,7 @@ wait
 #TEMP
 
 
+echo "Now putting together the results of all the runs."
 :> $log_dir/results.log
 
 for max_steps in ${max_steps_vals[@]}; do
