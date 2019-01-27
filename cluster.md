@@ -57,6 +57,5 @@ To check the job queue use `squeue`.
 
 ## Longjobbing
 ```
-(echo "YourDicePassword" | nohup longjob -28day -c 'nice yourCommandHere' ) &
-(echo 'YourDicePassword' | nohup longjob -28day -c './run.sh --experiment=baseline --stage=1' ) &
+(echo 'YourDicePassword' | nohup longjob -28day -c './run.sh --exp-config=conf/exp_default.conf --stage=1' &> nohup-baseline.out ) &
 ```
