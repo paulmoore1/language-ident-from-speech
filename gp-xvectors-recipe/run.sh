@@ -256,7 +256,7 @@ if [ $stage -eq 2 ]; then
     fi
 
     if [ "$feature_type" == "mfcc" ]; then
-      echo "Creating full MFCC features."
+      echo "Creating 23D MFCC features."
       steps/make_mfcc.sh \
         --write-utt2num-frames false \
         --mfcc-config conf/mfcc.conf \
@@ -267,16 +267,16 @@ if [ $stage -eq 2 ]; then
         $log_dir/make_mfcc \
         $mfcc_dir
     elif [ "$feature_type" == "mfcc_deltas" ]; then
-      echo "Creating 23D MFCC features for mfcc-delta features."
-      steps/make_mfcc.sh \
+      echo "Creating 23D MFCC features for MFCC-delta features."
+      steps/make_deltas.sh \
         --write-utt2num-frames false \
-        --mfcc-config conf/mfcc_sdc.conf \
+        --mfcc-config conf/mfcc.conf \
         --nj $num_jobs \
         --cmd "$preprocess_cmd" \
         --compress true \
         $DATADIR/${data_subset} \
-        $log_dir/make_mfcc_sdc \
-        $mfcc_sdc_dir
+        $log_dir/make_mfcc \
+        $mfcc_deltas_dir
 
       utils/fix_data_dir.sh $DATADIR/${data_subset}
       echo "Creating MFCC-delta features on top of 23D MFCC features."
