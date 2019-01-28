@@ -142,6 +142,7 @@ log_dir=$home_prefix/log
 mfcc_dir=$home_prefix/mfcc
 mfcc_sdc_dir=$home_prefix/mfcc_sdc
 sdc_dir=$home_prefix/mfcc_sdc
+mfcc_deltas_dir=$home_prefix/mfcc_deltas
 vaddir=$home_prefix/vad
 feat_dir=$home_prefix/x_vector_features
 nnet_train_data=$home_prefix/nnet_train_data
@@ -265,6 +266,29 @@ if [ $stage -eq 2 ]; then
         $DATADIR/${data_subset} \
         $log_dir/make_mfcc \
         $mfcc_dir
+    elif [ "$feature_type" == "mfcc_deltas" ]; then
+      echo "Creating 23D MFCC features for mfcc-delta features."
+      steps/make_mfcc.sh \
+        --write-utt2num-frames false \
+        --mfcc-config conf/mfcc_sdc.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_mfcc_sdc \
+        $mfcc_sdc_dir
+
+      utils/fix_data_dir.sh $DATADIR/${data_subset}
+      echo "Creating MFCC-delta features on top of 23D MFCC features."
+      ./local/make_deltas.sh \
+        --write-utt2num-frames false \
+        --deltas-config conf/deltas.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_deltas \
+        $mfcc_deltas_dir
     elif [ "$feature_type" == "sdc" ]; then
       echo "Creating 7D MFCC features for SDC features."
       steps/make_mfcc.sh \
