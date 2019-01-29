@@ -268,7 +268,7 @@ if [ $stage -eq 2 ]; then
         $mfcc_dir
     elif [ "$feature_type" == "mfcc_deltas" ]; then
       echo "Creating 23D MFCC features for MFCC-delta features."
-      steps/make_deltas.sh \
+      steps/make_mfcc.sh \
         --write-utt2num-frames false \
         --mfcc-config conf/mfcc.conf \
         --nj $num_jobs \
