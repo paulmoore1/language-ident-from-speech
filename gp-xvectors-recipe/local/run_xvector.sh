@@ -69,8 +69,11 @@ if [ $stage -le 4 ]; then
     --max-frames-per-chunk 400 \
     --num-diagnostic-archives 3 \
     --num-repeats 35 \
-    "$data" $egs_dir
+    "$data" \
+    $egs_dir
 fi
+
+exit 0
 
 if [ $stage -le 5 ]; then
   echo  "#### STAGE 5: Creating NN configs using the xconfig parser. ####";
@@ -138,10 +141,11 @@ fi
 
 dropout_schedule='0,0@0.20,0.1@0.50,0'
 srand=123
-#NOTE use_gpu set to false on this DICE machine
+
 if [ $stage -le 6 ]; then
   echo  "#### STAGE 6: Training the network. ####"
-  steps/nnet3/train_raw_dnn.py --stage=$train_stage \
+  steps/nnet3/train_raw_dnn.py \
+    --stage=$train_stage \
     --cmd="$train_cmd" \
     --trainer.optimization.proportional-shrink 10 \
     --trainer.optimization.momentum=0.5 \
