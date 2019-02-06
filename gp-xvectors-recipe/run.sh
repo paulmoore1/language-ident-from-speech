@@ -78,7 +78,7 @@ fi
 # Source some variables from the experiment-specific config file
 source $exp_config || echo "Problems sourcing the experiment config file: $exp_config"
 
-# Use arguments passed to this script on the command line 
+# Use arguments passed to this script on the command line
 # to overwrite the values sourced from the experiment-specific config.
 command_line_options="run_all stage exp_name"
 for cl_opt in $command_line_options; do
@@ -98,6 +98,7 @@ if [ $stage -eq -1 ]; then
     stage=0
   else
     echo "No stage specified and --run-all=false, not running any stages."
+    exit 1;
   fi
 else
   if [ "$run_all" = true ]; then
@@ -200,7 +201,7 @@ if [ $stage -eq 1 ]; then
   ./local/gp_data_organise.sh \
     --config-dir=$PWD/conf \
     --corpus-dir=$GP_CORPUS \
-    --wav-dir=/mnt/mscteach_home/s1513472/lid/wav \
+    --wav-dir=/mnt/mscteach_home/s1531206/lid/wav \
     --languages="$GP_LANGUAGES" \
     --data-dir=$DATADIR \
     || exit 1;
@@ -232,6 +233,25 @@ if [ $stage -eq 1 ]; then
     $test_data \
     ${test_data}
 
+    # Get utt2num frames information for using when restricting the amount of data
+  for data_subset in train enroll eval test; do
+    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
+    utils/fix_data_dir.sh $DATADIR/${data_subset}
+  done
+
+
+
+  # For filtering the frames based on the new shortened utterances:
+  utils/filter_scp.pl $train_dir/utterances_shortened $train_dir/wav.scp > $train_dir/wav.scp.temp
+  mv $train_dir/wav.scp.temp $train_dir/wav.scp
+  # Fixes utt2spk, spk2utt, utt2lang files
+  utils/fix_data_dir.sh $train_dir
+  # Fixes the lang2utt file
+  ./local/utt2lang_to_lang2utt.pl $train_dir/utt2lang \
+  > $train_dir/lang2utt
+
+  
+
   echo "Finished stage 1."
 
   if [ "$run_all" = true ]; then
@@ -241,11 +261,13 @@ if [ $stage -eq 1 ]; then
   fi
 fi
 
+
+
 # Make features and compute the energy-based VAD for each dataset
 # Runtime: ~12 mins
 if [ $stage -eq 2 ]; then
   echo "#### STAGE 2: features (MFCC, SDC, etc) and VAD. ####"
-  
+
   for data_subset in train enroll eval test; do
     (
     num_speakers=$(cat $DATADIR/${data_subset}/spk2utt | wc -l)
@@ -316,7 +338,7 @@ if [ $stage -eq 2 ]; then
     fi
 
     echo "Computing utt2num_frames and fixing the directory."
-    
+
     # Have to calculate this separately, since make_mfcc.sh isn't writing properly
     utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
     utils/fix_data_dir.sh $DATADIR/${data_subset}

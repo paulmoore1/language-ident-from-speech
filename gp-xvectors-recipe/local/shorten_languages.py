@@ -12,10 +12,8 @@ def get_args():
                                   epilog="Called by run.sh")
     parser.add_argument("--data-dir", type=str, required=True,
                     help="Path to main data directory")
-    parser.add_argument("--conf-dir", type=str, required=True,
-                    help="Path to configuration directory")
-    parser.add_argument("--conf-file", type=str, required=True,
-                    help="Name of configuration file that will be used")
+    parser.add_argument("--conf-file-path", type=str, required=True,
+                    help="Path to configuration file that will be used")
     args = parser.parse_args()
     return args
 
@@ -38,6 +36,9 @@ def parse_config(conf_file_path):
     langs = []
     lang_pairs = []
     for line in lines:
+        # Skip past commented lines
+        if line[0] == "#":
+            continue
         entry = line.split()
         langs.append(entry[0])
         lang_pairs.append((entry[0], int(entry[1])))
@@ -143,24 +144,17 @@ def get_error(test_frames, target_frames):
 
 def main():
     args = get_args()
-    #TODO remove this (hard-coded for safe editing)
-    if args.data_dir == "test":
-        data_dir = "/afs/inf.ed.ac.uk/user/s15/s1531206/project_test"
-    if args.conf_dir == "test":
-        conf_dir = "/afs/inf.ed.ac.uk/user/s15/s1531206/language-ident-from-speech/gp-xvectors-recipe/conf"
-    else:
-        conf_dir = args.conf_dir
+    data_dir = args.data_dir
     train_dir = os.path.join(data_dir, "train")
     os.chdir(train_dir)
-    if "utt2num_frames" not in os.listdir():
-        print("Frames file not located")
-    else:
-        print("Frames file found. Parsing...")
-    conf_file_path = os.path.join(conf_dir, args.conf_file)
-    assert os.path.exists(conf_file_path), "Configuration file {} not found in {}".format(args.conf_file, args.conf_dir)
+
+    conf_file_path = args.conf_file_path
+    assert os.path.exists(conf_file_path), "Configuration file not found in {}".format(conf_file_path)
     frames_file_path = os.path.join(train_dir, "utt2num_frames")
     assert os.path.exists(frames_file_path), "utt2num_frames not found in {}".format(train_dir)
 
+    assert "utt2num_frames" in os.listdir, "Frames file not located. Exiting..."
+    print("Frames file found. Parsing...")
     langs, lang_pairs = parse_config(conf_file_path)
 
     data = parse_utt2num_frames(frames_file_path, langs)
@@ -179,8 +173,6 @@ def main():
         get_utterances(data[lang], target_seconds, output_path, summary_path)
 
     print("Finished, summary of results stored in: {}".format(summary_path))
-
-
 
 
 if __name__ == "__main__":
