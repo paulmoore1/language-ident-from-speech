@@ -127,12 +127,26 @@ fi
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
-#if [ -d $DATADIR/$exp_name ]; then
-#  echo "Experiment with name '$exp_name' already exists." \
-#       "Continuing would overwrite it. Rename this experiment" \
-#       "or backup/delete the old experiment directory '$DATADIR'."
-#  exit 1
-#fi
+check_continue(){
+  echo -e "Data directory found in $1\n"\
+        "Continuing will overwrite any data stored here.\n"
+  read -p "Are you sure you want to continue? [y/n]" -r
+  # Avoid using negated form since that doesn't work properly in some shells
+  if [[ $REPLY =~ ^[Yy].*$ ]]
+  then
+    echo "Continuing..."
+  else
+    echo "Exiting"
+    exit 1;
+  fi
+}
+
+if [ -d $DATADIR/$exp_name ]; then
+  echo "Experiment with name '$exp_name' already exists."
+  check_continue $DATADIR/;
+fi
+
+conf_dir=$PWD/conf
 
 home_prefix=$DATADIR/$exp_name
 train_data=$home_prefix/train
@@ -174,7 +188,7 @@ mkdir -p $DATADIR/log
 echo "The experiment directory is: $DATADIR"
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
+GP_LANGUAGES="TA"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
@@ -185,7 +199,7 @@ if [ $stage -eq 42 ]; then
   ./local/make_wavs.sh \
     --corpus-dir=$GP_CORPUS \
     --wav-dir=$HOME/lid/wav \
-    --lang-map=$PWD/conf/lang_codes.txt \
+    --lang-map=$conf_dir/lang_codes.txt \
     --languages="$GP_LANGUAGES"
 
   echo "Finished stage 42."
@@ -199,7 +213,7 @@ if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
   echo "#### STAGE 1: Organising speakers into sets. ####"
   ./local/gp_data_organise.sh \
-    --config-dir=$PWD/conf \
+    --config-dir=$conf_dir \
     --corpus-dir=$GP_CORPUS \
     --wav-dir=/mnt/mscteach_home/s1531206/lid/wav \
     --languages="$GP_LANGUAGES" \
@@ -209,27 +223,27 @@ if [ $stage -eq 1 ]; then
   # Don't split training data into segments. It will be split anyway when
   # preparing the training examples for the DNN. Note that the LID X-vector
   # paper has training segments of 2-4s.
-  #  ./local/split_long_utts.sh \
-  #    --max-utt-len 4 \
-  #    $train_data \
-  #    ${train_data}
+  ./local/split_long_utts.sh \
+    --max-utt-len $train_length \
+    $train_data \
+    ${train_data}
 
   # Split enroll data into segments of < 30s.
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
   ./local/split_long_utts.sh \
-    --max-utt-len 30 \
+    --max-utt-len $enrollment_length \
     $enroll_data \
     ${enroll_data}
 
   # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
   # TO-DO: Allow for some variation, or do strictly this length?
   ./local/split_long_utts.sh \
-    --max-utt-len 10 \
+    --max-utt-len $evaluation_length \
     $eval_data \
     ${eval_data}
 
   ./local/split_long_utts.sh \
-    --max-utt-len 10 \
+    --max-utt-len $test_length \
     $test_data \
     ${test_data}
 
@@ -239,7 +253,7 @@ if [ $stage -eq 1 ]; then
     utils/fix_data_dir.sh $DATADIR/${data_subset}
   done
 
-
+  python ./local/shorten_languages.py --data-dir $train_dir --conf-file-path ${conf_dir}/lre_configs/${lre_config}
 
   # For filtering the frames based on the new shortened utterances:
   utils/filter_scp.pl $train_dir/utterances_shortened $train_dir/wav.scp > $train_dir/wav.scp.temp
@@ -250,7 +264,7 @@ if [ $stage -eq 1 ]; then
   ./local/utt2lang_to_lang2utt.pl $train_dir/utt2lang \
   > $train_dir/lang2utt
 
-  
+
 
   echo "Finished stage 1."
 
