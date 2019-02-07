@@ -2,6 +2,8 @@
 # Assuming Kaldi is installed in the home directory
 #export KALDI_ROOT=~/kaldi
 
+source ~/.bashrc
+
 # This contains the locations of the tools and data required for running
 # the GlobalPhone experiments.
 source ./helper_functions.sh
@@ -67,4 +69,3 @@ if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
 else
   echo "Conda environment '$CONDA_DEFAULT_ENV' active."
 fi
-
