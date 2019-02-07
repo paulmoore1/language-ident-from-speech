@@ -227,13 +227,15 @@ if [ $stage -eq 1 ]; then
   # Don't split training data into segments. It will be split anyway when
   # preparing the training examples for the DNN. Note that the LID X-vector
   # paper has training segments of 2-4s.
-  ./local/split_long_utts.sh \
-    --max-utt-len $train_length \
-    $train_data \
-    ${train_data}
+  # TODO remove this when not doing it for Tamil
+  #./local/split_long_utts.sh \
+  #  --max-utt-len $train_length \
+  #  $train_data \
+  #  ${train_data}
 
   # Split enroll data into segments of < 30s.
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
+  echo "Splitting enrollment data"
   ./local/split_long_utts.sh \
     --max-utt-len $enrollment_length \
     $enroll_data \
@@ -241,11 +243,13 @@ if [ $stage -eq 1 ]; then
 
   # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
   # TO-DO: Allow for some variation, or do strictly this length?
+  echo "Splitting evaluation data"
   ./local/split_long_utts.sh \
     --max-utt-len $evaluation_length \
     $eval_data \
     ${eval_data}
 
+  echo "Splitting test data"
   ./local/split_long_utts.sh \
     --max-utt-len $test_length \
     $test_data \
@@ -257,6 +261,7 @@ if [ $stage -eq 1 ]; then
     utils/fix_data_dir.sh $DATADIR/${data_subset}
   done
 
+  echo "Shortening languages"
   python ./local/shorten_languages.py --data-dir $train_dir --conf-file-path ${conf_dir}/lre_configs/${lre_config}
 
   # For filtering the frames based on the new shortened utterances:
