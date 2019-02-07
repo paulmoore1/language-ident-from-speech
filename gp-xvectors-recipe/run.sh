@@ -70,13 +70,17 @@ do
 done
 echo -e $usage
 
-if [ ! "$exp_config" == "NONE" ] && [ ! -f $exp_config ]; then
+conf_dir=$PWD/conf
+exp_conf_dir=$conf_dir/exp_configs
+lre_conf_dir=$conf_dir/lre_configs
+
+if [ ! "$exp_config" == "NONE" ] && [ ! -f $exp_conf_dir/$exp_config ]; then
   echo "Configuration file '${exp_config}' not found for this experiment."
   exit 1;
 fi
 
 # Source some variables from the experiment-specific config file
-source $exp_config || echo "Problems sourcing the experiment config file: $exp_config"
+source $exp_conf_dir/$exp_config || echo "Problems sourcing the experiment config file: $exp_conf_dir/$exp_config"
 
 # Use arguments passed to this script on the command line
 # to overwrite the values sourced from the experiment-specific config.
@@ -146,7 +150,7 @@ if [ -d $DATADIR/$exp_name ]; then
   check_continue $DATADIR/;
 fi
 
-conf_dir=$PWD/conf
+
 
 home_prefix=$DATADIR/$exp_name
 train_data=$home_prefix/train
