@@ -53,52 +53,52 @@ for L in $LANGUAGES; do
 
   LISTDIR=$WAVDIR/$L/lists # Directory to write file lists
   FILEDIR=$WAVDIR/$L/files # Directory to write wav files
-  mkdir -p $LISTDIR $FILEDIR
-
-  shn_dir=$GPDIR/$LNAME/adc
-  shn_file_pattern="${L}*\.adc\.shn"
-  if [ $L = HA ]; then
-    shn_dir=$GPDIR/Hausa/Hausa/Data/adc
-    shn_file_pattern="${L}*\.adc"
-  elif [ $L = SA ]; then
-    shn_file_pattern="${L}*\.adc"
-  elif [ $L = TA ]; then
+#  mkdir -p $LISTDIR $FILEDIR
+#
+#  shn_dir=$GPDIR/$LNAME/adc
+#  shn_file_pattern="${L}*\.adc\.shn"
+#  if [ $L = HA ]; then
+#    shn_dir=$GPDIR/Hausa/Hausa/Data/adc
+#    shn_file_pattern="${L}*\.adc"
+#  elif [ $L = SA ]; then
+#    shn_file_pattern="${L}*\.adc"
+#  elif [ $L = TA ]; then
     # shn_dir=$GPDIR/$LNAME/adc
     # File names are like taXXYYYd.wav.shn, e.g. ta02013d.wav.shn,
     # where XX is speaker number and YYY is utterance number
-    shn_file_pattern="ta*\.wav\.shn"
-  elif [ $L = UA ]; then
-    shn_file_pattern="${L}*\.adc"
-  elif [ $L = WU ]; then
-    shn_dir=$GPDIR/Chinese-Shanghai/Wu/adc
-  fi
-
-  find $shn_dir -name "$shn_file_pattern" > $LISTDIR/shn.list
-  
-  gp_convert_audio.sh \
-    --input-list=$LISTDIR/shn.list \
-    --output-dir=$FILEDIR \
-    --output-list=$LISTDIR/wav.list
-
-  if [ "$L" = "TA" ]; then
-    # from ta01007d.wav.shn.wav to TA007_01.wav
-    for f in $FILEDIR/*.wav; do
-      spk_id=$(echo $f | sed -E 's/.*ta[0-9]{2}([0-9]{3}).*/\1/')
-      utt_id=$(echo $f | sed -E 's/.*ta([0-9]{2}).*/\1/')
-      # echo "$FILEDIR/TA${spk_id}_${utt_id}.wav"
-      mv $f "$FILEDIR/TA${spk_id}_${utt_id}.wav"
-      
-      mv $LISTDIR/wav.list $LISTDIR/wav.list.bak
-      cat $LISTDIR/wav.list.bak | sed -E 's/(.*)ta([0-9]{2})([0-9]{3})d.wav.shn.wav/\1TA\3_\2.wav/g' |\
-        sort | uniq > $LISTDIR/wav.list
-    done
-  fi
+#    shn_file_pattern="ta*\.wav\.shn"
+#  elif [ $L = UA ]; then
+#    shn_file_pattern="${L}*\.adc"
+#  elif [ $L = WU ]; then
+#    shn_dir=$GPDIR/Chinese-Shanghai/Wu/adc
+#  fi
+#
+#  find $shn_dir -name "$shn_file_pattern" > $LISTDIR/shn.list
+#
+#  gp_convert_audio.sh \
+#    --input-list=$LISTDIR/shn.list \
+#    --output-dir=$FILEDIR \
+#    --output-list=$LISTDIR/wav.list
+#
+#  if [ "$L" = "TA" ]; then
+#    # from ta01007d.wav.shn.wav to TA007_01.wav
+#    for f in $FILEDIR/*.wav; do
+#      spk_id=$(echo $f | sed -E 's/.*ta[0-9]{2}([0-9]{3}).*/\1/')
+#      utt_id=$(echo $f | sed -E 's/.*ta([0-9]{2}).*/\1/')
+#      # echo "$FILEDIR/TA${spk_id}_${utt_id}.wav"
+#      mv $f "$FILEDIR/TA${spk_id}_${utt_id}.wav"
+#
+#      mv $LISTDIR/wav.list $LISTDIR/wav.list.bak
+#      cat $LISTDIR/wav.list.bak | sed -E 's/(.*)ta([0-9]{2})([0-9]{3})d.wav.shn.wav/\1TA\3_\2.wav/g' |\
+#        sort | uniq > $LISTDIR/wav.list
+#    done
+#  fi
 
   # Get the utterance IDs for the audio files successfully converted to WAV
-  sed -e "s?.*/??" -e 's?.wav$??' $LISTDIR/wav.list > $LISTDIR/basenames_wav
+#  sed -e "s?.*/??" -e 's?.wav$??' $LISTDIR/wav.list > $LISTDIR/basenames_wav
 
-  paste $LISTDIR/basenames_wav $LISTDIR/wav.list | sort -k1,1 \
-    > $LISTDIR/wav.scp
+#  paste $LISTDIR/basenames_wav $LISTDIR/wav.list | sort -k1,1 \
+#    > $LISTDIR/wav.scp
 
   (
     while read -r name; do
@@ -107,18 +107,18 @@ for L in $LANGUAGES; do
     done < $LISTDIR/wav.list
   ) > $LISTDIR/utt2len
 
-  sed -e 's?_.*$??' $LISTDIR/basenames_wav \
-    | paste -d' ' $LISTDIR/basenames_wav - \
-    > $LISTDIR/utt2spk
-
-  utt2spk_to_spk2utt.pl $LISTDIR/utt2spk \
-    > $LISTDIR/spk2utt || exit 1;
-
-  grep -ohE "[A-Z]+[0-9]+ " $LISTDIR/spk2utt \
-    | grep -ohE "[0-9]+" | sort | uniq -u > $LISTDIR/spk
-
-  rm $LISTDIR/basenames_wav
-  ) > $WAVDIR/${L}_log &
+#  sed -e 's?_.*$??' $LISTDIR/basenames_wav \
+#    | paste -d' ' $LISTDIR/basenames_wav - \
+#    > $LISTDIR/utt2spk
+#
+#  utt2spk_to_spk2utt.pl $LISTDIR/utt2spk \
+#    > $LISTDIR/spk2utt || exit 1;
+#
+#  grep -ohE "[A-Z]+[0-9]+ " $LISTDIR/spk2utt \
+#    | grep -ohE "[0-9]+" | sort | uniq -u > $LISTDIR/spk
+#
+#  rm $LISTDIR/basenames_wav
+#  ) > $WAVDIR/${L}_log &
 done
 wait;
 exit

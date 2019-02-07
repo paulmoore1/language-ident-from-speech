@@ -192,7 +192,7 @@ mkdir -p $DATADIR/log
 echo "The experiment directory is: $DATADIR"
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="TA"
+GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
