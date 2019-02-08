@@ -11,7 +11,7 @@ def get_args():
     parser = argparse.ArgumentParser(description="Gets utterance list for each language to a fixed length of time",
                                   epilog="Called by run.sh")
     parser.add_argument("--data-dir", type=str, required=True,
-                    help="Path to main data directory")
+                    help="Path to data directory that the shortening will be done on")
     parser.add_argument("--conf-file-path", type=str, required=True,
                     help="Path to configuration file that will be used")
     args = parser.parse_args()
@@ -145,13 +145,12 @@ def get_error(test_frames, target_frames):
 def main():
     args = get_args()
     data_dir = args.data_dir
-    train_dir = os.path.join(data_dir, "train")
-    os.chdir(train_dir)
+    os.chdir(data_dir)
 
     conf_file_path = args.conf_file_path
     assert os.path.exists(conf_file_path), "Configuration file not found in {}".format(conf_file_path)
-    frames_file_path = os.path.join(train_dir, "utt2num_frames")
-    assert os.path.exists(frames_file_path), "utt2num_frames not found in {}".format(train_dir)
+    frames_file_path = os.path.join(data_dir, "utt2num_frames")
+    assert os.path.exists(frames_file_path), "utt2num_frames not found in {}".format(data_dir)
 
     assert "utt2num_frames" in os.listdir, "Frames file not located. Exiting..."
     print("Frames file found. Parsing...")
@@ -159,8 +158,8 @@ def main():
 
     data = parse_utt2num_frames(frames_file_path, langs)
 
-    output_path = os.path.join(train_dir, "utterances_shortened")
-    summary_path = os.path.join(train_dir, "utterances_shortened_summary")
+    output_path = os.path.join(data_dir, "utterances_shortened")
+    summary_path = os.path.join(data_dir, "utterances_shortened_summary")
     # Delete files if they exist so that we can begin a new one from scratch each time
     if os.path.exists(output_path):
         os.remove(output_path)
