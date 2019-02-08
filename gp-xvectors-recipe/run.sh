@@ -157,6 +157,7 @@ train_data=$home_prefix/train
 enroll_data=$home_prefix/enroll
 eval_data=$home_prefix/eval
 test_data=$home_prefix/test
+tamil_data=$home_prefix/tamil
 log_dir=$home_prefix/log
 mfcc_dir=$home_prefix/mfcc
 mfcc_sdc_dir=$home_prefix/mfcc_sdc
@@ -193,7 +194,6 @@ echo "The experiment directory is: $DATADIR"
 
 # Set the languages that will actually be processed
 GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
-GP_LANGUAGES_NO_TAMIL="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
@@ -217,30 +217,14 @@ fi
 if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
   echo "#### STAGE 1: Organising speakers into sets. ####"
-  # Special case for Tamil; the training data needs to be split up
+  # Organise data into train, enroll, eval and test
   ./local/gp_data_organise.sh \
     --config-dir=$conf_dir \
     --corpus-dir=$GP_CORPUS \
     --wav-dir=/mnt/mscteach_home/s1531206/lid/wav \
-    --languages="TA" \
+    --languages="$GP_LANGUAGES" \
     --data-dir=$DATADIR \
     || exit 1;
-
-  # Split the Tamil training data since it has very long utterances
-  ./local/split_long_utts.sh \
-    --max-utt-len $train_length \
-    $train_data \
-    ${train_data}
-
-  # Do it as normal for the rest of the languages
-  ./local/gp_data_organise.sh \
-    --config-dir=$conf_dir \
-    --corpus-dir=$GP_CORPUS \
-    --wav-dir=/mnt/mscteach_home/s1531206/lid/wav \
-    --languages="$GP_LANGUAGES_NO_TAMIL" \
-    --data-dir=$DATADIR \
-    || exit 1;
-
 
   # Split enroll data into segments of < 30s.
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
@@ -285,9 +269,6 @@ if [ $stage -eq 1 ]; then
     ./local/utt2lang_to_lang2utt.pl $DATADIR/${data_subset}/utt2lang \
     > $DATADIR/${data_subset}/lang2utt
   done
-
-
-
 
   echo "Finished stage 1."
 

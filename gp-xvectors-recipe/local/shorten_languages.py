@@ -24,10 +24,12 @@ def parse_utt2num_frames(utt2num_frames_path, langs):
     for lang in langs:
         data[lang] = []
     for line in lines:
-        entry = line.split()
-        lang_code = entry[0][:2]
-        if lang_code in langs:
-            data[lang_code].append((entry[0], int(entry[1])))
+        # Check that it's not a blank line
+        if len(line) > 3:
+            entry = line.split()
+            lang_code = entry[0][:2]
+            if lang_code in langs:
+                data[lang_code].append((entry[0], int(entry[1])))
     return data
 
 def parse_config(conf_file_path):
@@ -47,7 +49,7 @@ def parse_config(conf_file_path):
 def get_utterances(lang_data, target_seconds, output_path, summary_path):
     # Target number of frames (seconds*100)
     target_frames = target_seconds*100
-
+    assert len(lang_data) != 0, "Empty language data list!"
     # Language code
     lang_code = lang_data[0][0][0:2]
 
@@ -152,7 +154,7 @@ def main():
     frames_file_path = os.path.join(data_dir, "utt2num_frames")
     assert os.path.exists(frames_file_path), "utt2num_frames not found in {}".format(data_dir)
 
-    assert "utt2num_frames" in os.listdir, "Frames file not located. Exiting..."
+    assert "utt2num_frames" in os.listdir(), "Frames file not located. Exiting..."
     print("Frames file found. Parsing...")
     langs, lang_pairs = parse_config(conf_file_path)
 

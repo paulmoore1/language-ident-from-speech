@@ -113,13 +113,13 @@ for L in $LANGUAGES; do
       echo "Could not find any training set speakers; \
       are you trying to use all of them for evaluation and testing?";
   fi
-  
+
   echo "Language - ${L}: formatting train/enroll/eval/test data."
   for x in train enroll eval test; do
     mkdir -p $datadir/$L/$x
     rm -f $datadir/$L/$x/wav.scp $datadir/$L/$x/spk2utt \
           $datadir/$L/$x/utt2spk $datadir/$L/$x/utt2len
-    
+
     for spk in `cat $tmpdir/$L/${x}_spk`; do
       grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/$x/wav.scp
       grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/$x/spk2utt
@@ -127,6 +127,13 @@ for L in $LANGUAGES; do
       grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/$x/utt2len
     done
   done
+  # Split Tamil uttterances up
+  if [ "$L" = "TA" ]; then
+    split_long_utts.sh \
+      --max-utt-len $train_length \
+      $datadir/$L/train \
+      $datadir/$L/train
+  fi
   ) &
 done
 wait;
