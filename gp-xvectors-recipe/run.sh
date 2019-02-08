@@ -226,6 +226,30 @@ if [ $stage -eq 1 ]; then
     --data-dir=$DATADIR \
     || exit 1;
 
+    # Get utt2num frames information for using when restricting the amount of data
+  for data_subset in train enroll eval test; do
+    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
+  done
+
+  echo "Shortening languages for training data"
+  python ./local/shorten_languages.py --data-dir $train_data --conf-file-path ${conf_dir}/lre_configs/${lre_train_config}
+  echo "Shortening languages for enrollment data"
+  python ./local/shorten_languages.py --data-dir $enroll_data --conf-file-path ${conf_dir}/lre_configs/${lre_enroll_config}
+
+
+  for data_subset in train enroll; do
+    # For filtering the frames based on the new shortened utterances:
+    utils/filter_scp.pl $DATADIR/${data_subset}/utterances_shortened $DATADIR/${data_subset}/wav.scp > $DATADIR/${data_subset}/wav.scp.temp
+    mv $DATADIR/${data_subset}/wav.scp.temp $DATADIR/${data_subset}/wav.scp
+    # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
+    utils/fix_data_dir.sh $DATADIR/${data_subset}
+    # Fixes the lang2utt file
+    ./local/utt2lang_to_lang2utt.pl $DATADIR/${data_subset}/utt2lang \
+    > $DATADIR/${data_subset}/lang2utt
+  done
+
+  # NOTE Splitting after shortening enrollment data ensures that it will all be there.
+  # Currently split_long_utts.sh doesn't affect wav.scp so need to do it in this order
   # Split enroll data into segments of < 30s.
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
   echo "Splitting enrollment data"
@@ -247,46 +271,6 @@ if [ $stage -eq 1 ]; then
     --max-utt-len $test_length \
     $test_data \
     ${test_data}
-
-    # Get utt2num frames information for using when restricting the amount of data
-  for data_subset in train enroll eval test; do
-    # Cleanup non-training folders after they've been split
-    if [ "$data_subset" != "train" ]; then
-        rm $DATADIR/${data_subset}/segments
-        rm $DATADIR/${data_subset}/wav.scp.unsplit
-        rm $DATADIR/${data_subset}/utt2spk.unsplit
-        rm $DATADIR/${data_subset}/spk2utt.unsplit
-        rm $DATADIR/${data_subset}/lang2utt.unsplit
-        rm $DATADIR/${data_subset}/utt2lang.unsplit
-    fi
-    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
-    utils/fix_data_dir.sh $DATADIR/${data_subset}
-    wait
-  done
-
-  echo "Shortening languages for training data"
-  python ./local/shorten_languages.py --data-dir $train_data --conf-file-path ${conf_dir}/lre_configs/${lre_train_config}
-  echo "Shortening languages for enrollment data"
-  python ./local/shorten_languages.py --data-dir $enroll_data --conf-file-path ${conf_dir}/lre_configs/${lre_enroll_config}
-
-  # Cleanup enrollment data before filtering (seems to cause errors otherwise when filtering)
-  rm $enroll_data/segments
-  rm $enroll_data/wav.scp.unsplit
-  rm $enroll_data/utt2spk.unsplit
-  rm $enroll_data/spk2utt.unsplit
-  rm $enroll_data/lang2utt.unsplit
-  rm $enroll_data/utt2lang.unsplit
-
-  for data_subset in train enroll; do
-    # For filtering the frames based on the new shortened utterances:
-    utils/filter_scp.pl $DATADIR/${data_subset}/utterances_shortened $DATADIR/${data_subset}/wav.scp > $DATADIR/${data_subset}/wav.scp.temp
-    mv $DATADIR/${data_subset}/wav.scp.temp $DATADIR/${data_subset}/wav.scp
-    # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
-    utils/fix_data_dir.sh $DATADIR/${data_subset}
-    # Fixes the lang2utt file
-    ./local/utt2lang_to_lang2utt.pl $DATADIR/${data_subset}/utt2lang \
-    > $DATADIR/${data_subset}/lang2utt
-  done
 
   echo "Finished stage 1."
 
