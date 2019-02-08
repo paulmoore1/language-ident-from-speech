@@ -192,8 +192,8 @@ mkdir -p $DATADIR/log
 echo "The experiment directory is: $DATADIR"
 
 # Set the languages that will actually be processed
-#GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
-GP_LANGUAGES="TA"
+GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
+GP_LANGUAGES_NO_TAMIL="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
@@ -217,22 +217,30 @@ fi
 if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
   echo "#### STAGE 1: Organising speakers into sets. ####"
+  # Special case for Tamil; the training data needs to be split up
   ./local/gp_data_organise.sh \
     --config-dir=$conf_dir \
     --corpus-dir=$GP_CORPUS \
     --wav-dir=/mnt/mscteach_home/s1531206/lid/wav \
-    --languages="$GP_LANGUAGES" \
+    --languages="TA" \
     --data-dir=$DATADIR \
     || exit 1;
 
-  # Don't split training data into segments. It will be split anyway when
-  # preparing the training examples for the DNN. Note that the LID X-vector
-  # paper has training segments of 2-4s.
-  # TODO remove this when not doing it for Tamil
+  # Split the Tamil training data since it has very long utterances
   ./local/split_long_utts.sh \
     --max-utt-len $train_length \
     $train_data \
     ${train_data}
+
+  # Do it as normal for the rest of the languages
+  ./local/gp_data_organise.sh \
+    --config-dir=$conf_dir \
+    --corpus-dir=$GP_CORPUS \
+    --wav-dir=/mnt/mscteach_home/s1531206/lid/wav \
+    --languages="$GP_LANGUAGES_NO_TAMIL" \
+    --data-dir=$DATADIR \
+    || exit 1;
+
 
   # Split enroll data into segments of < 30s.
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
@@ -261,9 +269,10 @@ if [ $stage -eq 1 ]; then
     utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
     utils/fix_data_dir.sh $DATADIR/${data_subset}
   done
-  exit
-  echo "Shortening languages"
+
+  echo "Shortening languages for training data"
   python ./local/shorten_languages.py --data-dir $train_data --conf-file-path ${conf_dir}/lre_configs/${lre_train_config}
+  echo "Shortening languages for enrollment data"
   python ./local/shorten_languages.py --data-dir $enroll_data --conf-file-path ${conf_dir}/lre_configs/${lre_enroll_config}
 
   for data_subset in train enroll; do
@@ -365,10 +374,7 @@ if [ $stage -eq 2 ]; then
         $sdc_dir
     fi
 
-    echo "Computing utt2num_frames and fixing the directory."
-
-    # Have to calculate this separately, since make_mfcc.sh isn't writing properly
-    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
+    echo "Fixing the directory to make sure everything is fine."
     utils/fix_data_dir.sh $DATADIR/${data_subset}
 
     ./local/compute_vad_decision.sh \
@@ -411,13 +417,14 @@ if [ $stage -eq 3 ]; then
 
   # Now, we need to remove features that are too short after removing silence
   # frames.  We want atleast 5s (500 frames) per utterance.
-	echo "Removing short features..."
-  min_len=500
-  mv $nnet_train_data/utt2num_frames $nnet_train_data/utt2num_frames.bak
-  awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $nnet_train_data/utt2num_frames.bak > $nnet_train_data/utt2num_frames
-  utils/filter_scp.pl $nnet_train_data/utt2num_frames $nnet_train_data/utt2spk > $nnet_train_data/utt2spk.new
-  mv $nnet_train_data/utt2spk.new $nnet_train_data/utt2spk
-  utils/fix_data_dir.sh $nnet_train_data
+  # NOTE Don't do this for LRE - need as much as we can get, an utterances are precomputed to be a certain number of frames
+  # echo "Removing short features..."
+  #min_len=500
+  #mv $nnet_train_data/utt2num_frames $nnet_train_data/utt2num_frames.bak
+  #awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $nnet_train_data/utt2num_frames.bak > $nnet_train_data/utt2num_frames
+  #utils/filter_scp.pl $nnet_train_data/utt2num_frames $nnet_train_data/utt2spk > $nnet_train_data/utt2spk.new
+  #mv $nnet_train_data/utt2spk.new $nnet_train_data/utt2spk
+  #utils/fix_data_dir.sh $nnet_train_data
 
   echo "Finished stage 3."
 
@@ -461,6 +468,9 @@ if [ $stage -eq 4 ]; then
     exit
   fi
 fi
+
+#TODO REMOVE ME!
+exit
 
 # Runtime: ~1:05h
 if [ $stage -eq 7 ]; then
