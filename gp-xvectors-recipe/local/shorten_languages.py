@@ -175,6 +175,26 @@ def main():
 
     print("Finished, summary of results stored in: {}".format(summary_path))
 
+    print("Filtering utt2len file since the default fixing ignores it")
+    utt2len_file = os.path.join(data_dir, "utt2len")
+    # If file doesn't exist, return
+    if not os.path.exists(utt2len_file):
+        print("File not found in {}".format(utt2len_file))
+    else:
+        with open(utt2len_file, "r") as f:
+            original_lines = f.read().splitlines()
+        with open(output_path, "r") as f:
+            valid_utterances = f.read().splitlines()
+        new_lines = []
+        for line in original_lines:
+            entry = line.split()
+            utterance = entry[0]
+            if utterance in valid_utterances:
+                new_lines.append(line)
+        with open(utt2len_file, "w") as f:
+            for line in new_lines:
+                f.write(line + "\n")
+
 
 if __name__ == "__main__":
     main()

@@ -139,6 +139,11 @@ for L in $LANGUAGES; do
       --max-utt-len 25 \
       $datadir/$L/train \
       $datadir/$L/train
+
+    split_long_utts.sh \
+      --max-utt-len 25 \
+      $datadir/$L/enroll \
+      $datadir/$L/enroll
   fi
   wait;
   ) &

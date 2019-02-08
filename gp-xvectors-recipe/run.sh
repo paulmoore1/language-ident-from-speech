@@ -246,6 +246,9 @@ if [ $stage -eq 1 ]; then
     # Fixes the lang2utt file
     ./local/utt2lang_to_lang2utt.pl $DATADIR/${data_subset}/utt2lang \
     > $DATADIR/${data_subset}/lang2utt
+
+    # Fix again, just to make sure
+    utils/fix_data_dir.sh $DATADIR/${data_subset}
   done
 
   # NOTE Splitting after shortening enrollment data ensures that it will all be there.
@@ -256,7 +259,7 @@ if [ $stage -eq 1 ]; then
   ./local/split_long_utts.sh \
     --max-utt-len $enrollment_length \
     $enroll_data \
-    ${enroll_data}
+    ${enroll_data}/split
 
   # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
   # TO-DO: Allow for some variation, or do strictly this length?
@@ -264,13 +267,19 @@ if [ $stage -eq 1 ]; then
   ./local/split_long_utts.sh \
     --max-utt-len $evaluation_length \
     $eval_data \
-    ${eval_data}
+    ${eval_data}/split
 
   echo "Splitting test data"
   ./local/split_long_utts.sh \
     --max-utt-len $test_length \
     $test_data \
-    ${test_data}
+    ${test_data}/split
+
+  echo "Recalculating number of frames after splitting"
+  for data_subset in enroll eval test; do
+    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
+    utils/fix_data_dir.sh $DATADIR/${data_subset}
+  done
 
   echo "Finished stage 1."
 
