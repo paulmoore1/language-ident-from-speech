@@ -28,4 +28,4 @@ sbatch \
   --mail-user=s1531206@ed.ac.uk \
   --open-mode=append \
   --output="${config_file}.out" \
-  ./gp-xvectors-recipe/run.sh --exp-config="${config_file}.conf"
+  ./gp-xvectors-recipe/run.sh --home-dir=$PWD/gp_xvectors_recipe/ --exp-config="${config_file}.conf"
