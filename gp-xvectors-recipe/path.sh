@@ -67,5 +67,5 @@ if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
     conda activate lid || exit
   fi
 else
-  echo "Conda environment '$CONDA_DEFAULT_ENV' active."
+  #echo "Conda environment '$CONDA_DEFAULT_ENV' active."
 fi
