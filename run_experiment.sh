@@ -27,5 +27,5 @@ sbatch \
   --mail-type=END \
   --mail-user=s1531206@ed.ac.uk \
   --open-mode=append \
-  --ouput="$config_file.out" \
-  ./gp-xvectors-recipe/run.sh --exp-config=$config_file
+  --output="${config_file}.out" \
+  ./gp-xvectors-recipe/run.sh --exp-config="${config_file}.conf"

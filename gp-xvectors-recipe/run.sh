@@ -31,12 +31,7 @@
 usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n
 \t       This shell script runs the GlobalPhone+X-vectors recipe.\n
 \t       Use like this: $0 <options>\n
-\t       --stage=INT\t\tStage from which to start\n
-\t       --run-all=(false|true)\tWhether to run all stages\n
-\t       \t\t\tor just the specified one\n
-\t       --experiment=STR\tExperiment name (also name of directory \n
-\t       \t\t\twhere all files will be stored).\n
-\t       \t\t\tDefault: 'baseline'.\n
+\t       --home-dir=DIRECTORY\tMain directory where recipe is stored
 \t       --exp-config=FILE\tConfig file with all kinds of options,\n
 \t       \t\t\tsee conf/exp_default.conf for an example.\n
 \t       \t\t\tNOTE: Where arguments are passed on the command line,\n
@@ -57,12 +52,8 @@ while [ $# -gt 0 ];
 do
   case "$1" in
   --help) echo -e $usage; exit 0 ;;
-  --run-all=*)
-  run_all_cl=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
-  --stage=*)
-  stage_cl=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
-  --exp-name=*)
-  exp_name_cl=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --home-dir=*)
+  home_dir=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --exp-config=*)
   exp_config=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
@@ -70,9 +61,10 @@ do
 done
 echo -e $usage
 
-conf_dir=$PWD/conf
+# Run from the home directory
+cd $home_dir
+conf_dir=$home_dir/conf
 exp_conf_dir=$conf_dir/exp_configs
-lre_conf_dir=$conf_dir/lre_configs
 
 if [ ! "$exp_config" == "NONE" ] && [ ! -f $exp_conf_dir/$exp_config ]; then
   echo "Configuration file '${exp_config}' not found for this experiment."
@@ -127,7 +119,7 @@ fi
 # CHECKING FOR AND INSTALLING REQUIRED TOOLS:
 #  This recipe requires shorten (3.6.1) and sox (14.3.2).
 #  If they are not found, the local/gp_install.sh script will install them.
-./local/gp_check_tools.sh $PWD path.sh || exit 1;
+./local/gp_check_tools.sh $home_dir path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
