@@ -127,6 +127,14 @@ num_train_frames=$(awk '{n += $2} END{print n}' <$temp/utt2num_frames.train)
 num_train_subset_frames=$(awk '{n += $2} END{print n}' <$temp/utt2num_frames.train_subset)
 
 echo $num_train_frames >$dir/info/num_frames
+
+echo "Working directory:"
+echo $PWD
+
+frames_per_iter=`python calculate_frames.py --num-train-frames $num_train_frames --num-repeats $num_repeats`
+
+echo $frames_per_iter
+
 num_train_archives=$[($num_train_frames*$num_repeats)/$frames_per_iter + 1]
 echo "$0: Producing $num_train_archives archives for training"
 echo $num_train_archives > $dir/info/num_archives
