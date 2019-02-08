@@ -192,7 +192,8 @@ mkdir -p $DATADIR/log
 echo "The experiment directory is: $DATADIR"
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
+#GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
+GP_LANGUAGES="TA"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
@@ -228,10 +229,10 @@ if [ $stage -eq 1 ]; then
   # preparing the training examples for the DNN. Note that the LID X-vector
   # paper has training segments of 2-4s.
   # TODO remove this when not doing it for Tamil
-  #./local/split_long_utts.sh \
-  #  --max-utt-len $train_length \
-  #  $train_data \
-  #  ${train_data}
+  ./local/split_long_utts.sh \
+    --max-utt-len $train_length \
+    $train_data \
+    ${train_data}
 
   # Split enroll data into segments of < 30s.
   # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
@@ -260,18 +261,22 @@ if [ $stage -eq 1 ]; then
     utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
     utils/fix_data_dir.sh $DATADIR/${data_subset}
   done
-
+  exit
   echo "Shortening languages"
-  python ./local/shorten_languages.py --data-dir $train_dir --conf-file-path ${conf_dir}/lre_configs/${lre_config}
+  python ./local/shorten_languages.py --data-dir $train_data --conf-file-path ${conf_dir}/lre_configs/${lre_train_config}
+  python ./local/shorten_languages.py --data-dir $enroll_data --conf-file-path ${conf_dir}/lre_configs/${lre_enroll_config}
 
-  # For filtering the frames based on the new shortened utterances:
-  utils/filter_scp.pl $train_dir/utterances_shortened $train_dir/wav.scp > $train_dir/wav.scp.temp
-  mv $train_dir/wav.scp.temp $train_dir/wav.scp
-  # Fixes utt2spk, spk2utt, utt2lang files
-  utils/fix_data_dir.sh $train_dir
-  # Fixes the lang2utt file
-  ./local/utt2lang_to_lang2utt.pl $train_dir/utt2lang \
-  > $train_dir/lang2utt
+  for data_subset in train enroll; do
+    # For filtering the frames based on the new shortened utterances:
+    utils/filter_scp.pl $DATADIR/${data_subset}/utterances_shortened $DATADIR/${data_subset}/wav.scp > $DATADIR/${data_subset}/wav.scp.temp
+    mv $DATADIR/${data_subset}/wav.scp.temp $DATADIR/${data_subset}/wav.scp
+    # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
+    utils/fix_data_dir.sh $DATADIR/${data_subset}
+    # Fixes the lang2utt file
+    ./local/utt2lang_to_lang2utt.pl $DATADIR/${data_subset}/utt2lang \
+    > $DATADIR/${data_subset}/lang2utt
+  done
+
 
 
 
