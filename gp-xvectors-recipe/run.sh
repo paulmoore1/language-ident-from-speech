@@ -250,14 +250,32 @@ if [ $stage -eq 1 ]; then
 
     # Get utt2num frames information for using when restricting the amount of data
   for data_subset in train enroll eval test; do
+    # Cleanup non-training folders after they've been split
+    if [ "$data_subset" != "train" ]; then
+        rm $DATADIR/${data_subset}/segments
+        rm $DATADIR/${data_subset}/wav.scp.unsplit
+        rm $DATADIR/${data_subset}/utt2spk.unsplit
+        rm $DATADIR/${data_subset}/spk2utt.unsplit
+        rm $DATADIR/${data_subset}/lang2utt.unsplit
+        rm $DATADIR/${data_subset}/utt2lang.unsplit
+    fi
     utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
     utils/fix_data_dir.sh $DATADIR/${data_subset}
+    wait
   done
 
   echo "Shortening languages for training data"
   python ./local/shorten_languages.py --data-dir $train_data --conf-file-path ${conf_dir}/lre_configs/${lre_train_config}
   echo "Shortening languages for enrollment data"
   python ./local/shorten_languages.py --data-dir $enroll_data --conf-file-path ${conf_dir}/lre_configs/${lre_enroll_config}
+
+  # Cleanup enrollment data before filtering (seems to cause errors otherwise when filtering)
+  rm $enroll_data/segments
+  rm $enroll_data/wav.scp.unsplit
+  rm $enroll_data/utt2spk.unsplit
+  rm $enroll_data/spk2utt.unsplit
+  rm $enroll_data/lang2utt.unsplit
+  rm $enroll_data/utt2lang.unsplit
 
   for data_subset in train enroll; do
     # For filtering the frames based on the new shortened utterances:

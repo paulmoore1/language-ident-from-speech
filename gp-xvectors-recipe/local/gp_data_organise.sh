@@ -140,6 +140,7 @@ for L in $LANGUAGES; do
       $datadir/$L/train \
       $datadir/$L/train
   fi
+  wait;
   ) &
 done
 wait;
