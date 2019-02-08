@@ -29,10 +29,9 @@ def parse_utt2num_frames(utt2num_frames_path, langs):
             entry = line.split()
             lang_code = entry[0][:2]
             if lang_code in langs:
-                # TODO edit this later?
                 # Skip utterances less than 2 seconds long (needed in allocate_egs.py)
-                #if int(entry[1]) < 200:
-                #    continue
+                if int(entry[1]) < 200:
+                    continue
                 data[lang_code].append((entry[0], int(entry[1])))
     return data
 
