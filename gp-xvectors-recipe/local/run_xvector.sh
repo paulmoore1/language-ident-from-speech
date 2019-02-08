@@ -67,8 +67,8 @@ if [ $stage -le 4 ]; then
     --stage 0 \
     --frames-per-iter 50000000 \
     --frames-per-iter-diagnostic 100000 \
-    --min-frames-per-chunk 200 \
-    --max-frames-per-chunk 400 \
+    --min-frames-per-chunk 150 \
+    --max-frames-per-chunk 250 \
     --num-diagnostic-archives 3 \
     --num-repeats 35 \
     "$data" \
