@@ -259,25 +259,29 @@ if [ $stage -eq 1 ]; then
   ./local/split_long_utts.sh \
     --max-utt-len $enrollment_length \
     $enroll_data \
-    ${enroll_data}
+    ${enroll_data}/split
 
+  # Put in separate directory then transfer the split data over since doing it in
+  # the same directory produces weird results
   # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
   # TO-DO: Allow for some variation, or do strictly this length?
   echo "Splitting evaluation data"
   ./local/split_long_utts.sh \
     --max-utt-len $evaluation_length \
     $eval_data \
-    ${eval_data}
+    ${eval_data}/split
 
   echo "Splitting test data"
   ./local/split_long_utts.sh \
     --max-utt-len $test_length \
     $test_data \
-    ${test_data}
+    ${test_data}/split
 
   echo "Fixing datasets after splitting"
   for data_subset in enroll eval test; do
-    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
+    utils/fix_data_dir.sh $DATADIR/${data_subset}/split
+    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}/split
+    mv $DATADIR/${data_subset}/split/* $DATADIR/${data_subset}/
     utils/fix_data_dir.sh $DATADIR/${data_subset}
   done
 

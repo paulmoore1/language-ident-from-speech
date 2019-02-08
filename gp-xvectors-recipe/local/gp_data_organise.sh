@@ -129,17 +129,14 @@ for L in $LANGUAGES; do
   done
   # Split Tamil uttterances up
   if [ "$L" = "TA" ]; then
-  #  sed -e 's?[0-9]*$??' $datadir/$L/train/utt2spk \
-  #  > $datadir/$L/train/utt2lang
-
-  #  utt2lang_to_lang2utt.pl $datadir/$L/train/utt2lang \
-  #  > $datadir/$L/train/lang2utt
-
     split_long_utts.sh \
       --max-utt-len 25 \
       $datadir/$L/train \
       $datadir/$L/train
-
+  fi
+  wait;
+  # Split Tamil uttterances up
+  if [ "$L" = "TA" ]; then
     split_long_utts.sh \
       --max-utt-len 25 \
       $datadir/$L/enroll \
