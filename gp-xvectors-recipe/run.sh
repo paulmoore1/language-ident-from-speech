@@ -147,7 +147,7 @@ check_continue(){
 
 if [ -d $DATADIR/$exp_name ]; then
   echo "Experiment with name '$exp_name' already exists."
-  check_continue $DATADIR/;
+  check_continue $DATADIR/$exp_name;
 fi
 
 
@@ -293,8 +293,6 @@ if [ $stage -eq 1 ]; then
     exit
   fi
 fi
-
-
 
 # Make features and compute the energy-based VAD for each dataset
 # Runtime: ~12 mins
