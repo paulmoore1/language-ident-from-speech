@@ -259,7 +259,7 @@ if [ $stage -eq 1 ]; then
   ./local/split_long_utts.sh \
     --max-utt-len $enrollment_length \
     $enroll_data \
-    ${enroll_data}/split
+    ${enroll_data}
 
   # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
   # TO-DO: Allow for some variation, or do strictly this length?
@@ -267,15 +267,15 @@ if [ $stage -eq 1 ]; then
   ./local/split_long_utts.sh \
     --max-utt-len $evaluation_length \
     $eval_data \
-    ${eval_data}/split
+    ${eval_data}
 
   echo "Splitting test data"
   ./local/split_long_utts.sh \
     --max-utt-len $test_length \
     $test_data \
-    ${test_data}/split
+    ${test_data}
 
-  echo "Recalculating number of frames after splitting"
+  echo "Fixing datasets after splitting"
   for data_subset in enroll eval test; do
     utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
     utils/fix_data_dir.sh $DATADIR/${data_subset}
