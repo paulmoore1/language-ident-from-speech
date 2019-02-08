@@ -35,4 +35,6 @@ sbatch \
   --mail-user=s1531206@ed.ac.uk \
   --open-mode=append \
   --output=$outputs_dir/"${config_file}.out" \
+
+  #(echo 'YourDicePassword' | nohup longjob -28day -c './run.sh --exp-config=conf/exp_default.conf --stage=1' &> nohup-baseline.out ) &
   ./gp-xvectors-recipe/run.sh --home-dir=$recipe_dir --exp-config="${config_file}.conf"

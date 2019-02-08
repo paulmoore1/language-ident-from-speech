@@ -29,6 +29,9 @@ def parse_utt2num_frames(utt2num_frames_path, langs):
             entry = line.split()
             lang_code = entry[0][:2]
             if lang_code in langs:
+                # Skip utterances less than 2 seconds long (needed in allocate_egs.py)
+                if int(entry[1]) < 200:
+                    continue
                 data[lang_code].append((entry[0], int(entry[1])))
     return data
 
@@ -60,8 +63,8 @@ def get_utterances(lang_data, target_seconds, output_path, summary_path):
     # Randomise data order
     np.random.shuffle(lang_data)
 
-    # Number of times to retry. 10 should be sufficient
-    num_retries = 10
+    # Number of times to retry. 20 should be sufficient
+    num_retries = 20
     curr_attempt_num = 1
 
     best_error = 9999999
