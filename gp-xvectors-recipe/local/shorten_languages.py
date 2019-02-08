@@ -171,6 +171,10 @@ def main():
     for lang_pair in lang_pairs:
         lang = lang_pair[0]
         target_seconds = lang_pair[1]
+        # check for no data
+        if len(data[lang]) == 0:
+            print("No utterances found for lanuage: {}".format(lang))
+            continue
         get_utterances(data[lang], target_seconds, output_path, summary_path)
 
     print("Finished, summary of results stored in: {}".format(summary_path))
