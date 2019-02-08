@@ -20,12 +20,19 @@ do
   esac
 done
 
+mkdir -p ${PWD}/outputs
+outputs_dir = ${PWD}/outputs
+
+recipe_dir=${PWD}/gp-xvectors-recipe
+# Remove output file if it exists already
+rm -f $outputs_dir/"${config_file}.out"
+
 sbatch \
-  --nodelist=landonia[04] \
+  --nodelist=landonia[11-17,22-24] \
   --gres=gpu:2 \
   --job-name=$config_file \
   --mail-type=END \
   --mail-user=s1531206@ed.ac.uk \
   --open-mode=append \
-  --output="${config_file}.out" \
-  ./gp-xvectors-recipe/run.sh --home-dir=$PWD/gp_xvectors_recipe/ --exp-config="${config_file}.conf"
+  --output=outputs_dir/"${config_file}.out" \
+  ./gp-xvectors-recipe/run.sh --home-dir=$recipe_dir --exp-config="${config_file}.conf"
