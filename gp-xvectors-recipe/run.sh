@@ -185,7 +185,8 @@ mkdir -p $DATADIR/log
 echo "The experiment directory is: $DATADIR"
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN"
+#GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN"
+GP_LANGUAGES="AR BG CH"
 
 echo "Running with languages: ${GP_LANGUAGES}"
 
@@ -454,9 +455,6 @@ if [ $stage -eq 4 ]; then
     exit
   fi
 fi
-
-#TODO REMOVE ME!
-exit
 
 # Runtime: ~1:05h
 if [ $stage -eq 7 ]; then

@@ -75,9 +75,6 @@ if [ $stage -le 4 ]; then
     $egs_dir
 fi
 
-# TODO REMOVE ME!
-exit
-
 if [ $stage -le 5 ]; then
   echo  "#### STAGE 5: Creating NN configs using the xconfig parser. ####";
   echo "$0: creating neural net configs using the xconfig parser";
