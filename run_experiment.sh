@@ -21,7 +21,7 @@ do
 done
 
 mkdir -p ${PWD}/outputs
-outputs_dir = ${PWD}/outputs
+outputs_dir=${PWD}/outputs
 
 recipe_dir=${PWD}/gp-xvectors-recipe
 # Remove output file if it exists already
@@ -34,5 +34,5 @@ sbatch \
   --mail-type=END \
   --mail-user=s1531206@ed.ac.uk \
   --open-mode=append \
-  --output=outputs_dir/"${config_file}.out" \
+  --output=$outputs_dir/"${config_file}.out" \
   ./gp-xvectors-recipe/run.sh --home-dir=$recipe_dir --exp-config="${config_file}.conf"

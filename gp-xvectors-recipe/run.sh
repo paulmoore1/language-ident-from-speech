@@ -139,7 +139,7 @@ check_continue(){
 
 if [ -d $DATADIR/$exp_name ]; then
   echo "Experiment with name '$exp_name' already exists."
-  check_continue $DATADIR/$exp_name;
+  #check_continue $DATADIR/$exp_name;
 fi
 
 

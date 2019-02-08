@@ -75,6 +75,8 @@ if [ $stage -le 4 ]; then
     $egs_dir
 fi
 
+stage=`expr $stage + 1`
+
 if [ $stage -le 5 ]; then
   echo  "#### STAGE 5: Creating NN configs using the xconfig parser. ####";
   echo "$0: creating neural net configs using the xconfig parser";
@@ -141,6 +143,8 @@ fi
 
 dropout_schedule='0,0@0.20,0.1@0.50,0'
 srand=123
+
+stage=`expr $stage + 1`
 
 if [ $stage -le 6 ]; then
   echo  "#### STAGE 6: Training the network. ####"
