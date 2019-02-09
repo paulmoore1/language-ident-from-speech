@@ -1,4 +1,19 @@
 #!/bin/sh
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --partition=longjob
+#SBATCH --gres=gpu:2
+#SBATCH --time=3-08:00:00
+#SBATCH --outupt=$outputs_dir/"${config_file}.out"
+#SBATCH --job-name=$config_file
+#SBATCH --mail-type=END
+#SBATCH --mail-user=lapilosew2003@gmail.com
+#SBATCH --open-mode=append
+
+export STUDENT_ID=$(whoami)
+export HOME_DIR=/home/${STUDENT_ID}/language-ident-from-speech
+
+cd $HOME_DIR
 
 usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n
 \t       This script runs a single experiment from the configuration directory.\n
@@ -20,21 +35,12 @@ do
   esac
 done
 
-mkdir -p ${PWD}/outputs
-outputs_dir=${PWD}/outputs
-
-recipe_dir=${PWD}/gp-xvectors-recipe
+mkdir -p ${HOME_DIR}/outputs
+outputs_dir=${HOME_DIR}/outputs
 # Remove output file if it exists already
 rm -f $outputs_dir/"${config_file}.out"
 
-sbatch \
-  --nodelist=landonia[11-12] \
-  --gres=gpu:2 \
-  --job-name=$config_file \
-  --mail-type=END \
-  --mail-user=s1531206@ed.ac.uk \
-  --open-mode=append \
-  --output=$outputs_dir/"${config_file}.out" \
+recipe_dir=${HOME_DIR}/gp-xvectors-recipe
 
-  #(echo 'YourDicePassword' | nohup longjob -28day -c './run.sh --exp-config=conf/exp_default.conf --stage=1' &> nohup-baseline.out ) &
-  ./gp-xvectors-recipe/run.sh --home-dir=$recipe_dir --exp-config="${config_file}.conf"
+#(echo 'YourDicePassword' | nohup longjob -28day -c './run.sh --exp-config=conf/exp_default.conf --stage=1' &> nohup-baseline.out ) &
+./gp-xvectors-recipe/run.sh --home-dir=$recipe_dir --exp-config="${config_file}.conf"
