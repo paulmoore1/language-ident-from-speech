@@ -74,8 +74,9 @@ def get_utterances(lang_data, target_seconds, output_path, summary_path):
         curr_num_frames = 0
         temp_utterances = []
         i = 0
+        n = len(lang_data)
         # Start by adding utterances until going over the target
-        while (curr_num_frames < target_frames):
+        while (curr_num_frames < target_frames) and i < n:
             temp_utterances.append(lang_data[i][0])
             curr_num_frames += lang_data[i][1]
             last_num_frames_added = lang_data[i][1]
