@@ -4,8 +4,8 @@
 #SBATCH --partition=LongJobs
 #SBATCH --gres=gpu:2
 #SBATCH --time=3-08:00:00
-#SBATCH --output=outputs/lre_tr_500_en_500_2.out
-#SBATCH --job-name=lre_tr_500_en_500_2
+#SBATCH --output=outputs/lre_tr_500_en_500_3.out
+#SBATCH --job-name=lre_tr_500_en_500_3
 #SBATCH --mail-type=END
 #SBATCH --mail-user=lapilosew2003@gmail.com
 #SBATCH --open-mode=append
