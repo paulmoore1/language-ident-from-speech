@@ -47,6 +47,7 @@ run_all=false
 exp_config=NONE
 num_epochs=3
 feature_type=mfcc
+skip_nnet_training=false
 
 while [ $# -gt 0 ];
 do
@@ -179,6 +180,17 @@ if [ ! -z "$use_dnn_egs_from" ]; then
   preprocessed_data_dir=$DATADIR/$use_dnn_egs_from
 fi
 
+# If the model requested for use is an actual directory with a model in it
+if [ -d $DATADIR/$use_model_from/nnet ]; then
+  skip_nnet_training=true
+  nnet_dir=$DATADIR/$use_model_from/nnet
+  echo "Model found!"
+  exit
+else
+  echo "Model not found in $DATADIR/$use_model_from/nnet"
+  exit
+fi
+
 DATADIR="${DATADIR}/$exp_name"
 mkdir -p $DATADIR
 mkdir -p $DATADIR/log
@@ -244,40 +256,6 @@ if [ $stage -eq 1 ]; then
     utils/fix_data_dir.sh $DATADIR/${data_subset}
   done
 
-  # NOTE Splitting after shortening enrollment data ensures that it will all be there.
-  # Currently split_long_utts.sh doesn't affect wav.scp so need to do it in this order
-  # Split enroll data into segments of < 30s.
-  # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
-  echo "Splitting enrollment data"
-  ./local/split_long_utts.sh \
-    --max-utt-len $enrollment_length \
-    $enroll_data \
-    ${enroll_data}/split
-
-  # Put in separate directory then transfer the split data over since doing it in
-  # the same directory produces weird results
-  # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
-  # TO-DO: Allow for some variation, or do strictly this length?
-  echo "Splitting evaluation data"
-  ./local/split_long_utts.sh \
-    --max-utt-len $evaluation_length \
-    $eval_data \
-    ${eval_data}/split
-
-  echo "Splitting test data"
-  ./local/split_long_utts.sh \
-    --max-utt-len $test_length \
-    $test_data \
-    ${test_data}/split
-
-  echo "Fixing datasets after splitting"
-  for data_subset in enroll eval test; do
-    utils/fix_data_dir.sh $DATADIR/${data_subset}/split
-    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}/split
-    mv $DATADIR/${data_subset}/split/* $DATADIR/${data_subset}/
-    utils/fix_data_dir.sh $DATADIR/${data_subset}
-  done
-
   echo "Finished stage 1."
 
   if [ "$run_all" = true ]; then
@@ -292,7 +270,14 @@ fi
 if [ $stage -eq 2 ]; then
   echo "#### STAGE 2: features (MFCC, SDC, etc) and VAD. ####"
 
-  for data_subset in train enroll eval test; do
+  # Don't bother getting features for training data
+  if [ "$skip_nnet_training" == true ]; then
+    declare -a data_subsets=(enroll eval test)
+  else
+    declare -a data_subsets=(train enroll eval test)
+  fi
+
+  for data_subset in ${data_subsets[@]}; do
     (
     num_speakers=$(cat $DATADIR/${data_subset}/spk2utt | wc -l)
     if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
@@ -378,7 +363,11 @@ if [ $stage -eq 2 ]; then
   echo "Finished stage 2."
 
   if [ "$run_all" = true ]; then
-    stage=`expr $stage + 1`
+    if [ "$skip_nnet_training" = true ]; then
+      stage=`expr $stage + 5`
+    else
+      stage=`expr $stage + 1`
+    fi
   else
     exit
   fi
@@ -466,6 +455,43 @@ if [ $stage -eq 7 ]; then
     use_gpu=false
   fi
 
+  echo "Splitting data first"
+  # NOTE Splitting after shortening enrollment data ensures that it will all be there.
+  # Currently split_long_utts.sh doesn't affect wav.scp so need to do it in this order
+  # Split enroll data into segments of < 30s.
+  # TO-DO: Split into segments of various lengths (LID X-vector paper has 3-60s)
+  echo "Splitting enrollment data"
+  ./local/split_long_utts.sh \
+    --max-utt-len $enrollment_length \
+    $enroll_data \
+    ${enroll_data}/split
+
+  # Put in separate directory then transfer the split data over since doing it in
+  # the same directory produces weird results
+  # Split eval and testing utterances into segments of the same length (3s, 10s, 30s)
+  # TO-DO: Allow for some variation, or do strictly this length?
+  echo "Splitting evaluation data"
+  ./local/split_long_utts.sh \
+    --max-utt-len $evaluation_length \
+    $eval_data \
+    ${eval_data}/split
+
+  echo "Splitting test data"
+  ./local/split_long_utts.sh \
+    --max-utt-len $test_length \
+    $test_data \
+    ${test_data}/split
+
+ # NB - currently not moving back after splitting, will use the split data instead
+ # This allows for use of the same data (it can easily be split into different lengths)
+  #echo "Fixing datasets after splitting"
+  #for data_subset in enroll eval test; do
+  #  utils/fix_data_dir.sh $DATADIR/${data_subset}/split
+  #  utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}/split
+  #  mv $DATADIR/${data_subset}/split/* $DATADIR/${data_subset}/
+  #  utils/fix_data_dir.sh $DATADIR/${data_subset}
+  #done
+
   # X-vectors for training the classifier
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
@@ -473,7 +499,7 @@ if [ $stage -eq 7 ]; then
     --nj $MAXNUMJOBS \
     --stage 0 \
     $nnet_dir \
-    $enroll_data \
+    $enroll_data/split \
     $exp_dir/xvectors_enroll &
 
   # X-vectors for end-to-end evaluation
@@ -483,7 +509,7 @@ if [ $stage -eq 7 ]; then
     --nj $MAXNUMJOBS \
     --stage 0 \
     $nnet_dir \
-    $eval_data \
+    $eval_data/split \
     $exp_dir/xvectors_eval &
 
   # X-vectors for testing (final evaluation)
@@ -493,7 +519,7 @@ if [ $stage -eq 7 ]; then
 #    --nj $MAXNUMJOBS \
 #    --stage 0 \
 #    $nnet_dir \
-#    $test_data \
+#    $test_data/split \
 #    $exp_dir/xvectors_test &
 
   wait;
@@ -531,8 +557,8 @@ if [ $stage -eq 8 ]; then
     --test-dir $exp_dir/xvectors_eval \
     --model-dir $exp_dir/classifier \
     --classification-file $exp_dir/results/classification \
-    --train-utt2lang $enroll_data/utt2lang \
-    --test-utt2lang $eval_data/utt2lang \
+    --train-utt2lang $enroll_data/split/utt2lang \
+    --test-utt2lang $eval_data/split/utt2lang \
     --languages conf/test_languages.list \
     > $exp_dir/classifier/logistic-regression.log
 
