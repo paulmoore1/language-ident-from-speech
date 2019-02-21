@@ -105,7 +105,7 @@ trap 'rm -rf "$tmpdir"' EXIT
 echo "datadir is: $datadir"
 for L in $TRAIN_LANGUAGES; do
   (
-  mkdir $tmpdir/train/$L
+  mkdir -p $tmpdir/train/$L
   if [ -f $CONFDIR/train_spk.list ]; then
     grep "^$L" $train_list | cut -f2- | tr ' ' '\n' \
       | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/train/$L/train_spk
@@ -136,7 +136,7 @@ echo "Done"
 
 for L in $ENROLL_LANGUAGES; do
   (
-  mkdir $tmpdir/enroll/$L
+  mkdir -p $tmpdir/enroll/$L
   grep "^$L" $enroll_list | cut -f2- | tr ' ' '\n' \
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/enroll/$L/enroll_spk
   echo "Language - ${L}: formatting enroll data."
@@ -157,7 +157,7 @@ echo "Done"
 
 for L in $EVAL_LANGUAGES; do
   (
-  mkdir $tmpdir/eval/$L
+  mkdir -p $tmpdir/eval/$L
   grep "^$L" $eval_list | cut -f2- | tr ' ' '\n' \
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/eval/$L/eval_spk
 
@@ -179,7 +179,7 @@ echo "Done"
 
 for L in $TEST_LANGUAGES; do
   (
-  mkdir $tmpdir/test/$L
+  mkdir -p $tmpdir/test/$L
   grep "^$L" $test_list | cut -f2- | tr ' ' '\n' \
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/test/$L/test_spk
 
