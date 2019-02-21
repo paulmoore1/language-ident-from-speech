@@ -12,6 +12,8 @@ src/logs/
 gp-xvectors-recipe/c_primary_calculator.py
 gp-xvectors-recipe/explore_log_regression.sh
 
+outputs
+
 #######################################
 # C++ GITIGNORE
 #######################################

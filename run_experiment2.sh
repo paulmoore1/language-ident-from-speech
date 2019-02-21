@@ -4,8 +4,8 @@
 #SBATCH --partition=Standard
 #SBATCH --gres=gpu:2
 #SBATCH --time=08:00:00
-#SBATCH --output=outputs/lre_tr_500_en_500_3.out
-#SBATCH --job-name=lre_tr_500_en_500_3
+#SBATCH --output=outputs/lre_tr_500_en_10000.out
+#SBATCH --job-name=lre_tr_500_en_10000
 #SBATCH --mail-type=END
 #SBATCH --mail-user=lapilosew2003@gmail.com
 #SBATCH --open-mode=append
@@ -43,4 +43,4 @@ rm -f $outputs_dir/"${config_file}.out"
 recipe_dir=${HOME_DIR}/gp-xvectors-recipe
 
 #(echo 'YourDicePassword' | nohup longjob -28day -c './run.sh --exp-config=conf/exp_default.conf --stage=1' &> nohup-baseline.out ) &
-./gp-xvectors-recipe/run.sh --home-dir=$recipe_dir --exp-config="lre_tr_500_en_500.conf"
+./gp-xvectors-recipe/run.sh --home-dir=$recipe_dir --exp-config="lre_tr_500_en_10000.conf"
