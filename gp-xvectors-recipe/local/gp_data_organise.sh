@@ -35,7 +35,10 @@ e.g.: $PROG --config-dir=conf --corpus-dir=corpus --languages=\"GE PO SP\"\n\n
 Required arguments:\n
   --config-dir=DIR\tDirecory containing the necessary config files\n
   --corpus-dir=DIR\tDirectory for the GlobalPhone corpus\n
-  --languages=STR\tSpace separated list of two letter language codes\n
+  --train-languages=STR\tSpace separated list of two letter language codes for training\n
+  --enroll-languages=STR\tSpace separated list of two letter language codes for enrollment\n
+  --eval-languages=STR\tSpace separated list of two letter language codes for evaluation\n
+  --test-languages=STR\tSpace separated list of two letter language codes for testing\n
 ";
 
 if [ $# -lt 4 ]; then
@@ -50,8 +53,14 @@ do
   CONFDIR=`read_dirname $1`; shift ;;
   --corpus-dir=*)
   GPDIR=`read_dirname $1`; shift ;;
-  --languages=*)
-  LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --train-languages=*)
+  TRAIN_LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --enroll-languages=*)
+  ENROLL_LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --eval-languages=*)
+  EVAL_LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --test-languages=*)
+  TEST_LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --data-dir=*)
   datadir=`read_dirname $1`; shift ;;
   --wav-dir=*)
@@ -94,60 +103,96 @@ trap 'rm -rf "$tmpdir"' EXIT
 
 # Create directories to contain files needed in training and testing:
 echo "datadir is: $datadir"
-for L in $LANGUAGES; do
+for L in $TRAIN_LANGUAGES; do
   (
   mkdir $tmpdir/$L
-  grep "^$L" $test_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/test_spk
-  grep "^$L" $eval_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/eval_spk
-  grep "^$L" $enroll_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/enroll_spk
   if [ -f $CONFDIR/train_spk.list ]; then
     grep "^$L" $train_list | cut -f2- | tr ' ' '\n' \
       | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/train_spk
   else
-    echo "Train-set speaker list not found. Using all speakers not in eval set."
-    grep -v -f $tmpdir/$L/test_spk -f $tmpdir/$L/eval_spk -f $tmpdir/$L/enroll_spk \
-      $WAVDIR/$L/lists/spk > $tmpdir/$L/train_spk || \
-      echo "Could not find any training set speakers; \
-      are you trying to use all of them for evaluation and testing?";
+    echo "Train-set speaker list not found. Skipping."
+    #grep -v -f $tmpdir/$L/test_spk -f $tmpdir/$L/eval_spk -f $tmpdir/$L/enroll_spk \
+    #  $WAVDIR/$L/lists/spk > $tmpdir/$L/train_spk || \
+    #  echo "Could not find any training set speakers; \
+    #  are you trying to use all of them for evaluation and testing?";
+    continue
   fi
 
-  echo "Language - ${L}: formatting train/enroll/eval/test data."
-  for x in train enroll eval test; do
-    mkdir -p $datadir/$L/$x
-    rm -f $datadir/$L/$x/wav.scp $datadir/$L/$x/spk2utt \
-          $datadir/$L/$x/utt2spk $datadir/$L/$x/utt2len
+  echo "Language - ${L}: formatting train data."
+  mkdir -p $datadir/$L/train
+  rm -f $datadir/$L/train/wav.scp $datadir/$L/train/spk2utt \
+        $datadir/$L/train/utt2spk $datadir/$L/train/utt2len
 
-    for spk in `cat $tmpdir/$L/${x}_spk`; do
-      grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/$x/wav.scp
-      grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/$x/spk2utt
-      grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/$x/utt2spk
-      grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/$x/utt2len
-    done
+  for spk in `cat $tmpdir/$L/train_spk`; do
+    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/train/wav.scp
+    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/train/spk2utt
+    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/train/utt2spk
+    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/train/utt2len
   done
-  # Split Tamil uttterances up
-  if [ "$L" = "TA" ]; then
-    sed -e 's?[0-9]*$??' $datadir/$L/train/utt2spk \
-    > $datadir/$L/train/utt2lang
+  ) &
+done
+wait;
+echo "Done"
 
-    split_long_utts.sh \
-      --max-utt-len 25 \
-      $datadir/$L/train \
-      $datadir/$L/train
-  fi
-  # Split Tamil uttterances up
-  if [ "$L" = "TA" ]; then
-    sed -e 's?[0-9]*$??' $datadir/$L/enroll/utt2spk \
-    > $datadir/$L/enroll/utt2lang
+for L in $ENROLL_LANGUAGES; do
+  (
+  mkdir $tmpdir/$L
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/enroll_spk
+  echo "Language - ${L}: formatting enroll data."
+  mkdir -p $datadir/$L/enroll
+  rm -f $datadir/$L/enroll/wav.scp $datadir/$L/enroll/spk2utt \
+        $datadir/$L/enroll/utt2spk $datadir/$L/enroll/utt2len
 
-    split_long_utts.sh \
-      --max-utt-len 25 \
-      $datadir/$L/enroll \
-      $datadir/$L/enroll
-  fi
-  wait;
+  for spk in `cat $tmpdir/$L/enroll_spk`; do
+    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/enroll/wav.scp
+    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/enroll/spk2utt
+    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/enroll/utt2spk
+    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/enroll/utt2len
+  done
+  ) &
+done
+wait;
+echo "Done"
+
+for L in $EVAL_LANGUAGES; do
+  (
+  mkdir $tmpdir/$L
+  grep "^$L" $eval_list | cut -f2- | tr ' ' '\n' \
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/eval_spk
+
+  echo "Language - ${L}: formatting eval data."
+  mkdir -p $datadir/$L/eval
+  rm -f $datadir/$L/eval/wav.scp $datadir/$L/eval/spk2utt \
+        $datadir/$L/eval/utt2spk $datadir/$L/eval/utt2len
+
+  for spk in `cat $tmpdir/$L/train_spk`; do
+    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/eval/wav.scp
+    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/eval/spk2utt
+    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/eval/utt2spk
+    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/eval/utt2len
+  done
+  ) &
+done
+wait;
+echo "Done"
+
+for L in $TEST_LANGUAGES; do
+  (
+  mkdir $tmpdir/$L
+  grep "^$L" $test_list | cut -f2- | tr ' ' '\n' \
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/test_spk
+
+  echo "Language - ${L}: formatting test data."
+  mkdir -p $datadir/$L/test
+  rm -f $datadir/$L/test/wav.scp $datadir/$L/test/spk2utt \
+        $datadir/$L/test/utt2spk $datadir/$L/test/utt2len
+
+  for spk in `cat $tmpdir/$L/train_spk`; do
+    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/test/wav.scp
+    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/test/spk2utt
+    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/test/utt2spk
+    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/test/utt2len
+  done
   ) &
 done
 wait;
@@ -159,12 +204,19 @@ eval_dirs=()
 enroll_dirs=()
 test_dirs=()
 
-for L in $LANGUAGES; do
+for L in $TRAIN_LANGUAGES; do
   train_dirs+=($datadir/$L/train)
+done
+for L in $ENROLL_LANGUAGES; do
   enroll_dirs+=($datadir/$L/enroll)
+done
+for L in $EVAL_LANGUAGES; do
   eval_dirs+=($datadir/$L/eval)
+done
+for L in $TEST_LANGUAGES; do
   test_dirs+=($datadir/$L/test)
 done
+
 
 echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${datadir}||g")"
 utils/combine_data.sh --extra-files 'utt2len' $datadir/train ${train_dirs[@]}
