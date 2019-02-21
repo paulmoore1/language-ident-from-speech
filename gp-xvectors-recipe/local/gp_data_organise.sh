@@ -166,7 +166,7 @@ for L in $EVAL_LANGUAGES; do
   rm -f $datadir/$L/eval/wav.scp $datadir/$L/eval/spk2utt \
         $datadir/$L/eval/utt2spk $datadir/$L/eval/utt2len
 
-  for spk in `cat $tmpdir/eval/$L/train_spk`; do
+  for spk in `cat $tmpdir/eval/$L/eval_spk`; do
     grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/eval/wav.scp
     grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/eval/spk2utt
     grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/eval/utt2spk
@@ -176,7 +176,6 @@ for L in $EVAL_LANGUAGES; do
 done
 wait;
 echo "Done"
-
 for L in $TEST_LANGUAGES; do
   (
   mkdir -p $tmpdir/test/$L
@@ -188,7 +187,7 @@ for L in $TEST_LANGUAGES; do
   rm -f $datadir/$L/test/wav.scp $datadir/$L/test/spk2utt \
         $datadir/$L/test/utt2spk $datadir/$L/test/utt2len
 
-  for spk in `cat $tmpdir/test/$L/train_spk`; do
+  for spk in `cat $tmpdir/test/$L/test_spk`; do
     grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/test/wav.scp
     grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/test/spk2utt
     grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/test/utt2spk
