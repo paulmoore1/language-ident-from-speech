@@ -185,10 +185,8 @@ if [ -d $DATADIR/$use_model_from/nnet ]; then
   skip_nnet_training=true
   nnet_dir=$DATADIR/$use_model_from/nnet
   echo "Model found!"
-  exit
 else
   echo "Model not found in $DATADIR/$use_model_from/nnet"
-  exit
 fi
 
 DATADIR="${DATADIR}/$exp_name"
