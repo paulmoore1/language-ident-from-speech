@@ -353,7 +353,7 @@ if [ $stage -eq 2 ]; then
     ./local/compute_vad_decision.sh \
       --nj $num_jobs \
       --cmd "$preprocess_cmd" \
-      $DATADIR/${data_subset} \
+      $DATADIR/${data_subset}/split \
       $log_dir/make_vad \
       $vaddir
 
