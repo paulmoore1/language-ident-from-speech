@@ -225,7 +225,10 @@ if [ $stage -eq 1 ]; then
     --config-dir=$conf_dir \
     --corpus-dir=$GP_CORPUS \
     --wav-dir=/mnt/mscteach_home/s1531206/lid/wav \
-    --languages="$GP_LANGUAGES" \
+    --train-languages="$GP_LANGUAGES" \
+    --enroll-languages="$GP_LANGUAGES" \
+    --eval-languages="$GP_LANGUAGES" \
+    --test-languages="$GP_LANGUAGES" \
     --data-dir=$DATADIR \
     || exit 1;
 
