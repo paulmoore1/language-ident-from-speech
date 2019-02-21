@@ -220,6 +220,7 @@ fi
 if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
   echo "#### STAGE 1: Organising speakers into sets. ####"
+  (
   # Organise data into train, enroll, eval and test
   ./local/gp_data_organise.sh \
     --config-dir=$conf_dir \
@@ -231,6 +232,8 @@ if [ $stage -eq 1 ]; then
     --test-languages="$GP_LANGUAGES" \
     --data-dir=$DATADIR \
     || exit 1;
+
+  ) > $log_dir/data_oranisation
 
   if [ "$skip_nnet_training" == true ]; then
     # Get utt2num frames information for using when restricting the amount of data
