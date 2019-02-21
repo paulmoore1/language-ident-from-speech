@@ -303,6 +303,16 @@ if [ $stage -eq 1 ]; then
     $test_data \
     ${test_data}/split
 
+ # NB - currently not moving back after splitting, will use the split data instead
+ # This allows for use of the same data (it can easily be split into different lengths)
+  #echo "Fixing datasets after splitting"
+  #for data_subset in enroll eval test; do
+  #  utils/fix_data_dir.sh $DATADIR/${data_subset}/split
+  #  utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}/split
+  #  mv $DATADIR/${data_subset}/split/* $DATADIR/${data_subset}/
+  #  utils/fix_data_dir.sh $DATADIR/${data_subset}
+  #done
+
   echo "Finished stage 1."
 
   if [ "$run_all" = true ]; then
@@ -333,16 +343,41 @@ if [ $stage -eq 2 ]; then
       num_jobs=$num_speakers
     fi
 
-    echo "Creating 23D MFCC features."
-    steps/make_mfcc.sh \
-      --write-utt2num-frames false \
-      --mfcc-config conf/mfcc.conf \
-      --nj $num_jobs \
-      --cmd "$preprocess_cmd" \
-      --compress true \
-      $DATADIR/${data_subset}/split \
-      $log_dir/make_mfcc \
-      $mfcc_dir
+    if [ "$feature_type" == "mfcc" ]; then
+      echo "Creating 23D MFCC features."
+      steps/make_mfcc.sh \
+        --write-utt2num-frames false \
+        --mfcc-config conf/mfcc.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset}/split \
+        $log_dir/make_mfcc \
+        $mfcc_dir
+    elif [ "$feature_type" == "mfcc_deltas" ]; then
+      echo "Creating 23D MFCC features for MFCC-delta features."
+      steps/make_mfcc.sh \
+        --write-utt2num-frames false \
+        --mfcc-config conf/mfcc.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_mfcc \
+        $mfcc_deltas_dir
+
+      utils/fix_data_dir.sh $DATADIR/${data_subset}
+      echo "Creating MFCC-delta features on top of 23D MFCC features."
+      ./local/make_deltas.sh \
+        --write-utt2num-frames false \
+        --deltas-config conf/deltas.conf \
+        --nj $num_jobs \
+        --cmd "$preprocess_cmd" \
+        --compress true \
+        $DATADIR/${data_subset} \
+        $log_dir/make_deltas \
+        $mfcc_deltas_dir
+    fi
 
     echo "Fixing the directory to make sure everything is fine."
     utils/fix_data_dir.sh $DATADIR/${data_subset}
@@ -388,6 +423,17 @@ if [ $stage -eq 3 ]; then
 
 	utils/data/get_utt2num_frames.sh $nnet_train_data
   utils/fix_data_dir.sh $nnet_train_data
+
+  # Now, we need to remove features that are too short after removing silence
+  # frames.  We want atleast 5s (500 frames) per utterance.
+  # NOTE Don't do this for LRE - need as much as we can get, an utterances are precomputed to be a certain number of frames
+  # echo "Removing short features..."
+  #min_len=500
+  #mv $nnet_train_data/utt2num_frames $nnet_train_data/utt2num_frames.bak
+  #awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $nnet_train_data/utt2num_frames.bak > $nnet_train_data/utt2num_frames
+  #utils/filter_scp.pl $nnet_train_data/utt2num_frames $nnet_train_data/utt2spk > $nnet_train_data/utt2spk.new
+  #mv $nnet_train_data/utt2spk.new $nnet_train_data/utt2spk
+  #utils/fix_data_dir.sh $nnet_train_data
 
   echo "Finished stage 3."
 
