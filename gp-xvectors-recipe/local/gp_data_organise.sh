@@ -105,10 +105,10 @@ trap 'rm -rf "$tmpdir"' EXIT
 echo "datadir is: $datadir"
 for L in $TRAIN_LANGUAGES; do
   (
-  mkdir $tmpdir/$L
+  mkdir $tmpdir/train/$L
   if [ -f $CONFDIR/train_spk.list ]; then
     grep "^$L" $train_list | cut -f2- | tr ' ' '\n' \
-      | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/train_spk
+      | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/train/$L/train_spk
   else
     echo "Train-set speaker list not found. Skipping."
     #grep -v -f $tmpdir/$L/test_spk -f $tmpdir/$L/eval_spk -f $tmpdir/$L/enroll_spk \
@@ -123,7 +123,7 @@ for L in $TRAIN_LANGUAGES; do
   rm -f $datadir/$L/train/wav.scp $datadir/$L/train/spk2utt \
         $datadir/$L/train/utt2spk $datadir/$L/train/utt2len
 
-  for spk in `cat $tmpdir/$L/train_spk`; do
+  for spk in `cat $tmpdir/train/$L/train_spk`; do
     grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/train/wav.scp
     grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/train/spk2utt
     grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/train/utt2spk
@@ -136,15 +136,15 @@ echo "Done"
 
 for L in $ENROLL_LANGUAGES; do
   (
-  mkdir $tmpdir/$L
+  mkdir $tmpdir/enroll/$L
   grep "^$L" $enroll_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/enroll_spk
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/enroll/$L/enroll_spk
   echo "Language - ${L}: formatting enroll data."
   mkdir -p $datadir/$L/enroll
   rm -f $datadir/$L/enroll/wav.scp $datadir/$L/enroll/spk2utt \
         $datadir/$L/enroll/utt2spk $datadir/$L/enroll/utt2len
 
-  for spk in `cat $tmpdir/$L/enroll_spk`; do
+  for spk in `cat $tmpdir/enroll/$L/enroll_spk`; do
     grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/enroll/wav.scp
     grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/enroll/spk2utt
     grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/enroll/utt2spk
@@ -157,16 +157,16 @@ echo "Done"
 
 for L in $EVAL_LANGUAGES; do
   (
-  mkdir $tmpdir/$L
+  mkdir $tmpdir/eval/$L
   grep "^$L" $eval_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/eval_spk
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/eval/$L/eval_spk
 
   echo "Language - ${L}: formatting eval data."
   mkdir -p $datadir/$L/eval
   rm -f $datadir/$L/eval/wav.scp $datadir/$L/eval/spk2utt \
         $datadir/$L/eval/utt2spk $datadir/$L/eval/utt2len
 
-  for spk in `cat $tmpdir/$L/train_spk`; do
+  for spk in `cat $tmpdir/eval/$L/train_spk`; do
     grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/eval/wav.scp
     grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/eval/spk2utt
     grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/eval/utt2spk
@@ -179,16 +179,16 @@ echo "Done"
 
 for L in $TEST_LANGUAGES; do
   (
-  mkdir $tmpdir/$L
+  mkdir $tmpdir/test/$L
   grep "^$L" $test_list | cut -f2- | tr ' ' '\n' \
-    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/test_spk
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/test/$L/test_spk
 
   echo "Language - ${L}: formatting test data."
   mkdir -p $datadir/$L/test
   rm -f $datadir/$L/test/wav.scp $datadir/$L/test/spk2utt \
         $datadir/$L/test/utt2spk $datadir/$L/test/utt2len
 
-  for spk in `cat $tmpdir/$L/train_spk`; do
+  for spk in `cat $tmpdir/test/$L/train_spk`; do
     grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/test/wav.scp
     grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/test/spk2utt
     grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/test/utt2spk
