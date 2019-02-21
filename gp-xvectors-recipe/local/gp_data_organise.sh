@@ -137,6 +137,7 @@ echo "Done"
 for L in $ENROLL_LANGUAGES; do
   (
   mkdir $tmpdir/$L
+  grep "^$L" $enroll_list | cut -f2- | tr ' ' '\n' \
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/$L/enroll_spk
   echo "Language - ${L}: formatting enroll data."
   mkdir -p $datadir/$L/enroll
