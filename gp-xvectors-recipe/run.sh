@@ -48,6 +48,7 @@ exp_config=NONE
 num_epochs=3
 feature_type=mfcc
 skip_nnet_training=false
+use_model_from=NONE
 
 while [ $# -gt 0 ];
 do
