@@ -451,6 +451,7 @@ if [ $stage -eq 4 ]; then
   else
     exit
   fi
+fi
 
 # Runtime: ~1:05h
 if [ $stage -eq 7 ]; then
