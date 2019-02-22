@@ -9,6 +9,7 @@
 #SBATCH --mail-type=END
 #SBATCH --mail-user=lapilosew2003@gmail.com
 #SBATCH --open-mode=append
+config_file=lre_tr_500_en_10000
 
 export STUDENT_ID=$(whoami)
 export HOME_DIR=/home/${STUDENT_ID}/language-ident-from-speech
@@ -43,4 +44,4 @@ rm -f $outputs_dir/"${config_file}.out"
 recipe_dir=${HOME_DIR}/gp-xvectors-recipe
 
 #(echo 'YourDicePassword' | nohup longjob -28day -c './run.sh --exp-config=conf/exp_default.conf --stage=1' &> nohup-baseline.out ) &
-./gp-xvectors-recipe/run.sh --home-dir=$recipe_dir --exp-config="lre_tr_500_en_10000.conf"
+./gp-xvectors-recipe/run.sh --home-dir=$recipe_dir --exp-config="${config_file}.conf"
