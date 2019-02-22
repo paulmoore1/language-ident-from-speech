@@ -411,8 +411,8 @@ if [ "$use_data_augmentation" = true ]; then
 
   # Make a version with reverberated speech
   rvb_opts=()
-  rvb_opts+=(--rir-set-parameters "0.5, RIRS_NOISES/simulated_rirs/smallroom/rir_list")
-  rvb_opts+=(--rir-set-parameters "0.5, RIRS_NOISES/simulated_rirs/mediumroom/rir_list")
+  rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/smallroom/rir_list")
+  rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/mediumroom/rir_list")
 
   # Make a reverberated version of the training data.  Note that we don't add any
   # additive noise here.
@@ -424,6 +424,7 @@ if [ "$use_data_augmentation" = true ]; then
     --num-replications 1 \
     --source-sampling-rate 8000 \
     ${train_data} ${train_data}_reverb
+  utils/data/get_utt2dur.sh ${train_data}_reverb
   cp ${train_data}/vad.scp ${train_data}_reverb
   utils/copy_data_dir.sh --utt-suffix "-reverb" ${train_data}_reverb ${train_data}_reverb.new
   rm -rf ${train_data}_reverb
@@ -439,9 +440,12 @@ if [ "$use_data_augmentation" = true ]; then
   # Combine reverb, noise, music, and babble into one directory.
   utils/combine_data.sh ${train_data}_aug ${train_data}_reverb ${train_data}_noise ${train_data}_music ${train_data}_babble
 
+  # Get target number of utterances for the subset of the augmented data
+  # Set so it's about 2.5x the normal data (4x augmented / 1.6 = 2.5)
+  num_utts=$(wc -l ${train_data}_aug/utt2spk | cut -d' ' -f1)
+  target_utts=$(echo ${num_utts}/1.6 | bc)
   # Take a random subset of the augmentations
-  # TODO check correct number
-  utils/subset_data_dir.sh ${train_data}_aug 1000 ${train_data}_aug_subset
+  utils/subset_data_dir.sh ${train_data}_aug $target_utts ${train_data}_aug_subset
   utils/fix_data_dir.sh ${train_data}_aug_subset
 
   # Make MFCCs for the augmented data.  Note that we do not compute a new
@@ -450,10 +454,25 @@ if [ "$use_data_augmentation" = true ]; then
   steps/make_mfcc.sh --mfcc-config conf/mfcc.conf --nj 40 --cmd "$train_cmd" \
     ${train_data}_aug_subset exp/make_mfcc $mfccdir
 
+  # Keep original clean copy of training data as backup
+  cp -r $train_data ${train_data}_clean
+
   # Combine the clean and augmented SWBD+SRE list.  This is now roughly
   # double the size of the original clean list.
-  utils/combine_data.sh ${train_data} ${train_data}_aug_subset ${train_data}
+  utils/combine_data.sh ${train_data}_combined ${train_data}_aug_subset ${train_data}_clean
+  rm -rf ${train_data}
+  mv ${train_data}_combined ${train_data}
   utils/fix_data_dir.sh ${train_data}
+
+  # Remove unnecessary folders
+  rm -rf ${train_data}_music
+  rm -rf ${train_data}_noise
+  rm -rf ${train_data}_reverb
+  rm -rf ${train_data}_babble
+  rm -rf ${train_data}_aug # Have the subset and clean data which is enough
+
+  utils/data/get_utt2num_frames.sh ${train_data}
+
   echo "Done with data augmentation"
 else
   echo "No data augmentation required"

@@ -71,10 +71,13 @@ def GetArgs():
                         "the RIRs/noises will be resampled to the rate of the source data.")
     parser.add_argument("--include-original-data", type=str, help="If true, the output data includes one copy of the original data",
                          choices=['true', 'false'], default = "false")
+    parser.add_argument("rirs_dir",
+                        help="Directory where RIRS_NOISES is stored")
     parser.add_argument("input_dir",
                         help="Input data directory")
     parser.add_argument("output_dir",
                         help="Output data directory")
+
 
     print(' '.join(sys.argv))
 
@@ -206,7 +209,7 @@ def AddPointSourceNoise(noise_addition_descriptor,  # descriptor to store the in
                         foreground_snrs, # the SNR for adding the foreground noises
                         background_snrs, # the SNR for adding the background noises
                         speech_dur,  # duration of the recording
-                        max_noises_recording  # Maximum number of point-source noises that can be added
+                        max_noises_recording,  # Maximum number of point-source noises that can be added
                         ):
     if len(pointsource_noise_list) > 0 and random.random() < pointsource_noise_addition_probability and max_noises_recording >= 1:
         for k in range(random.randint(1, max_noises_recording)):
@@ -502,7 +505,7 @@ def ParseSetParameterStrings(set_para_array):
 # Each rir object in the list contains the following attributes:
 # rir_id, room_id, receiver_position_id, source_position_id, rt60, drr, probability
 # Please refer to the help messages in the parser for the meaning of these attributes
-def ParseRirList(rir_set_para_array, smoothing_weight, sampling_rate = None):
+def ParseRirList(rir_set_para_array, smoothing_weight, rirs_dir, sampling_rate = None):
     rir_parser = argparse.ArgumentParser()
     rir_parser.add_argument('--rir-id', type=str, required=True, help='This id is unique for each RIR and the noise may associate with a particular RIR by refering to this id')
     rir_parser.add_argument('--room-id', type=str, required=True, help='This is the room that where the RIR is generated')
@@ -524,9 +527,9 @@ def ParseRirList(rir_set_para_array, smoothing_weight, sampling_rate = None):
             if sampling_rate is not None:
                 # check if the rspecifier is a pipe or not
                 if len(rir.rir_rspecifier.split()) == 1:
-                    rir.rir_rspecifier = "sox {0} -r {1} -t wav - |".format(rir.rir_rspecifier, sampling_rate)
+                    rir.rir_rspecifier = "sox {0}/{1} -r {2} -t wav - |".format(rirs_dir, rir.rir_rspecifier, sampling_rate)
                 else:
-                    rir.rir_rspecifier = "{0} sox -t wav - -r {1} -t wav - |".format(rir.rir_rspecifier, sampling_rate)
+                    rir.rir_rspecifier = "{0}/{1} sox -t wav - -r {2} -t wav - |".format(rirs_dir, rir.rir_rspecifier, sampling_rate)
 
         rir_list += SmoothProbabilityDistribution(current_rir_list, smoothing_weight, rir_set.probability)
 
@@ -622,7 +625,7 @@ def ParseNoiseList(noise_set_para_array, smoothing_weight, sampling_rate = None)
 def Main():
     args = GetArgs()
     random.seed(args.random_seed)
-    rir_list = ParseRirList(args.rir_set_para_array, args.rir_smoothing_weight, args.source_sampling_rate)
+    rir_list = ParseRirList(args.rir_set_para_array, args.rir_smoothing_weight, args.rirs_dir, args.source_sampling_rate)
     print("Number of RIRs is {0}".format(len(rir_list)))
     pointsource_noise_list = []
     iso_noise_dict = {}
@@ -655,4 +658,3 @@ def Main():
 
 if __name__ == "__main__":
     Main()
-

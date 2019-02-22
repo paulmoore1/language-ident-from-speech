@@ -169,7 +169,7 @@ def main():
 
     # Augment each line in the wav file
     for line in wav_scp_file:
-        toks = line.rstrip().split(" ")
+        toks = line.rstrip().split()
         utt = toks[0]
         wav = " ".join(toks[1:])
         dur = reco2dur[utt]

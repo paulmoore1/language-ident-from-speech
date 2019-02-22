@@ -29,6 +29,8 @@ def main():
             print("Copying results")
             os.mkdir(results_path_to)
             shutil.copy(results_path_from, results_path_to)
+        else:
+            print("No results found in {}".format(exp_dir))
 
 if __name__ == "__main__":
     main()
