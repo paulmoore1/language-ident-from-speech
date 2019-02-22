@@ -55,12 +55,12 @@ fi
 #  || echo "env.sh not found or not working. Important tools won't be available."
 
 if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
-	echo "Conda environment not activated"
-	exit 1
 	if [[ $(whichMachine) == cluster* ]]; then
     #echo "Conda environment not activated, sourcing ~/.bashrc and activating the 'lid' env."
     #source ~/.bashrc
     #conda activate lid || exit
+		echo "Conda environment not activated"
+		exit 1
   elif [[ $(whichMachine) == dice* ]]; then
     echo "Conda environment not activated, trying to activate it."
     source activate lid || exit
