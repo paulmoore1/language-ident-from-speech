@@ -141,6 +141,7 @@ if [ ! -d $rirs_dir ]; then
   echo "RIRS data not found. Downloading and unzipping"
   wget --no-check-certificate -P $root_data_dir http://www.openslr.org/resources/28/rirs_noises.zip
   unzip $root_data_dir/rirs_noises.zip
+  rm $root_data_dir/rirs_noises.zip
 fi
 
 
@@ -592,8 +593,8 @@ if [ $stage -eq 8 ]; then
     --test-dir $exp_dir/xvectors_eval \
     --model-dir $exp_dir/classifier \
     --classification-file $exp_dir/results/classification \
-    --train-utt2lang $enroll_data/split/utt2lang \
-    --test-utt2lang $eval_data/split/utt2lang \
+    --train-utt2lang $enroll_data/utt2lang \
+    --test-utt2lang $eval_data/utt2lang \
     --languages conf/test_languages.list \
     > $exp_dir/classifier/logistic-regression.log
 
