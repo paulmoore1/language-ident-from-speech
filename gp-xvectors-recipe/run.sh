@@ -416,6 +416,8 @@ if [ "$use_data_augmentation" = true ]; then
 
   # Make a reverberated version of the training data.  Note that we don't add any
   # additive noise here.
+  # Make sure we have permission to execute (can be weird)
+  chmod +x steps/data/augment_data_dir.py
   steps/data/reverberate_data_dir.py \
     "${rvb_opts[@]}" \
     --speech-rvb-probability 1 \
@@ -423,8 +425,11 @@ if [ "$use_data_augmentation" = true ]; then
     --isotropic-noise-addition-probability 0 \
     --num-replications 1 \
     --source-sampling-rate 8000 \
+    ${root_data_dir} \
     ${train_data} ${train_data}_reverb
-  utils/data/get_utt2dur.sh ${train_data}_reverb
+  #utils/data/get_utt2dur.sh ${train_data}_reverb
+  # Durations are the same
+  cp ${train_data}/utt2dur ${train_data}_reverb
   cp ${train_data}/vad.scp ${train_data}_reverb
   utils/copy_data_dir.sh --utt-suffix "-reverb" ${train_data}_reverb ${train_data}_reverb.new
   rm -rf ${train_data}_reverb
@@ -451,9 +456,11 @@ if [ "$use_data_augmentation" = true ]; then
   # Make MFCCs for the augmented data.  Note that we do not compute a new
   # vad.scp file here.  Instead, we use the vad.scp from the clean version of
   # the list.
+  echo "Making MFCCs for augmented data"
   steps/make_mfcc.sh --mfcc-config conf/mfcc.conf --nj 40 --cmd "$train_cmd" \
-    ${train_data}_aug_subset exp/make_mfcc $mfccdir
+    ${train_data}_aug_subset $log_dir/make_mfcc $mfccdir
 
+  echo "Tidying up data"
   # Keep original clean copy of training data as backup
   cp -r $train_data ${train_data}_clean
 
@@ -469,9 +476,13 @@ if [ "$use_data_augmentation" = true ]; then
   rm -rf ${train_data}_noise
   rm -rf ${train_data}_reverb
   rm -rf ${train_data}_babble
-  rm -rf ${train_data}_aug # Have the subset and clean data which is enough
+  rm -rf ${train_data}_aug
+  # Have the aug subset and clean data which is enough (both are separate)
 
+  # Get back necessary files for training
   utils/data/get_utt2num_frames.sh ${train_data}
+  sed -e 's?[0-9]*$??' ${train_data}/utt2spk > ${train_data}/utt2lang
+  local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang > ${train_data}/lang2utt
 
   echo "Done with data augmentation"
 else

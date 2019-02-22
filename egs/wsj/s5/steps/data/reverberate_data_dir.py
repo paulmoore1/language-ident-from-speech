@@ -72,7 +72,7 @@ def GetArgs():
     parser.add_argument("--include-original-data", type=str, help="If true, the output data includes one copy of the original data",
                          choices=['true', 'false'], default = "false")
     parser.add_argument("rirs_dir",
-                        help="Directory where RIRS_NOISES is stored")
+                        help="Directory where RIRS_NOISES is located e.g. /home/data/RIRS_NOISES")
     parser.add_argument("input_dir",
                         help="Input data directory")
     parser.add_argument("output_dir",
@@ -625,7 +625,9 @@ def ParseNoiseList(noise_set_para_array, smoothing_weight, sampling_rate = None)
 def Main():
     args = GetArgs()
     random.seed(args.random_seed)
-    rir_list = ParseRirList(args.rir_set_para_array, args.rir_smoothing_weight, args.rirs_dir, args.source_sampling_rate)
+    # Remove the /RIRS_NOISES from the path input
+    rirs_dir = args.rirs_dir[:-12]
+    rir_list = ParseRirList(args.rir_set_para_array, args.rir_smoothing_weight, rirs_dir, args.source_sampling_rate)
     print("Number of RIRs is {0}".format(len(rir_list)))
     pointsource_noise_list = []
     iso_noise_dict = {}
