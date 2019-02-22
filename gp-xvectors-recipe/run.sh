@@ -49,6 +49,7 @@ num_epochs=3
 feature_type=mfcc
 skip_nnet_training=false
 use_model_from=NONE
+use_data_augmentation=false
 
 while [ $# -gt 0 ];
 do
@@ -75,18 +76,6 @@ fi
 
 # Source some variables from the experiment-specific config file
 source $exp_conf_dir/$exp_config || echo "Problems sourcing the experiment config file: $exp_conf_dir/$exp_config"
-
-# Use arguments passed to this script on the command line
-# to overwrite the values sourced from the experiment-specific config.
-command_line_options="run_all stage exp_name"
-for cl_opt in $command_line_options; do
-  var="${cl_opt}_cl"
-  if [[ -v $var ]]; then
-    echo "Overwriting the experiment config value of ${cl_opt}=${!cl_opt}"\
-      "using the value '${!var}' passed as a command-line argument."
-    declare $cl_opt="${!var}"
-  fi
-done
 
 echo "Running experiment: '$exp_name'"
 
@@ -139,12 +128,36 @@ check_continue(){
   fi
 }
 
+root_data_dir=$DATADIR
+rirs_dir=$root_data_dir/RIRS_NOISES
+musan_dir=$root_data_dir/musan
+
+echo $root_data_dir
+exit
+
 if [ -d $DATADIR/$exp_name ]; then
   echo "Experiment with name '$exp_name' already exists."
   #check_continue $DATADIR/$exp_name;
 fi
 
+if [ -d $rirs_dir ]; then
+  echo "RIRS data not found. Downloading and unzipping"
+  wget --no-check-certificate -P $root_data_dir http://www.openslr.org/resources/28/rirs_noises.zip
+  unzip $root_data_dir/rirs_noises.zip
+fi
 
+
+if [ -d $musan_dir ]; then
+  echo "MUSAN data not set up. Setting up now"
+  # Assumes MUSAN data is already present at the file path shown at /home..
+  local/make_musan.sh /home/s1531206/musan $musan_dir
+  # Get the duration of the MUSAN recordings.  This will be used by the
+  # script augment_data_dir.py.
+  for name in speech noise music; do
+    utils/data/get_utt2dur.sh $musan_dir/musan_${name}
+    mv data/musan_${name}/utt2dur $musan_dir/musan_${name}/reco2dur
+  done
+fi
 
 home_prefix=$DATADIR/$exp_name
 train_data=$home_prefix/train
@@ -181,7 +194,7 @@ if [ ! -z "$use_dnn_egs_from" ]; then
   preprocessed_data_dir=$DATADIR/$use_dnn_egs_from
 fi
 
-# If the model requested for use is an actual directory with a model in it
+# Check any requested model exists
 if [ -d $DATADIR/$use_model_from/nnet ]; then
   skip_nnet_training=true
   nnet_dir=$DATADIR/$use_model_from/nnet
@@ -377,6 +390,58 @@ if [ $stage -eq 2 ]; then
     ) > $log_dir/${feature_type}_${data_subset}
   done
 
+  # Do data augmentation if required
+  if [ "$use_data_augmentation" = true ]; then
+    frame_shift=0.01
+    awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $train_data/utt2num_frames > $train_data/reco2dur
+
+    # Make a version with reverberated speech
+    rvb_opts=()
+    rvb_opts+=(--rir-set-parameters "0.5, RIRS_NOISES/simulated_rirs/smallroom/rir_list")
+    rvb_opts+=(--rir-set-parameters "0.5, RIRS_NOISES/simulated_rirs/mediumroom/rir_list")
+
+    # Make a reverberated version of the training data.  Note that we don't add any
+    # additive noise here.
+    steps/data/reverberate_data_dir.py \
+      "${rvb_opts[@]}" \
+      --speech-rvb-probability 1 \
+      --pointsource-noise-addition-probability 0 \
+      --isotropic-noise-addition-probability 0 \
+      --num-replications 1 \
+      --source-sampling-rate 8000 \
+      ${train_data} ${train_data}_reverb
+    cp ${train_data}/vad.scp ${train_data}_reverb
+    utils/copy_data_dir.sh --utt-suffix "-reverb" ${train_data}_reverb ${train_data}_reverb.new
+    rm -rf ${train_data}_reverb
+    mv ${train_data}_reverb.new ${train_data}_reverb
+
+    # Augment with musan_noise
+    steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
+    # Augment with musan_music
+    steps/data/augment_data_dir.py --utt-suffix "music" --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "${musan_dir}/musan_music" ${train_data} ${train_data}_music
+    # Augment with musan_speech
+    steps/data/augment_data_dir.py --utt-suffix "babble" --bg-snrs "20:17:15:13" --num-bg-noises "3:4:5:6:7" --bg-noise-dir "${musan_dir}/musan_speech" ${train_data} ${train_data}_babble
+
+    # Combine reverb, noise, music, and babble into one directory.
+    utils/combine_data.sh ${train_data}_aug ${train_data}_reverb ${train_data}_noise ${train_data}_music ${train_data}_babble
+
+    # Take a random subset of the augmentations
+    # TODO check correct number
+    utils/subset_data_dir.sh ${train_data}_aug 1000 ${train_data}_aug_subset
+    utils/fix_data_dir.sh ${train_data}_aug_subset
+
+    # Make MFCCs for the augmented data.  Note that we do not compute a new
+    # vad.scp file here.  Instead, we use the vad.scp from the clean version of
+    # the list.
+    steps/make_mfcc.sh --mfcc-config conf/mfcc.conf --nj 40 --cmd "$train_cmd" \
+      ${train_data}_aug_subset exp/make_mfcc $mfccdir
+
+    # Combine the clean and augmented SWBD+SRE list.  This is now roughly
+    # double the size of the original clean list.
+    utils/combine_data.sh ${train_data} ${train_data}_aug_subset ${train_data}
+    utils/fix_data_dir.sh ${train_data}
+  fi
+
   echo "Finished stage 2."
 
   if [ "$run_all" = true ]; then
@@ -469,6 +534,7 @@ if [ $stage -eq 7 ]; then
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     --stage 0 \
+    --remove-nonspeech true \
     $nnet_dir \
     $enroll_data \
     $exp_dir/xvectors_enroll &
@@ -479,19 +545,20 @@ if [ $stage -eq 7 ]; then
     --use-gpu $use_gpu \
     --nj $MAXNUMJOBS \
     --stage 0 \
+    --remove-nonspeech true \
     $nnet_dir \
     $eval_data \
     $exp_dir/xvectors_eval &
 
   # X-vectors for testing (final evaluation)
-#  ./local/extract_xvectors.sh \
-#    --cmd "$extract_cmd --mem 6G" \
-#    --use-gpu $use_gpu \
-#    --nj $MAXNUMJOBS \
-#    --stage 0 \
-#    $nnet_dir \
-#    $test_data \
-#    $exp_dir/xvectors_test &
+  #./local/extract_xvectors.sh \
+  #  --cmd "$extract_cmd --mem 6G" \
+  #  --use-gpu $use_gpu \
+  #  --nj $MAXNUMJOBS \
+  #  --stage 0 \
+  #  $nnet_dir \
+  #  $test_data \
+  #  $exp_dir/xvectors_test &
 
   wait;
 
