@@ -283,8 +283,8 @@ if [ $stage -eq 1 ]; then
 
   # Keep a backup of unsplit data
   for data_subset in enroll eval test; do
-    mkdir -p $DATADIR/$data_subset/.backup
-    cp -r $DATADIR/$data_subset/* $DATADIR/$data_subset/.backup
+    mkdir -p $DATADIR/$data_subset/.backup_unsplit
+    cp -r $DATADIR/$data_subset/* $DATADIR/$data_subset/.backup_unsplit
   done
 
   # NOTE Splitting after shortening enrollment data ensures that it will all be there.
@@ -381,11 +381,13 @@ if [ $stage -eq 2 ]; then
 
   if [ "$run_all" = true ]; then
     if [ "$skip_nnet_training" = true ]; then
+      echo "Skipping NN training"
       stage=`expr $stage + 5`
     else
       stage=`expr $stage + 1`
     fi
   else
+    echo "Run all is false; exiting..."
     exit
   fi
 fi
@@ -449,7 +451,6 @@ if [ $stage -eq 4 ]; then
   else
     exit
   fi
-fi
 
 # Runtime: ~1:05h
 if [ $stage -eq 7 ]; then
@@ -488,7 +489,7 @@ if [ $stage -eq 7 ]; then
 #    --nj $MAXNUMJOBS \
 #    --stage 0 \
 #    $nnet_dir \
-#    $test_data/split \
+#    $test_data \
 #    $exp_dir/xvectors_test &
 
   wait;
