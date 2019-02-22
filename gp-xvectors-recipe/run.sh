@@ -140,14 +140,14 @@ if [ -d $DATADIR/$exp_name ]; then
   #check_continue $DATADIR/$exp_name;
 fi
 
-if [ -d $rirs_dir ]; then
+if [ ! -d $rirs_dir ]; then
   echo "RIRS data not found. Downloading and unzipping"
   wget --no-check-certificate -P $root_data_dir http://www.openslr.org/resources/28/rirs_noises.zip
   unzip $root_data_dir/rirs_noises.zip
 fi
 
 
-if [ -d $musan_dir ]; then
+if [ ! -d $musan_dir ]; then
   echo "MUSAN data not set up. Setting up now"
   # Assumes MUSAN data is already present at the file path shown at /home..
   local/make_musan.sh /home/s1531206/musan $musan_dir
