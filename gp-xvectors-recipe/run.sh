@@ -321,7 +321,6 @@ if [ $stage -eq 1 ]; then
      utils/fix_data_dir.sh $DATADIR/${data_subset}
    done
 
-
   echo "Finished stage 1."
 
   if [ "$run_all" = true ]; then

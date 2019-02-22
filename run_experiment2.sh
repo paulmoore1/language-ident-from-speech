@@ -9,6 +9,7 @@
 #SBATCH --mail-type=END
 #SBATCH --mail-user=lapilosew2003@gmail.com
 #SBATCH --open-mode=append
+config_file=lre_tr_500_en_10000
 
 config_file=lre_tr_500_en_1000
 
