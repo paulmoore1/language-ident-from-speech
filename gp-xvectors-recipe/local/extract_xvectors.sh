@@ -102,8 +102,6 @@ if [ $stage -le 0 ]; then
   echo "$0: extracting xvectors from nnet"
   if $use_gpu; then
     for g in $(seq $nj); do
-      echo "Running job ${g}"
-      echo "cmd = $cmd"
       $cmd --gpu 1 ${xvector_dir}/log/extract.$g.log \
         nnet3-xvector-compute --use-gpu=yes --min-chunk-size=$min_chunk_size --chunk-size=$chunk_size --cache-capacity=${cache_capacity} \
         "$nnet" "`echo $feat | sed s/JOB/$g/g`" ark,scp:${xvector_dir}/xvector.$g.ark,${xvector_dir}/xvector.$g.scp || exit 1 &
