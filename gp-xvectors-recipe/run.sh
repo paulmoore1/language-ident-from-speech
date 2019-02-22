@@ -280,6 +280,12 @@ if [ $stage -eq 1 ]; then
     done
   fi
 
+  # Keep a backup of unsplit data
+  for data_subset in enroll eval test; do
+    mkdir -p $DATADIR/$data_subset/.backup
+    cp -r ./* .backup
+  done
+
   # NOTE Splitting after shortening enrollment data ensures that it will all be there.
   # Currently split_long_utts.sh doesn't affect wav.scp so need to do it in this order
   # Split enroll data into segments of < 30s.
@@ -305,6 +311,16 @@ if [ $stage -eq 1 ]; then
     --max-utt-len $test_length \
     $test_data \
     ${test_data}/split
+
+  #NB this replaces the data previously stored. The unsplit lists are in .backup
+   echo "Fixing datasets after splitting"
+   for data_subset in enroll eval test; do
+     utils/fix_data_dir.sh $DATADIR/${data_subset}/split
+     utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}/split
+     mv $DATADIR/${data_subset}/split/* $DATADIR/${data_subset}/
+     utils/fix_data_dir.sh $DATADIR/${data_subset}
+   done
+
 
   echo "Finished stage 1."
 

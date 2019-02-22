@@ -82,42 +82,49 @@ def get_utterances(lang_data, target_seconds, output_path, summary_path):
             curr_num_frames += lang_data[i][1]
             last_num_frames_added = lang_data[i][1]
             i += 1
-
-        # Remove the last utterance added as it shot over
-        del temp_utterances[-1]
-        curr_num_frames -= last_num_frames_added
-
-        # Only search remaining data for better result.
-        search_data = lang_data[i:]
-        # Number of frames left to fill in the last utterance
-        target_last_utterance_frames = target_frames - curr_num_frames
-
-        # Check the error here:
-        error_before_last = target_last_utterance_frames
-
-        (last_utterance, last_frames, error_after_last) = find_last_utterance(search_data, target_last_utterance_frames)
-
-        # See if adding the extra frames actually helped or not
-        if error_before_last < error_after_last:
-            add_last = False
-            error = error_before_last
-        else:
-            add_last = True
-            error = error_after_last
-
-        # If a better solution than before is found, update
-        if error < best_error:
-            best_error = error
-            # Add on the last utterance if it improved the error
-            if add_last == True:
-                temp_utterances.append(last_utterance)
-                curr_num_frames += last_frames
+        # If we ran out of data
+        if i == n:
+            print("Ran out of data")
             current_best_utterances = temp_utterances
             closest_number_frames = curr_num_frames
-            if error == 0:
-                print("Correct solution found!")
-                # Break out of the while loop
-                break
+            break
+        else:
+            # Remove the last utterance added as it shot over
+            del temp_utterances[-1]
+            curr_num_frames -= last_num_frames_added
+            i -= 1
+
+            # Only search remaining data for better result.
+            search_data = lang_data[i:]
+            # Number of frames left to fill in the last utterance
+            target_last_utterance_frames = target_frames - curr_num_frames
+
+            # Check the error here:
+            error_before_last = target_last_utterance_frames
+
+            (last_utterance, last_frames, error_after_last) = find_last_utterance(search_data, target_last_utterance_frames)
+
+            # See if adding the extra frames actually helped or not
+            if error_before_last < error_after_last:
+                add_last = False
+                error = error_before_last
+            else:
+                add_last = True
+                error = error_after_last
+
+            # If a better solution than before is found, update
+            if error < best_error:
+                best_error = error
+                # Add on the last utterance if it improved the error
+                if add_last == True:
+                    temp_utterances.append(last_utterance)
+                    curr_num_frames += last_frames
+                current_best_utterances = temp_utterances
+                closest_number_frames = curr_num_frames
+                if error == 0:
+                    print("Correct solution found!")
+                    # Break out of the while loop
+                    break
 
         curr_attempt_num += 1
         # Randomise data order
@@ -139,7 +146,7 @@ def get_utterances(lang_data, target_seconds, output_path, summary_path):
 
 def find_last_utterance(search_data, target_frames):
     min_error = 999999
-    best_tuple = None
+    best_tuple = search_data[0]
     for utterance_tuple in search_data:
         curr_error = get_error(utterance_tuple[1], target_frames)
         if curr_error <= min_error:

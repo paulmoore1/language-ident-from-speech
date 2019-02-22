@@ -303,15 +303,14 @@ if [ $stage -eq 1 ]; then
     $test_data \
     ${test_data}/split
 
- # NB - currently not moving back after splitting, will use the split data instead
- # This allows for use of the same data (it can easily be split into different lengths)
-  #echo "Fixing datasets after splitting"
-  #for data_subset in enroll eval test; do
-  #  utils/fix_data_dir.sh $DATADIR/${data_subset}/split
-  #  utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}/split
-  #  mv $DATADIR/${data_subset}/split/* $DATADIR/${data_subset}/
-  #  utils/fix_data_dir.sh $DATADIR/${data_subset}
-  #done
+ #NB this replaces the data previously stored. The unsplit lists are in .backup
+  echo "Fixing datasets after splitting"
+  for data_subset in enroll eval test; do
+    utils/fix_data_dir.sh $DATADIR/${data_subset}/split
+    utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}/split
+    mv $DATADIR/${data_subset}/split/* $DATADIR/${data_subset}/
+    utils/fix_data_dir.sh $DATADIR/${data_subset}
+  done
 
   echo "Finished stage 1."
 
