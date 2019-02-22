@@ -133,7 +133,7 @@ def get_utterances(lang_data, target_seconds, output_path, summary_path):
     final_output_utterances = current_best_utterances
     final_output_utterances.sort()
     final_number_frames = closest_number_frames
-    error_percent = best_error*100/target_frames
+    error_percent = abs(final_number_frames - target_frames)*100/target_frames
 
     summary = "Language: {}\tTarget #frames: {}\tActual #frames: {}\tError: {}%".format(lang_code, str(target_frames), str(final_number_frames), str(error_percent))
 

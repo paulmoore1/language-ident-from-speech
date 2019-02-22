@@ -233,7 +233,7 @@ if [ $stage -eq 1 ]; then
     --data-dir=$DATADIR \
     || exit 1;
 
-  ) > $log_dir/data_oranisation
+  ) > $log_dir/data_organisation
 
   if [ "$skip_nnet_training" == true ]; then
     # Get utt2num frames information for using when restricting the amount of data
@@ -283,7 +283,7 @@ if [ $stage -eq 1 ]; then
   # Keep a backup of unsplit data
   for data_subset in enroll eval test; do
     mkdir -p $DATADIR/$data_subset/.backup
-    cp -r ./* .backup
+    cp -r $DATADIR/$data_subset/* $DATADIR/$data_subset/.backup
   done
 
   # NOTE Splitting after shortening enrollment data ensures that it will all be there.
@@ -359,7 +359,7 @@ if [ $stage -eq 2 ]; then
       --nj $num_jobs \
       --cmd "$preprocess_cmd" \
       --compress true \
-      $DATADIR/${data_subset}/split \
+      $DATADIR/${data_subset} \
       $log_dir/make_mfcc \
       $mfcc_dir
 
@@ -369,7 +369,7 @@ if [ $stage -eq 2 ]; then
     ./local/compute_vad_decision.sh \
       --nj $num_jobs \
       --cmd "$preprocess_cmd" \
-      $DATADIR/${data_subset}/split \
+      $DATADIR/${data_subset} \
       $log_dir/make_vad \
       $vaddir
 
@@ -468,7 +468,7 @@ if [ $stage -eq 7 ]; then
     --nj $MAXNUMJOBS \
     --stage 0 \
     $nnet_dir \
-    $enroll_data/split \
+    $enroll_data \
     $exp_dir/xvectors_enroll &
 
   # X-vectors for end-to-end evaluation
@@ -478,7 +478,7 @@ if [ $stage -eq 7 ]; then
     --nj $MAXNUMJOBS \
     --stage 0 \
     $nnet_dir \
-    $eval_data/split \
+    $eval_data \
     $exp_dir/xvectors_eval &
 
   # X-vectors for testing (final evaluation)
