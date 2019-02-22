@@ -153,7 +153,7 @@ if [ ! -d $musan_dir ]; then
   # script augment_data_dir.py.
   for name in speech noise music; do
     utils/data/get_utt2dur.sh $musan_dir/musan_${name}
-    mv data/musan_${name}/utt2dur $musan_dir/musan_${name}/reco2dur
+    mv $musan_dir/musan_${name}/utt2dur $musan_dir/musan_${name}/reco2dur
   done
 fi
 
@@ -388,58 +388,6 @@ if [ $stage -eq 2 ]; then
     ) > $log_dir/${feature_type}_${data_subset}
   done
 
-  # Do data augmentation if required
-  if [ "$use_data_augmentation" = true ]; then
-    frame_shift=0.01
-    awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $train_data/utt2num_frames > $train_data/reco2dur
-
-    # Make a version with reverberated speech
-    rvb_opts=()
-    rvb_opts+=(--rir-set-parameters "0.5, RIRS_NOISES/simulated_rirs/smallroom/rir_list")
-    rvb_opts+=(--rir-set-parameters "0.5, RIRS_NOISES/simulated_rirs/mediumroom/rir_list")
-
-    # Make a reverberated version of the training data.  Note that we don't add any
-    # additive noise here.
-    steps/data/reverberate_data_dir.py \
-      "${rvb_opts[@]}" \
-      --speech-rvb-probability 1 \
-      --pointsource-noise-addition-probability 0 \
-      --isotropic-noise-addition-probability 0 \
-      --num-replications 1 \
-      --source-sampling-rate 8000 \
-      ${train_data} ${train_data}_reverb
-    cp ${train_data}/vad.scp ${train_data}_reverb
-    utils/copy_data_dir.sh --utt-suffix "-reverb" ${train_data}_reverb ${train_data}_reverb.new
-    rm -rf ${train_data}_reverb
-    mv ${train_data}_reverb.new ${train_data}_reverb
-
-    # Augment with musan_noise
-    steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
-    # Augment with musan_music
-    steps/data/augment_data_dir.py --utt-suffix "music" --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "${musan_dir}/musan_music" ${train_data} ${train_data}_music
-    # Augment with musan_speech
-    steps/data/augment_data_dir.py --utt-suffix "babble" --bg-snrs "20:17:15:13" --num-bg-noises "3:4:5:6:7" --bg-noise-dir "${musan_dir}/musan_speech" ${train_data} ${train_data}_babble
-
-    # Combine reverb, noise, music, and babble into one directory.
-    utils/combine_data.sh ${train_data}_aug ${train_data}_reverb ${train_data}_noise ${train_data}_music ${train_data}_babble
-
-    # Take a random subset of the augmentations
-    # TODO check correct number
-    utils/subset_data_dir.sh ${train_data}_aug 1000 ${train_data}_aug_subset
-    utils/fix_data_dir.sh ${train_data}_aug_subset
-
-    # Make MFCCs for the augmented data.  Note that we do not compute a new
-    # vad.scp file here.  Instead, we use the vad.scp from the clean version of
-    # the list.
-    steps/make_mfcc.sh --mfcc-config conf/mfcc.conf --nj 40 --cmd "$train_cmd" \
-      ${train_data}_aug_subset exp/make_mfcc $mfccdir
-
-    # Combine the clean and augmented SWBD+SRE list.  This is now roughly
-    # double the size of the original clean list.
-    utils/combine_data.sh ${train_data} ${train_data}_aug_subset ${train_data}
-    utils/fix_data_dir.sh ${train_data}
-  fi
-
   echo "Finished stage 2."
 
   if [ "$run_all" = true ]; then
@@ -454,6 +402,65 @@ if [ $stage -eq 2 ]; then
     exit
   fi
 fi
+
+# Data augmentation step
+# Do data augmentation if required
+if [ "$use_data_augmentation" = true ]; then
+  frame_shift=0.01
+  awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $train_data/utt2num_frames > $train_data/reco2dur
+
+  # Make a version with reverberated speech
+  rvb_opts=()
+  rvb_opts+=(--rir-set-parameters "0.5, RIRS_NOISES/simulated_rirs/smallroom/rir_list")
+  rvb_opts+=(--rir-set-parameters "0.5, RIRS_NOISES/simulated_rirs/mediumroom/rir_list")
+
+  # Make a reverberated version of the training data.  Note that we don't add any
+  # additive noise here.
+  steps/data/reverberate_data_dir.py \
+    "${rvb_opts[@]}" \
+    --speech-rvb-probability 1 \
+    --pointsource-noise-addition-probability 0 \
+    --isotropic-noise-addition-probability 0 \
+    --num-replications 1 \
+    --source-sampling-rate 8000 \
+    ${train_data} ${train_data}_reverb
+  cp ${train_data}/vad.scp ${train_data}_reverb
+  utils/copy_data_dir.sh --utt-suffix "-reverb" ${train_data}_reverb ${train_data}_reverb.new
+  rm -rf ${train_data}_reverb
+  mv ${train_data}_reverb.new ${train_data}_reverb
+
+  # Augment with musan_noise
+  steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
+  # Augment with musan_music
+  steps/data/augment_data_dir.py --utt-suffix "music" --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "${musan_dir}/musan_music" ${train_data} ${train_data}_music
+  # Augment with musan_speech
+  steps/data/augment_data_dir.py --utt-suffix "babble" --bg-snrs "20:17:15:13" --num-bg-noises "3:4:5:6:7" --bg-noise-dir "${musan_dir}/musan_speech" ${train_data} ${train_data}_babble
+
+  # Combine reverb, noise, music, and babble into one directory.
+  utils/combine_data.sh ${train_data}_aug ${train_data}_reverb ${train_data}_noise ${train_data}_music ${train_data}_babble
+
+  # Take a random subset of the augmentations
+  # TODO check correct number
+  utils/subset_data_dir.sh ${train_data}_aug 1000 ${train_data}_aug_subset
+  utils/fix_data_dir.sh ${train_data}_aug_subset
+
+  # Make MFCCs for the augmented data.  Note that we do not compute a new
+  # vad.scp file here.  Instead, we use the vad.scp from the clean version of
+  # the list.
+  steps/make_mfcc.sh --mfcc-config conf/mfcc.conf --nj 40 --cmd "$train_cmd" \
+    ${train_data}_aug_subset exp/make_mfcc $mfccdir
+
+  # Combine the clean and augmented SWBD+SRE list.  This is now roughly
+  # double the size of the original clean list.
+  utils/combine_data.sh ${train_data} ${train_data}_aug_subset ${train_data}
+  utils/fix_data_dir.sh ${train_data}
+  echo "Done with data augmentation"
+else
+  echo "No data augmentation required"
+fi
+
+#echo "Exiting early"
+#exit
 
 # Now we prepare the features to generate examples for xvector training.
 # Runtime: ~2 mins
