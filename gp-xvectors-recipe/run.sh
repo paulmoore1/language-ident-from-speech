@@ -132,9 +132,6 @@ root_data_dir=$DATADIR
 rirs_dir=$root_data_dir/RIRS_NOISES
 musan_dir=$root_data_dir/musan
 
-echo $root_data_dir
-exit
-
 if [ -d $DATADIR/$exp_name ]; then
   echo "Experiment with name '$exp_name' already exists."
   #check_continue $DATADIR/$exp_name;
