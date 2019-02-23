@@ -253,7 +253,10 @@ if [ $stage -eq 1 ]; then
       utils/data/get_utt2num_frames.sh $DATADIR/${data_subset}
     done
     echo "Shortening languages for enrollment data"
-    python ./local/shorten_languages.py --data-dir $enroll_data --conf-file-path ${conf_dir}/lre_configs/${lre_enroll_config}
+    python ./local/shorten_languages.py \
+      --data-dir $enroll_data \
+      --conf-file-path ${conf_dir}/lre_configs/${lre_enroll_config} \
+      >> $log_dir/data_organisation
 
     # For filtering the frames based on the new shortened utterances:
     utils/filter_scp.pl $enroll_data/utterances_shortened $enroll_data/wav.scp > $enroll_data/wav.scp.temp
@@ -273,9 +276,15 @@ if [ $stage -eq 1 ]; then
     done
 
     echo "Shortening languages for training data"
-    python ./local/shorten_languages.py --data-dir $train_data --conf-file-path ${conf_dir}/lre_configs/${lre_train_config}
+    python ./local/shorten_languages.py \
+      --data-dir $train_data \
+      --conf-file-path ${conf_dir}/lre_configs/${lre_train_config} \
+      >> $log_dir/data_organisation
     echo "Shortening languages for enrollment data"
-    python ./local/shorten_languages.py --data-dir $enroll_data --conf-file-path ${conf_dir}/lre_configs/${lre_enroll_config}
+    python ./local/shorten_languages.py \
+      --data-dir $enroll_data \
+      --conf-file-path ${conf_dir}/lre_configs/${lre_enroll_config} \
+      >> $log_dir/data_organisation
 
     for data_subset in train enroll; do
       # For filtering the frames based on the new shortened utterances:
@@ -294,8 +303,8 @@ if [ $stage -eq 1 ]; then
 
   # Keep a backup of unsplit data
   for data_subset in enroll eval test; do
-    mkdir -p $DATADIR/$data_subset/.backup_unsplit
-    cp -r $DATADIR/$data_subset/* $DATADIR/$data_subset/.backup_unsplit
+    mkdir -p $DATADIR/$data_subset/.unsplit_backup
+    cp -r $DATADIR/$data_subset/* $DATADIR/$data_subset/.unsplit_backup
   done
 
   # NOTE Splitting after shortening enrollment data ensures that it will all be there.
@@ -457,8 +466,13 @@ if [ "$use_data_augmentation" = true ]; then
   # vad.scp file here.  Instead, we use the vad.scp from the clean version of
   # the list.
   echo "Making MFCCs for augmented data"
-  steps/make_mfcc.sh --mfcc-config conf/mfcc.conf --nj 40 --cmd "$train_cmd" \
-    ${train_data}_aug_subset $log_dir/make_mfcc $mfccdir
+  steps/make_mfcc.sh \
+  --mfcc-config conf/mfcc.conf \
+  --nj $num_jobs \
+  --cmd "$train_cmd" \
+    ${train_data}_aug_subset \
+    $log_dir/make_mfcc \
+    $mfcc_dir
 
   echo "Tidying up data"
   # Keep original clean copy of training data as backup
@@ -483,6 +497,7 @@ if [ "$use_data_augmentation" = true ]; then
   utils/data/get_utt2num_frames.sh ${train_data}
   sed -e 's?[0-9]*$??' ${train_data}/utt2spk > ${train_data}/utt2lang
   local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang > ${train_data}/lang2utt
+  cp ${train_data}_clean/utterances_shortened_summary ${train_data}
 
   echo "Done with data augmentation"
 else
