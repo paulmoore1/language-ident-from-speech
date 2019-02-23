@@ -50,6 +50,7 @@ feature_type=mfcc
 skip_nnet_training=false
 use_model_from=NONE
 use_data_augmentation=false
+use_preprocessed=false
 
 while [ $# -gt 0 ];
 do
@@ -114,27 +115,12 @@ fi
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
-check_continue(){
-  echo -e "Data directory found in $1\n"\
-        "Continuing will overwrite any data stored here.\n"
-  read -p "Are you sure you want to continue? [y/n]" -r
-  # Avoid using negated form since that doesn't work properly in some shells
-  if [[ $REPLY =~ ^[Yy].*$ ]]
-  then
-    echo "Continuing..."
-  else
-    echo "Exiting"
-    exit 1;
-  fi
-}
-
 root_data_dir=$DATADIR
 rirs_dir=$root_data_dir/RIRS_NOISES
 musan_dir=$root_data_dir/musan
 
 if [ -d $DATADIR/$exp_name ]; then
   echo "Experiment with name '$exp_name' already exists."
-  #check_continue $DATADIR/$exp_name;
 fi
 
 if [ ! -d $rirs_dir ]; then
@@ -165,9 +151,6 @@ test_data=$home_prefix/test
 tamil_data=$home_prefix/tamil
 log_dir=$home_prefix/log
 mfcc_dir=$home_prefix/mfcc
-mfcc_sdc_dir=$home_prefix/mfcc_sdc
-sdc_dir=$home_prefix/mfcc_sdc
-mfcc_deltas_dir=$home_prefix/mfcc_deltas
 vaddir=$home_prefix/vad
 feat_dir=$home_prefix/x_vector_features
 nnet_train_data=$home_prefix/nnet_train_data
@@ -226,6 +209,7 @@ if [ $stage -eq 42 ]; then
 fi
 
 if [ "$use_preprocessed" = true ]; then
+  processed_dir=~/gp-data/all_preprocessed
   ./local/prep_preprocessed.sh \
     --config-dir=$conf_dir \
     --processed-dir=$processed_dir \
@@ -529,11 +513,6 @@ if [ $stage -eq 2 ]; then
     exit
   fi
 fi
-
-
-
-#echo "Exiting early"
-#exit
 
 # Now we prepare the features to generate examples for xvector training.
 # Runtime: ~2 mins

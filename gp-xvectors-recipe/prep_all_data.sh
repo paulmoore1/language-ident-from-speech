@@ -61,18 +61,23 @@ echo "#### STAGE 1: Organising speakers into sets. ####"
 for L in $GP_LANGUAGES; do
   echo "Prepping language ${L}"
   lang_dir=$DATADIR/${L}
-  train_data=$lang_dir/${L}_train
-  enroll_data=$lang_dir/${L}_enroll
-  eval_data=$lang_dir/${L}_eval
-  test_data=$lang_dir/${L}_test
+  train=${L}_train
+  enroll=${L}_enroll
+  eval=${L}_eval
+  test=${L}}_test
+  train_data=$lang_dir/${train}
+  enroll_data=$lang_dir/${enroll}
+  eval_data=$lang_dir/${eval}
+  test_data=$lang_dir/${test}
 
-  for data_subset in train enroll eval test; do
+
+  for data_subset in ${train} ${enroll} ${eval} ${test}; do
     utils/data/get_utt2num_frames.sh $lang_dir/${data_subset}
   done
 
   echo "Splitting data"
   declare -a times=(3 10 30 60)
-  for data_subset in enroll eval test; do
+  for data_subset in ${enroll} ${eval} ${test}; do
     # Make a backup
     mkdir -p $lang_dir/${data_subset}/.unsplit_backup
     cp -r $lang_dir/${data_subset}/* $lang_dir/${data_subset}/.unsplit_backup
@@ -88,7 +93,7 @@ for L in $GP_LANGUAGES; do
 
   # Make features and compute the energy-based VAD for each dataset
   echo "#### Calculating MFCCs and VAD for unsplit data ####"
-  for data_subset in train enroll eval test; do
+  for data_subset in ${train} ${enroll} ${eval} ${test}; do
     num_speakers=$(cat $lang_dir/${data_subset}/spk2utt | wc -l)
     if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
       num_jobs=$MAXNUMJOBS
@@ -123,7 +128,7 @@ for L in $GP_LANGUAGES; do
   done
 
   echo "### Calcuating MFCCs and VAD for split data ####"
-  for data_subset in enroll eval test; do
+  for data_subset in ${enroll} ${eval} ${test}; do
     for time in ${times[@]}; do
       num_speakers=$(cat $lang_dir/${data_subset}_split_${time}s/spk2utt | wc -l)
       if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
