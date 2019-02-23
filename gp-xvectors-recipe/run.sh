@@ -225,6 +225,21 @@ if [ $stage -eq 42 ]; then
   echo "Finished stage 42."
 fi
 
+if [ !]
+
+if [ "$use_preprocessed" = true ]; then
+  ./local/prep_preprocessed.sh \
+    --config-dir=$conf_dir \
+    --processed-dir=$processed_dir \
+    --data_augmentation=$use_data_augmentation \
+    --train-languages="$GP_TRAIN_LANGUAGES" \
+    --enroll-languages="$GP_ENROLL_LANGUAGES" \
+    --eval-languages="$GP_EVAL_LANGUAGES" \
+    --test-languages="$GP_TEST_LANGUAGES" \
+    --data-dir=$DATADIR \
+    || exit 1;
+fi
+
 # Preparing lists of utterances (and a couple other auxiliary lists) based
 # on the train/enroll/eval/test splitting. The lists refer to the WAVs
 # generated in the previous stage.
@@ -397,6 +412,106 @@ if [ $stage -eq 2 ]; then
     ) > $log_dir/${feature_type}_${data_subset}
   done
 
+  # Data augmentation step
+  # Do data augmentation if required
+  if [ "$use_data_augmentation" = true ]; then
+    frame_shift=0.01
+    awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $train_data/utt2num_frames > $train_data/reco2dur
+
+    # Make a version with reverberated speech
+    rvb_opts=()
+    rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/smallroom/rir_list")
+    rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/mediumroom/rir_list")
+
+    # Make a reverberated version of the training data.  Note that we don't add any
+    # additive noise here.
+    # Make sure we have permission to execute (can be weird)
+    chmod +x steps/data/augment_data_dir.py
+    steps/data/reverberate_data_dir.py \
+      "${rvb_opts[@]}" \
+      --speech-rvb-probability 1 \
+      --pointsource-noise-addition-probability 0 \
+      --isotropic-noise-addition-probability 0 \
+      --num-replications 1 \
+      --source-sampling-rate 8000 \
+      ${root_data_dir} \
+      ${train_data} ${train_data}_reverb
+    #utils/data/get_utt2dur.sh ${train_data}_reverb
+    # Durations are the same
+    cp ${train_data}/utt2dur ${train_data}_reverb
+    cp ${train_data}/vad.scp ${train_data}_reverb
+    utils/copy_data_dir.sh --utt-suffix "-reverb" ${train_data}_reverb ${train_data}_reverb.new
+    rm -rf ${train_data}_reverb
+    mv ${train_data}_reverb.new ${train_data}_reverb
+
+    # Augment with musan_noise
+    steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
+    # Augment with musan_music
+    steps/data/augment_data_dir.py --utt-suffix "music" --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "${musan_dir}/musan_music" ${train_data} ${train_data}_music
+    # Augment with musan_speech
+    steps/data/augment_data_dir.py --utt-suffix "babble" --bg-snrs "20:17:15:13" --num-bg-noises "3:4:5:6:7" --bg-noise-dir "${musan_dir}/musan_speech" ${train_data} ${train_data}_babble
+
+    # Combine reverb, noise, music, and babble into one directory.
+    utils/combine_data.sh ${train_data}_aug ${train_data}_reverb ${train_data}_noise ${train_data}_music ${train_data}_babble
+
+    # Get target number of utterances for the subset of the augmented data
+    # Set so it's about 2.5x the normal data (4x augmented / 1.6 = 2.5)
+    num_utts=$(wc -l ${train_data}_aug/utt2spk | cut -d' ' -f1)
+    target_utts=$(echo ${num_utts}/1.6 | bc)
+    # Take a random subset of the augmentations
+    utils/subset_data_dir.sh ${train_data}_aug $target_utts ${train_data}_aug_subset
+    utils/fix_data_dir.sh ${train_data}_aug_subset
+
+    # Make MFCCs for the augmented data.  Note that we do not compute a new
+    # vad.scp file here.  Instead, we use the vad.scp from the clean version of
+    # the list.
+
+    num_speakers=$(cat ${train_data}_aug_subset/spk2utt | wc -l)
+    if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
+      num_jobs=$MAXNUMJOBS
+    else
+      num_jobs=$num_speakers
+    fi
+
+    echo "Making MFCCs for augmented data"
+    steps/make_mfcc.sh \
+    --mfcc-config conf/mfcc.conf \
+    --nj $num_jobs \
+    --cmd "$train_cmd" \
+      ${train_data}_aug_subset \
+      $log_dir/make_mfcc \
+      $mfcc_dir
+
+    echo "Tidying up data"
+    # Keep original clean copy of training data as backup
+    cp -r $train_data ${train_data}_clean
+
+    # Combine the clean and augmented SWBD+SRE list.  This is now roughly
+    # double the size of the original clean list.
+    utils/combine_data.sh ${train_data}_combined ${train_data}_aug_subset ${train_data}_clean
+    rm -rf ${train_data}
+    mv ${train_data}_combined ${train_data}
+    utils/fix_data_dir.sh ${train_data}
+
+    # Remove unnecessary folders
+    rm -rf ${train_data}_music
+    rm -rf ${train_data}_noise
+    rm -rf ${train_data}_reverb
+    rm -rf ${train_data}_babble
+    rm -rf ${train_data}_aug
+    # Have the aug subset and clean data which is enough (both are separate)
+
+    # Get back necessary files for training
+    utils/data/get_utt2num_frames.sh ${train_data}
+    sed -e 's?[0-9]*$??' ${train_data}/utt2spk > ${train_data}/utt2lang
+    local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang > ${train_data}/lang2utt
+    cp ${train_data}_clean/utterances_shortened_summary ${train_data}
+
+    echo "Done with data augmentation"
+  else
+    echo "No data augmentation required"
+  fi
+
   echo "Finished stage 2."
 
   if [ "$run_all" = true ]; then
@@ -412,105 +527,7 @@ if [ $stage -eq 2 ]; then
   fi
 fi
 
-# Data augmentation step
-# Do data augmentation if required
-if [ "$use_data_augmentation" = true ]; then
-  frame_shift=0.01
-  awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $train_data/utt2num_frames > $train_data/reco2dur
 
-  # Make a version with reverberated speech
-  rvb_opts=()
-  rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/smallroom/rir_list")
-  rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/mediumroom/rir_list")
-
-  # Make a reverberated version of the training data.  Note that we don't add any
-  # additive noise here.
-  # Make sure we have permission to execute (can be weird)
-  chmod +x steps/data/augment_data_dir.py
-  steps/data/reverberate_data_dir.py \
-    "${rvb_opts[@]}" \
-    --speech-rvb-probability 1 \
-    --pointsource-noise-addition-probability 0 \
-    --isotropic-noise-addition-probability 0 \
-    --num-replications 1 \
-    --source-sampling-rate 8000 \
-    ${root_data_dir} \
-    ${train_data} ${train_data}_reverb
-  #utils/data/get_utt2dur.sh ${train_data}_reverb
-  # Durations are the same
-  cp ${train_data}/utt2dur ${train_data}_reverb
-  cp ${train_data}/vad.scp ${train_data}_reverb
-  utils/copy_data_dir.sh --utt-suffix "-reverb" ${train_data}_reverb ${train_data}_reverb.new
-  rm -rf ${train_data}_reverb
-  mv ${train_data}_reverb.new ${train_data}_reverb
-
-  # Augment with musan_noise
-  steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
-  # Augment with musan_music
-  steps/data/augment_data_dir.py --utt-suffix "music" --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "${musan_dir}/musan_music" ${train_data} ${train_data}_music
-  # Augment with musan_speech
-  steps/data/augment_data_dir.py --utt-suffix "babble" --bg-snrs "20:17:15:13" --num-bg-noises "3:4:5:6:7" --bg-noise-dir "${musan_dir}/musan_speech" ${train_data} ${train_data}_babble
-
-  # Combine reverb, noise, music, and babble into one directory.
-  utils/combine_data.sh ${train_data}_aug ${train_data}_reverb ${train_data}_noise ${train_data}_music ${train_data}_babble
-
-  # Get target number of utterances for the subset of the augmented data
-  # Set so it's about 2.5x the normal data (4x augmented / 1.6 = 2.5)
-  num_utts=$(wc -l ${train_data}_aug/utt2spk | cut -d' ' -f1)
-  target_utts=$(echo ${num_utts}/1.6 | bc)
-  # Take a random subset of the augmentations
-  utils/subset_data_dir.sh ${train_data}_aug $target_utts ${train_data}_aug_subset
-  utils/fix_data_dir.sh ${train_data}_aug_subset
-
-  # Make MFCCs for the augmented data.  Note that we do not compute a new
-  # vad.scp file here.  Instead, we use the vad.scp from the clean version of
-  # the list.
-
-  num_speakers=$(cat ${train_data}_aug_subset/spk2utt | wc -l)
-  if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
-    num_jobs=$MAXNUMJOBS
-  else
-    num_jobs=$num_speakers
-  fi
-
-  echo "Making MFCCs for augmented data"
-  steps/make_mfcc.sh \
-  --mfcc-config conf/mfcc.conf \
-  --nj $num_jobs \
-  --cmd "$train_cmd" \
-    ${train_data}_aug_subset \
-    $log_dir/make_mfcc \
-    $mfcc_dir
-
-  echo "Tidying up data"
-  # Keep original clean copy of training data as backup
-  cp -r $train_data ${train_data}_clean
-
-  # Combine the clean and augmented SWBD+SRE list.  This is now roughly
-  # double the size of the original clean list.
-  utils/combine_data.sh ${train_data}_combined ${train_data}_aug_subset ${train_data}_clean
-  rm -rf ${train_data}
-  mv ${train_data}_combined ${train_data}
-  utils/fix_data_dir.sh ${train_data}
-
-  # Remove unnecessary folders
-  rm -rf ${train_data}_music
-  rm -rf ${train_data}_noise
-  rm -rf ${train_data}_reverb
-  rm -rf ${train_data}_babble
-  rm -rf ${train_data}_aug
-  # Have the aug subset and clean data which is enough (both are separate)
-
-  # Get back necessary files for training
-  utils/data/get_utt2num_frames.sh ${train_data}
-  sed -e 's?[0-9]*$??' ${train_data}/utt2spk > ${train_data}/utt2lang
-  local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang > ${train_data}/lang2utt
-  cp ${train_data}_clean/utterances_shortened_summary ${train_data}
-
-  echo "Done with data augmentation"
-else
-  echo "No data augmentation required"
-fi
 
 #echo "Exiting early"
 #exit

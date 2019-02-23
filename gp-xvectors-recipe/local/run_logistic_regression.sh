@@ -27,12 +27,6 @@ apply_log=true # If true, the output of the binary
 if [ -f path.sh ]; then . ./path.sh; fi
 . parse_options.sh || exit 1;
 
-if [ ! -f $train_utt2lang ] || [ ! -f $test_utt2lang ]; then
-  echo "Training/testing utt2lang files not found"
-  echo "Probably a mistake happened in X-vector extraction"
-  exit 1
-fi
-
 model=$model_dir/logistic_regression
 model_rebalanced=$model_dir/logistic_regression_rebalanced
 train_xvectors="ark:ivector-normalize-length scp:$train_dir/xvector.scp ark:- |";
