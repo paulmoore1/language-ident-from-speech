@@ -64,7 +64,7 @@ for L in $GP_LANGUAGES; do
   train=${L}_train
   enroll=${L}_enroll
   eval=${L}_eval
-  test=${L}}_test
+  test=${L}_test
   train_data=$lang_dir/${train}
   enroll_data=$lang_dir/${enroll}
   eval_data=$lang_dir/${eval}

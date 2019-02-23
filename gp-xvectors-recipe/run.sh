@@ -225,6 +225,7 @@ if [ "$use_preprocessed" = true ]; then
     --evaluation-length=$evaluation_length \
     --test-length=$test_length
     || exit 1;
+  stage=3
 fi
 
 # Preparing lists of utterances (and a couple other auxiliary lists) based

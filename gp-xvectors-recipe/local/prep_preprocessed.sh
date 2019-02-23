@@ -108,6 +108,26 @@ else
   utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train ${train_dirs_clean[@]}
 fi
 
+train_data=$OUTDIR/train
+
+echo "Shortening languages for training data"
+python local/shorten_languages.py \
+  --data-dir $train_data \
+  --conf-file-path ${train_file_path} \
+  >> ${train_data}/data_organisation
+
+# For filtering the frames based on the new shortened utterances:
+utils/filter_scp.pl ${train_data}/utterances_shortened ${train_data}/wav.scp > $DATADIR/${data_subset}/wav.scp.temp
+mv ${train_data}/wav.scp.temp ${train_data}/wav.scp
+# Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
+utils/fix_data_dir.sh ${train_data}
+# Fixes the lang2utt file
+./local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang \
+> ${train_data}/lang2utt
+
+
+
+
 enroll_dirs=()
 for L in $ENROLL_LANGUAGES; do
   enroll_dir_lang=$INDIR/$L/${L}_enroll_split_${enrollment_length}s
@@ -118,14 +138,25 @@ for L in $ENROLL_LANGUAGES; do
     exit 1
 done
 
+enroll_data=$OUTDIR/enroll
+
 echo "Combining enrollment directories: $(echo ${enroll_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $OUTDIR/enroll ${enroll_dirs[@]}
+utils/combine_data.sh ${enroll_data} ${enroll_dirs[@]}
 
 echo "Shortening languages for enrollment data"
 python ./local/shorten_languages.py \
   --data-dir $enroll_data \
   --conf-file-path ${enroll_file_path} \
-  >> $log_dir/data_organisation
+  >> ${enroll_data}/data_organisation
+
+# For filtering the frames based on the new shortened utterances:
+utils/filter_scp.pl ${enroll_data}/utterances_shortened ${enroll_data}/wav.scp > ${enroll_data}/wav.scp.temp
+mv ${enroll_data}/wav.scp.temp ${enroll_data}/wav.scp
+# Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
+utils/fix_data_dir.sh ${enroll_data}
+# Fixes the lang2utt file
+./local/utt2lang_to_lang2utt.pl ${enroll_data}/utt2lang \
+> ${enroll_data}/lang2utt
 
 
 eval_dirs=()
