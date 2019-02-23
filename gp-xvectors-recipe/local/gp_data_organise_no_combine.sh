@@ -105,23 +105,23 @@ for L in $TRAIN_LANGUAGES; do
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/train/$L/train_spk
 
   echo "Language - ${L}: formatting train data."
-  mkdir -p $datadir/$L/train
-  rm -f $datadir/$L/train/wav.scp $datadir/$L/train/spk2utt \
-        $datadir/$L/train/utt2spk $datadir/$L/train/utt2len
+  mkdir -p $datadir/$L/${L}_train
+  rm -f $datadir/$L/${L}_train/wav.scp $datadir/$L/${L}_train/spk2utt \
+        $datadir/$L/${L}_train/utt2spk $datadir/$L/${L}_train/utt2len
 
   for spk in `cat $tmpdir/train/$L/train_spk`; do
-    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/train/wav.scp
-    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/train/spk2utt
-    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/train/utt2spk
-    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/train/utt2len
+    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/${L}_train/wav.scp
+    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/${L}_train/spk2utt
+    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/${L}_train/utt2spk
+    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/${L}_train/utt2len
   done
   ) &
   wait;
-  sed -e 's?[0-9]*$??' $datadir/${L}/train/utt2spk \
-  > $datadir/${L}/train/utt2lang
+  sed -e 's?[0-9]*$??' $datadir/${L}/${L}_train/utt2spk \
+  > $datadir/${L}/${L}_train/utt2lang
 
-  ./local/utt2lang_to_lang2utt.pl $datadir/${L}/train/utt2lang \
-  > $datadir/${L}/train/lang2utt
+  ./local/utt2lang_to_lang2utt.pl $datadir/${L}/${L}_train/utt2lang \
+  > $datadir/${L}/${L}_train/lang2utt
 done
 wait;
 echo "Done"
@@ -132,23 +132,23 @@ for L in $ENROLL_LANGUAGES; do
   grep "^$L" $enroll_list | cut -f2- | tr ' ' '\n' \
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/enroll/$L/enroll_spk
   echo "Language - ${L}: formatting enroll data."
-  mkdir -p $datadir/$L/enroll
-  rm -f $datadir/$L/enroll/wav.scp $datadir/$L/enroll/spk2utt \
-        $datadir/$L/enroll/utt2spk $datadir/$L/enroll/utt2len
+  mkdir -p $datadir/$L/${L}_enroll
+  rm -f $datadir/$L/${L}_enroll/wav.scp $datadir/$L/${L}_enroll/spk2utt \
+        $datadir/$L/${L}_enroll/utt2spk $datadir/$L/${L}_enroll/utt2len
 
   for spk in `cat $tmpdir/enroll/$L/enroll_spk`; do
-    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/enroll/wav.scp
-    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/enroll/spk2utt
-    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/enroll/utt2spk
-    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/enroll/utt2len
+    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/${L}_enroll/wav.scp
+    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/${L}_enroll/spk2utt
+    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/${L}_enroll/utt2spk
+    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/${L}_enroll/utt2len
   done
   ) &
   wait;
-  sed -e 's?[0-9]*$??' $datadir/${L}/enroll/utt2spk \
-  > $datadir/${L}/enroll/utt2lang
+  sed -e 's?[0-9]*$??' $datadir/${L}/${L}_enroll/utt2spk \
+  > $datadir/${L}/${L}_enroll/utt2lang
 
-  ./local/utt2lang_to_lang2utt.pl $datadir/${L}/enroll/utt2lang \
-  > $datadir/${L}/enroll/lang2utt
+  ./local/utt2lang_to_lang2utt.pl $datadir/${L}/${L}_enroll/utt2lang \
+  > $datadir/${L}/${L}_enroll/lang2utt
 done
 wait;
 echo "Done"
@@ -160,23 +160,23 @@ for L in $EVAL_LANGUAGES; do
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/eval/$L/eval_spk
 
   echo "Language - ${L}: formatting eval data."
-  mkdir -p $datadir/$L/eval
-  rm -f $datadir/$L/eval/wav.scp $datadir/$L/eval/spk2utt \
-        $datadir/$L/eval/utt2spk $datadir/$L/eval/utt2len
+  mkdir -p $datadir/$L/${L}_eval
+  rm -f $datadir/$L/${L}_eval/wav.scp $datadir/$L/${L}_eval/spk2utt \
+        $datadir/$L/${L}_eval/utt2spk $datadir/$L/${L}_eval/utt2len
 
   for spk in `cat $tmpdir/eval/$L/eval_spk`; do
-    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/eval/wav.scp
-    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/eval/spk2utt
-    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/eval/utt2spk
-    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/eval/utt2len
+    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/${L}_eval/wav.scp
+    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/${L}_eval/spk2utt
+    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/${L}_eval/utt2spk
+    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/${L}_eval/utt2len
   done
   ) &
   wait;
-  sed -e 's?[0-9]*$??' $datadir/${L}/eval/utt2spk \
-  > $datadir/${L}/eval/utt2lang
+  sed -e 's?[0-9]*$??' $datadir/${L}/${L}_eval/utt2spk \
+  > $datadir/${L}/${L}_eval/utt2lang
 
-  ./local/utt2lang_to_lang2utt.pl $datadir/${L}/eval/utt2lang \
-  > $datadir/${L}/eval/lang2utt
+  ./local/utt2lang_to_lang2utt.pl $datadir/${L}/${L}_eval/utt2lang \
+  > $datadir/${L}/${L}_eval/lang2utt
 done
 wait;
 echo "Done"
@@ -187,23 +187,23 @@ for L in $TEST_LANGUAGES; do
     | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/test/$L/test_spk
 
   echo "Language - ${L}: formatting test data."
-  mkdir -p $datadir/$L/test
-  rm -f $datadir/$L/test/wav.scp $datadir/$L/test/spk2utt \
-        $datadir/$L/test/utt2spk $datadir/$L/test/utt2len
+  mkdir -p $datadir/$L/${L}_test
+  rm -f $datadir/$L/${L}_test/wav.scp $datadir/$L/${L}_test/spk2utt \
+        $datadir/$L/${L}_test/utt2spk $datadir/$L/${L}_test/utt2len
 
   for spk in `cat $tmpdir/test/$L/test_spk`; do
-    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/test/wav.scp
-    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/test/spk2utt
-    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/test/utt2spk
-    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/test/utt2len
+    grep -h "$spk" $WAVDIR/$L/lists/wav.scp >> $datadir/$L/${L}_test/wav.scp
+    grep -h "$spk" $WAVDIR/$L/lists/spk2utt >> $datadir/$L/${L}_test/spk2utt
+    grep -h "$spk" $WAVDIR/$L/lists/utt2spk >> $datadir/$L/${L}_test/utt2spk
+    grep -h "$spk" $WAVDIR/$L/lists/utt2len >> $datadir/$L/${L}_test/utt2len
   done
   ) &
   wait;
-  sed -e 's?[0-9]*$??' $datadir/${L}/test/utt2spk \
-  > $datadir/${L}/test/utt2lang
+  sed -e 's?[0-9]*$??' $datadir/${L}/${L}_test/utt2spk \
+  > $datadir/${L}/${L}_test/utt2lang
 
-  ./local/utt2lang_to_lang2utt.pl $datadir/${L}/test/utt2lang \
-  > $datadir/${L}/test/lang2utt
+  ./local/utt2lang_to_lang2utt.pl $datadir/${L}/${L}_test/utt2lang \
+  > $datadir/${L}/${L}_test/lang2utt
 done
 wait;
 

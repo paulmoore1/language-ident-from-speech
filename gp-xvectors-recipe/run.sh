@@ -434,7 +434,7 @@ if [ "$use_data_augmentation" = true ]; then
     --isotropic-noise-addition-probability 0 \
     --num-replications 1 \
     --source-sampling-rate 8000 \
-    ${rirs_dir} \
+    ${root_data_dir} \
     ${train_data} ${train_data}_reverb
   #utils/data/get_utt2dur.sh ${train_data}_reverb
   # Durations are the same

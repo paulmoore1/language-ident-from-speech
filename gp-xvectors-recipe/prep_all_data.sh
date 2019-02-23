@@ -159,6 +159,7 @@ for L in $GP_LANGUAGES; do
 
   echo "Finished stage 2."
 
+
   # Data augmentation step
   frame_shift=0.01
   awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $train_data/utt2num_frames > $train_data/reco2dur
@@ -179,7 +180,7 @@ for L in $GP_LANGUAGES; do
     --isotropic-noise-addition-probability 0 \
     --num-replications 1 \
     --source-sampling-rate 8000 \
-    ${rirs_dir} \
+    ${root_data_dir} \
     ${train_data} ${train_data}_reverb
   # Durations are the same
   cp ${train_data}/utt2dur ${train_data}_reverb
@@ -188,6 +189,7 @@ for L in $GP_LANGUAGES; do
   rm -rf ${train_data}_reverb
   mv ${train_data}_reverb.new ${train_data}_reverb
 
+  exit
   # Augment with musan_noise
   steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
   # Augment with musan_music
