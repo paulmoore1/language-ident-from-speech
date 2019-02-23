@@ -465,6 +465,14 @@ if [ "$use_data_augmentation" = true ]; then
   # Make MFCCs for the augmented data.  Note that we do not compute a new
   # vad.scp file here.  Instead, we use the vad.scp from the clean version of
   # the list.
+
+  num_speakers=$(cat ${train_data}_aug_subset/spk2utt | wc -l)
+  if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
+    num_jobs=$MAXNUMJOBS
+  else
+    num_jobs=$num_speakers
+  fi
+
   echo "Making MFCCs for augmented data"
   steps/make_mfcc.sh \
   --mfcc-config conf/mfcc.conf \

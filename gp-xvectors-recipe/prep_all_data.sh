@@ -118,6 +118,7 @@ for L in $GP_LANGUAGES; do
       $vaddir
 
     utils/fix_data_dir.sh $lang_dir/${data_subset}
+    
   done
 
   echo "### Calcuating MFCCs and VAD for split data ####"
