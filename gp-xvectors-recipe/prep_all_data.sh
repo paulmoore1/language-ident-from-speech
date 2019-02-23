@@ -201,7 +201,6 @@ for L in $GP_LANGUAGES; do
   # Combine reverb, noise, music, and babble into one directory.
   utils/combine_data.sh ${train_data}_aug ${train_data}_reverb ${train_data}_noise ${train_data}_music ${train_data}_babble
 
- exit
   # Make MFCCs for the augmented data.  Note that we do not compute a new
   # vad.scp file here.  Instead, we use the vad.scp from the clean version of
   # the list.
@@ -209,7 +208,7 @@ for L in $GP_LANGUAGES; do
   steps/make_mfcc.sh \
   --mfcc-config conf/mfcc.conf \
   --nj $num_jobs \
-  --cmd "$train_cmd" \
+  --cmd "$preprocess_cmd" \
   ${train_data}_aug \
   $log_dir/make_mfcc \
   $mfcc_dir

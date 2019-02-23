@@ -225,18 +225,21 @@ if [ $stage -eq 42 ]; then
   echo "Finished stage 42."
 fi
 
-if [ !]
-
 if [ "$use_preprocessed" = true ]; then
   ./local/prep_preprocessed.sh \
     --config-dir=$conf_dir \
     --processed-dir=$processed_dir \
-    --data_augmentation=$use_data_augmentation \
+    --data-augmentation=$use_data_augmentation \
     --train-languages="$GP_TRAIN_LANGUAGES" \
     --enroll-languages="$GP_ENROLL_LANGUAGES" \
     --eval-languages="$GP_EVAL_LANGUAGES" \
     --test-languages="$GP_TEST_LANGUAGES" \
     --data-dir=$DATADIR \
+    --train-config-file-path=${conf_dir}/lre_configs/${lre_train_config}
+    --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config}
+    --enrollment-length=$enrollment_length \
+    --evaluation-length=$evaluation_length \
+    --test-length=$test_length
     || exit 1;
 fi
 
