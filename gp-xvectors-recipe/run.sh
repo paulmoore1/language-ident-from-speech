@@ -627,6 +627,7 @@ if [ $stage -eq 7 ]; then
   if [ "$run_all" = true ]; then
     stage=`expr $stage + 1`
   else
+    echo "Stage completed without continuing"
     exit
   fi
 fi

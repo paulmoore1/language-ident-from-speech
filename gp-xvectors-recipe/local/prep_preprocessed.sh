@@ -40,7 +40,7 @@ Required arguments:\n
   --test-languages=STR\tSpace separated list of two letter language codes for testing\n
 ";
 
-if [ $# -lt 12 ]; then
+if [ $# -lt 13 ]; then
   error_exit $usage;
 fi
 
@@ -125,6 +125,30 @@ utils/fix_data_dir.sh ${train_data}
 ./local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang \
 > ${train_data}/lang2utt
 
+if [ "$use_data_augmentation" = true ]; then
+  # Get about 2.5x augmented data from the original number of utterances
+  num_utts=$(wc -l ${train_data}/utt2spk | cut -d' ' -f1)
+  target_aug_utts=$(echo ${num_utts}*2.5 | bc)
+  # Take a random subset of the augmentations
+  utils/subset_data_dir.sh ${train_data}_aug $target_aug_utts ${train_data}_aug_subset
+  utils/fix_data_dir.sh ${train_data}_aug_subset
+
+  # Make a backup of the training data
+  cp -r $train_data ${train_data}_clean
+
+  utils/combine_data.sh ${train_data}_combined ${train_data}_aug_subset ${train_data}_clean
+  rm -rf ${train_data}
+  mv ${train_data}_combined ${train_data}
+  utils/fix_data_dir.sh ${train_data}
+  rm -rf ${train_data}_aug
+
+  # Get back necessary files for training
+  #utils/data/get_utt2num_frames.sh ${train_data}
+  #sed -e 's?[0-9]*$??' ${train_data}/utt2spk > ${train_data}/utt2lang
+  #local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang > ${train_data}/lang2utt
+  #cp ${train_data}_clean/utterances_shortened_summary ${train_data}
+
+fi
 
 enroll_dirs=()
 for L in $ENROLL_LANGUAGES; do
@@ -155,7 +179,6 @@ utils/fix_data_dir.sh ${enroll_data}
 # Fixes the lang2utt file
 ./local/utt2lang_to_lang2utt.pl ${enroll_data}/utt2lang \
 > ${enroll_data}/lang2utt
-
 
 eval_dirs=()
 for L in $EVAL_LANGUAGES; do
