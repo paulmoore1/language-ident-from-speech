@@ -71,32 +71,27 @@ done
 
 # Check if the config files are in place:
 pushd $CONFDIR > /dev/null
-if [ -f test_spk.list ]; then
-  test_list=$CONFDIR/test_spk.list
+if [ -f test_spk_check.list ]; then
+  test_list=$CONFDIR/test_spk_check.list
 else
   echo "Test-set speaker list not found."; exit 1
 fi
-if [ -f eval_spk.list ]; then
-  eval_list=$CONFDIR/eval_spk.list
+if [ -f eval_spk_check.list ]; then
+  eval_list=$CONFDIR/eval_spk_check.list
 else
   echo "Eval-set speaker list not found."; exit 1
 fi
-if [ -f enroll_spk.list ]; then
-  enroll_list=$CONFDIR/enroll_spk.list
+if [ -f enroll_spk_check.list ]; then
+  enroll_list=$CONFDIR/enroll_spk_check.list
 else
   echo "Enrollment-set speaker list not found."; exit 1
 fi
-if [ -f train_spk.list ]; then
-  train_list=$CONFDIR/train_spk.list
+if [ -f train_spk_check.list ]; then
+  train_list=$CONFDIR/train_spk_check.list
 fi
 popd > /dev/null
 
 [ -f path.sh ] && . ./path.sh  # Sets the PATH to contain necessary executables
-
-# Make data folders to contain all the language files.
-for x in train enroll eval test; do
-  mkdir -p $datadir/${x}
-done
 
 tmpdir=$(mktemp -d /tmp/kaldi.XXXX);
 trap 'rm -rf "$tmpdir"' EXIT
@@ -106,17 +101,8 @@ echo "datadir is: $datadir"
 for L in $TRAIN_LANGUAGES; do
   (
   mkdir -p $tmpdir/train/$L
-  if [ -f $CONFDIR/train_spk.list ]; then
-    grep "^$L" $train_list | cut -f2- | tr ' ' '\n' \
-      | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/train/$L/train_spk
-  else
-    echo "Train-set speaker list not found. Skipping."
-    #grep -v -f $tmpdir/$L/test_spk -f $tmpdir/$L/eval_spk -f $tmpdir/$L/enroll_spk \
-    #  $WAVDIR/$L/lists/spk > $tmpdir/$L/train_spk || \
-    #  echo "Could not find any training set speakers; \
-    #  are you trying to use all of them for evaluation and testing?";
-    continue
-  fi
+  grep "^$L" $train_list | cut -f2- | tr ' ' '\n' \
+    | sed -e "s?^?$L?" -e 's?$?_?' > $tmpdir/train/$L/train_spk
 
   echo "Language - ${L}: formatting train data."
   mkdir -p $datadir/$L/train
@@ -159,7 +145,7 @@ for L in $ENROLL_LANGUAGES; do
   ) &
   wait;
   sed -e 's?[0-9]*$??' $datadir/${L}/enroll/utt2spk \
-  > $datadir/${L}/enrolltest/utt2lang
+  > $datadir/${L}/enroll/utt2lang
 
   ./local/utt2lang_to_lang2utt.pl $datadir/${L}/enroll/utt2lang \
   > $datadir/${L}/enroll/lang2utt

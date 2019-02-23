@@ -23,7 +23,7 @@
 # CHECKING FOR AND INSTALLING REQUIRED TOOLS:
 #  This recipe requires shorten (3.6.1) and sox (14.3.2).
 #  If they are not found, the local/gp_install.sh script will install them.
-./local/gp_check_tools.sh $home_dir path.sh || exit 1;
+./local/gp_check_tools.sh . path.sh || exit 1;
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 root_data_dir=/home/s1531206/gp-data
@@ -45,10 +45,10 @@ echo "Running with languages: ${GP_LANGUAGES}"
 # generated in the previous stage.
   # NOTE: The wav-dir as it is right now only works in the cluster!
 echo "#### STAGE 1: Organising speakers into sets. ####"
-(
+
 # Organise data into train, enroll, eval and test
 ./local/gp_data_organise_no_combine.sh \
-  --config-dir=$conf_dir \
+  --config-dir=conf \
   --corpus-dir=$GP_CORPUS \
   --wav-dir=/mnt/mscteach_home/s1531206/lid/wav \
   --train-languages="$GP_LANGUAGES" \
@@ -57,10 +57,10 @@ echo "#### STAGE 1: Organising speakers into sets. ####"
   --test-languages="$GP_LANGUAGES" \
   --data-dir=$DATADIR \
   || exit 1;
-) > $log_dir/data_organisation
 
 for L in $GP_LANGUAGES; do
-  lang_dir=$home_prefix/${L}
+  echo "Prepping language ${L}"
+  lang_dir=$DATADIR/${L}
   train_data=$lang_dir/train
   enroll_data=$lang_dir/enroll
   eval_data=$lang_dir/eval
@@ -76,7 +76,7 @@ for L in $GP_LANGUAGES; do
     # Make a backup
     mkdir -p $lang_dir/${data_subset}/.unsplit_backup
     cp -r $lang_dir/${data_subset}/* $lang_dir/${data_subset}/.unsplit_backup
-    for time in $times; do
+    for time in ${times[@]}; do
       echo "Splitting ${data_subset} data"
       ./local/split_long_utts.sh \
         --max-utt-len $time \
@@ -88,13 +88,13 @@ for L in $GP_LANGUAGES; do
   # Make features and compute the energy-based VAD for each dataset
   echo "#### Calculating MFCCs and VAD for unsplit data ####"
   for data_subset in train enroll eval test; do
-    (
     num_speakers=$(cat $lang_dir/${data_subset}/spk2utt | wc -l)
     if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
       num_jobs=$MAXNUMJOBS
     else
       num_jobs=$num_speakers
     fi
+    utils/fix_data_dir.sh $lang_dir/${data_subset}
 
     echo "Creating 23D MFCC features."
     steps/make_mfcc.sh \
@@ -118,19 +118,18 @@ for L in $GP_LANGUAGES; do
       $vaddir
 
     utils/fix_data_dir.sh $lang_dir/${data_subset}
-    ) > $log_dir/${feature_type}_${data_subset}
   done
 
   echo "### Calcuating MFCCs and VAD for split data ####"
   for data_subset in enroll eval test; do
-    (
-    for time in $times; do
+    for time in ${times[@]}; do
       num_speakers=$(cat $lang_dir/${data_subset}/split_${time}s/spk2utt | wc -l)
       if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
         num_jobs=$MAXNUMJOBS
       else
         num_jobs=$num_speakers
       fi
+      utils/fix_data_dir.sh $lang_dir/${data_subset}/split_${time}s
 
       echo "Creating 23D MFCC features."
       steps/make_mfcc.sh \
@@ -154,7 +153,6 @@ for L in $GP_LANGUAGES; do
         $vaddir
 
       utils/fix_data_dir.sh $lang_dir/${data_subset}/split_${time}s
-      ) > $log_dir/${feature_type}_${data_subset}/split_${time}s
     done
   done
 
