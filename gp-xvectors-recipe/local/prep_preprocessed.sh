@@ -62,8 +62,10 @@ do
   EVAL_LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --test-languages=*)
   TEST_LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
-  --config-file-path=*)
-  config_file_path=`read_dirname $1`; shift ;;
+  --train-config-file-path=*)
+  train_file_path=`read_dirname $1`; shift ;;
+  --enroll-config-file-path=*)
+  enroll_file_path=`read_dirname $1`; shift ;;
   --enrollment-length=*)
   enrollment_length=$1; shift ;;
   --evaluation-length=*)
@@ -85,70 +87,71 @@ done
 
 # Create directories to contain files needed in training and testing:
 echo "Directory for storing is: $OUTDIR"
+train_dirs_clean=()
+train_dirs_aug=()
 for L in $TRAIN_LANGUAGES; do
-  train_dirs=()
-  train_dirs+=($INDIR/$L/${L}_train)
-  cp -r $INDIR/${L}/${L}_train
+  if [ "$use_data_augmentation" = true ]; then
+    train_dirs_aug+=($INDIR/$L/${L}_train_aug)
+    train_dirs_clean+=($INDIR/$L/${L}_train)
+  else
+    train_dirs_clean+=($INDIR/$L/${L}_train)
+  fi
 done
 
 if [ "$use_data_augmentation" = true ]; then
-
+  echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
+  utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train ${train_dirs_clean[@]}
+  echo "Combining training directories: $(echo ${train_dirs_aug[@]} | sed -e "s|${OUTDIR}||g")"
+  utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train_aug ${train_dirs_aug[@]}
 else
-
+  echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
+  utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train ${train_dirs_clean[@]}
 fi
 
-for L in $ENROLL_LANGUAGES; do
-
-done
-
-for L in $EVAL_LANGUAGES; do
-
-done
-
-for L in $TEST_LANGUAGES; do
-
-done
-
-# Combine data from all languages into big piles
-train_dirs=()
-eval_dirs=()
 enroll_dirs=()
-test_dirs=()
-
-for L in $TRAIN_LANGUAGES; do
-  train_dirs+=($datadir/$L/train)
-done
 for L in $ENROLL_LANGUAGES; do
-  enroll_dirs+=($datadir/$L/enroll)
+  enroll_dir_lang=$INDIR/$L/${L}_enroll_split_${enrollment_length}s
+  if [ -d $enroll_dir_lang ]; then
+    enroll_dirs+=($enroll_dir_lang)
+  else
+    echo "Directory not found: $enroll_dir_lang"
+    exit 1
 done
-for L in $EVAL_LANGUAGES; do
-  eval_dirs+=($datadir/$L/eval)
-done
-for L in $TEST_LANGUAGES; do
-  test_dirs+=($datadir/$L/test)
-done
-
-
-echo "Combining training directories: $(echo ${train_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh --extra-files 'utt2len' $datadir/train ${train_dirs[@]}
 
 echo "Combining enrollment directories: $(echo ${enroll_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh --extra-files 'utt2len' $datadir/enroll ${enroll_dirs[@]}
+utils/combine_data.sh $OUTDIR/enroll ${enroll_dirs[@]}
+
+echo "Shortening languages for enrollment data"
+python ./local/shorten_languages.py \
+  --data-dir $enroll_data \
+  --conf-file-path ${enroll_file_path} \
+  >> $log_dir/data_organisation
+
+
+eval_dirs=()
+for L in $EVAL_LANGUAGES; do
+  eval_dir_lang=$INDIR/$L/${L}_eval_split_${evaluation_length}s
+  if [ -d $eval_dir_lang ]; then
+    eval_dirs+=($eval_dir_lang)
+  else
+    echo "Directory not found: $eval_dir_lang"
+    exit 1
+done
 
 echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh --extra-files 'utt2len' $datadir/eval ${eval_dirs[@]}
+utils/combine_data.sh $OUTDIR/eval ${eval_dirs[@]}
+
+test_dirs=()
+for L in $TEST_LANGUAGES; do
+  test_dir_lang=$INDIR/$L/${L}_test_split_${test_length}s
+  if [ -d $test_dir_lang ]; then
+    test_dirs+=($test_dir_lang)
+  else
+    echo "Directory not found: $test_dir_lang"
+    exit 1
+done
 
 echo "Combining testing directories: $(echo ${test_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh --extra-files 'utt2len' $datadir/test ${test_dirs[@]}
-
-
-# Add utt2lang and lang2utt files for the collected languages
-for x in train enroll eval test; do
-  sed -e 's?[0-9]*$??' $datadir/${x}/utt2spk \
-  > $datadir/${x}/utt2lang
-
-  ./local/utt2lang_to_lang2utt.pl $datadir/${x}/utt2lang \
-  > $datadir/${x}/lang2utt
-done
+utils/combine_data.sh $OUTDIR/test ${test_dirs[@]}
 
 echo "Finished data preparation."

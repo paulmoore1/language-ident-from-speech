@@ -61,10 +61,10 @@ echo "#### STAGE 1: Organising speakers into sets. ####"
 for L in $GP_LANGUAGES; do
   echo "Prepping language ${L}"
   lang_dir=$DATADIR/${L}
-  train_data=$lang_dir/train
-  enroll_data=$lang_dir/enroll
-  eval_data=$lang_dir/eval
-  test_data=$lang_dir/test
+  train_data=$lang_dir/${L}_train
+  enroll_data=$lang_dir/${L}_enroll
+  eval_data=$lang_dir/${L}_eval
+  test_data=$lang_dir/${L}_test
 
   for data_subset in train enroll eval test; do
     utils/data/get_utt2num_frames.sh $lang_dir/${data_subset}
@@ -78,10 +78,11 @@ for L in $GP_LANGUAGES; do
     cp -r $lang_dir/${data_subset}/* $lang_dir/${data_subset}/.unsplit_backup
     for time in ${times[@]}; do
       echo "Splitting ${data_subset} data"
-      ./local/split_long_utts.sh \
+      local/split_long_utts.sh \
         --max-utt-len $time \
         $lang_dir/${data_subset} \
         $lang_dir/${data_subset}_split_${time}s
+      utils/data/get_utt2num_frames.sh $lang_dir/${data_subset}_split_${time}s
     done
   done
 
@@ -189,7 +190,7 @@ for L in $GP_LANGUAGES; do
   rm -rf ${train_data}_reverb
   mv ${train_data}_reverb.new ${train_data}_reverb
 
-  exit
+
   # Augment with musan_noise
   steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
   # Augment with musan_music
@@ -207,7 +208,7 @@ for L in $GP_LANGUAGES; do
   steps/make_mfcc.sh \
   --mfcc-config conf/mfcc.conf \
   --nj $num_jobs \
-  --cmd "$train_cmd" \
+  --cmd "$preprocess_cmd" \
   ${train_data}_aug \
   $log_dir/make_mfcc \
   $mfcc_dir
