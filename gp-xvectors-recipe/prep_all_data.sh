@@ -126,42 +126,41 @@ for L in $GP_LANGUAGES; do
     utils/fix_data_dir.sh $lang_dir/${data_subset}
 
   done
-
-  echo "### Calcuating MFCCs and VAD for split data ####"
-  for data_subset in ${enroll} ${eval} ${test}; do
-    for time in ${times[@]}; do
-      num_speakers=$(cat $lang_dir/${data_subset}_split_${time}s/spk2utt | wc -l)
-      if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
-        num_jobs=$MAXNUMJOBS
-      else
-        num_jobs=$num_speakers
-      fi
-      utils/fix_data_dir.sh $lang_dir/${data_subset}_split_${time}s
-
-      echo "Creating 23D MFCC features."
-      steps/make_mfcc.sh \
-        --write-utt2num-frames false \
-        --mfcc-config conf/mfcc.conf \
-        --nj $num_jobs \
-        --cmd "$preprocess_cmd" \
-        --compress true \
-        $lang_dir/${data_subset}_split_${time}s \
-        $log_dir/make_mfcc/${data_subset}_split_${time}s \
-        $mfcc_dir
-
-      echo "Fixing the directory to make sure everything is fine."
-      utils/fix_data_dir.sh $lang_dir/${data_subset}_split_${time}s
-
-      ./local/compute_vad_decision.sh \
-        --nj $num_jobs \
-        --cmd "$preprocess_cmd" \
-        $lang_dir/${data_subset}_split_${time}s \
-        $log_dir/make_vad/${data_subset}_split_${time}s \
-        $vaddir
-
-      utils/fix_data_dir.sh ${lang_dir}/${data_subset}_split_${time}s
-    done
-  done
+  #echo "### Calcuating MFCCs and VAD for split data ####"
+  #for data_subset in ${enroll} ${eval} ${test}; do
+  #  for time in ${times[@]}; do
+  #    num_speakers=$(cat $lang_dir/${data_subset}_split_${time}s/spk2utt | wc -l)
+  #    if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
+  #      num_jobs=$MAXNUMJOBS
+  #    else
+  #      num_jobs=$num_speakers
+  #    fi
+  #    utils/fix_data_dir.sh $lang_dir/${data_subset}_split_${time}s
+#
+#      echo "Creating 23D MFCC features."
+#      steps/make_mfcc.sh \
+#        --write-utt2num-frames false \
+#        --mfcc-config conf/mfcc.conf \
+#        --nj $num_jobs \
+#        --cmd "$preprocess_cmd" \
+#        --compress true \
+#        $lang_dir/${data_subset}_split_${time}s \
+#        $log_dir/make_mfcc/${data_subset}_split_${time}s \
+#        $mfcc_dir
+#
+#      echo "Fixing the directory to make sure everything is fine."
+#      utils/fix_data_dir.sh $lang_dir/${data_subset}_split_${time}s
+#
+#      ./local/compute_vad_decision.sh \
+#        --nj $num_jobs \
+#        --cmd "$preprocess_cmd" \
+#        $lang_dir/${data_subset}_split_${time}s \
+#        $log_dir/make_vad/${data_subset}_split_${time}s \
+#        $vaddir
+#
+#      utils/fix_data_dir.sh ${lang_dir}/${data_subset}_split_${time}s
+#    done
+#  done
 
   echo "Finished stage 2."
 
@@ -215,7 +214,7 @@ for L in $GP_LANGUAGES; do
   --nj $num_jobs \
   --cmd "$preprocess_cmd" \
   ${train_data}_aug \
-  $log_dir/make_mfcc \
+  $log_dir/make_mfcc/${train_data}_aug \
   $mfcc_dir
 
   echo "Tidying up data"

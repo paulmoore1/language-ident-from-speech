@@ -223,9 +223,11 @@ if [ "$use_preprocessed" = true ]; then
     --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config}
     --enrollment-length=$enrollment_length \
     --evaluation-length=$evaluation_length \
-    --test-length=$test_length
+    --test-length=$test_length \
     || exit 1;
-  stage=3
+  echo "Finished running"
+  # !!!TODO Remove this!!!
+  exit
 fi
 
 # Preparing lists of utterances (and a couple other auxiliary lists) based

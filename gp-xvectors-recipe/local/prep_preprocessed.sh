@@ -126,8 +126,6 @@ utils/fix_data_dir.sh ${train_data}
 > ${train_data}/lang2utt
 
 
-
-
 enroll_dirs=()
 for L in $ENROLL_LANGUAGES; do
   enroll_dir_lang=$INDIR/$L/${L}_enroll_split_${enrollment_length}s
