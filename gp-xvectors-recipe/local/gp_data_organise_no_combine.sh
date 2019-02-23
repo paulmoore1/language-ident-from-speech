@@ -71,23 +71,23 @@ done
 
 # Check if the config files are in place:
 pushd $CONFDIR > /dev/null
-if [ -f test_spk_check.list ]; then
-  test_list=$CONFDIR/test_spk_check.list
+if [ -f test_spk.list ]; then
+  test_list=$CONFDIR/test_spk.list
 else
   echo "Test-set speaker list not found."; exit 1
 fi
-if [ -f eval_spk_check.list ]; then
-  eval_list=$CONFDIR/eval_spk_check.list
+if [ -f eval_spk.list ]; then
+  eval_list=$CONFDIR/eval_spk.list
 else
   echo "Eval-set speaker list not found."; exit 1
 fi
-if [ -f enroll_spk_check.list ]; then
-  enroll_list=$CONFDIR/enroll_spk_check.list
+if [ -f enroll_spk.list ]; then
+  enroll_list=$CONFDIR/enroll_spk.list
 else
   echo "Enrollment-set speaker list not found."; exit 1
 fi
-if [ -f train_spk_check.list ]; then
-  train_list=$CONFDIR/train_spk_check.list
+if [ -f train_spk.list ]; then
+  train_list=$CONFDIR/train_spk.list
 fi
 popd > /dev/null
 
