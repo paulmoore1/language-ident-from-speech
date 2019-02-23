@@ -85,28 +85,45 @@ done
 
 # Create directories to contain files needed in training and testing:
 echo "Directory for storing is: $OUTDIR"
+train_dirs_clean=()
+train_dirs_aug=()
 for L in $TRAIN_LANGUAGES; do
-  train_dirs=()
-  train_dirs+=($INDIR/$L/${L}_train)
-  cp -r $INDIR/${L}/${L}_train
+  if [ "$use_data_augmentation" = true ]; then
+    train_dirs_aug+=($INDIR/$L/${L}_train_aug)
+    train_dirs_clean+=($INDIR/$L/${L}_train)
+  else
+    train_dirs_clean+=($INDIR/$L/${L}_train)
+  fi
 done
 
 if [ "$use_data_augmentation" = true ]; then
-
+  echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
+  utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train ${train_dirs_clean[@]}
+  echo "Combining training directories: $(echo ${train_dirs_aug[@]} | sed -e "s|${OUTDIR}||g")"
+  utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train_aug ${train_dirs_aug[@]}
 else
-
+  echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
+  utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train ${train_dirs_clean[@]}
 fi
 
+enroll_dirs=()
 for L in $ENROLL_LANGUAGES; do
-
+  enroll_dir_lang=$INDIR/$L/${L}_enroll_split_${enrollment_length}s
+  if [ -d $enroll_dir_lang ]; then
+    enroll_dirs+=($enroll_dir_lang)
+  else
+    echo "Directory not found: $enroll_dir_lang"
+    exit 1
 done
 
+eval_dirs=()
 for L in $EVAL_LANGUAGES; do
-
+  enroll_dirs+=($INDIR/$L/${L}_eval_split_${evaluation_length}s)
 done
 
+test_dirs=()
 for L in $TEST_LANGUAGES; do
-
+  test_dirs+=($INDIR/$L/${L}_test_split_${test_length}s)
 done
 
 # Combine data from all languages into big piles
