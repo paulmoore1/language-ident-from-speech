@@ -19,6 +19,7 @@ def main():
     exp_dirs = listdir_no_arguments()
     for exp_dir in exp_dirs:
         results_path_from = os.path.join(exp_dir, "exp", "results", "results")
+        classification_file = os.path.join(exp_dir, "exp", "results", "classification")
         results_path_to = os.path.join(copy_to_path, exp_dir)
 
         if os.path.exists(os.path.join(results_path_to, "results")):
@@ -29,6 +30,7 @@ def main():
             print("Copying results")
             os.mkdir(results_path_to)
             shutil.copy(results_path_from, results_path_to)
+            shutil.copy(classification_file, results_path_to)
         else:
             print("No results found in {}".format(exp_dir))
 
