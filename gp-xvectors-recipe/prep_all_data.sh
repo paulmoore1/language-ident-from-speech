@@ -184,7 +184,7 @@ for L in $GP_LANGUAGES; do
     --pointsource-noise-addition-probability 0 \
     --isotropic-noise-addition-probability 0 \
     --num-replications 1 \
-    --source-sampling-rate 8000 \
+    --source-sampling-rate 16000 \
     ${root_data_dir} \
     ${train_data} ${train_data}_reverb
   # Durations are the same
