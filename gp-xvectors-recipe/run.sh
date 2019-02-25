@@ -189,11 +189,10 @@ mkdir -p $DATADIR
 mkdir -p $DATADIR/log
 echo "The experiment directory is: $DATADIR"
 
-# Set the languages that will actually be processed
-GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN"
-#GP_LANGUAGES="AR BG CH"
-
-echo "Running with languages: ${GP_LANGUAGES}"
+echo "Running with training languages: ${GP_TRAIN_LANGUAGES}"
+echo "Running with enrollment languages: ${GP_ENROLL_LANGUAGES}"
+echo "Running with evaluation languages: ${GP_EVAL_LANGUAGES}"
+echo "Running with test languages: ${GP_TEST_LANGUAGES}"
 
 # The most time-consuming stage: Converting SHNs to WAVs. Should be done only once;
 # then, this script can be run from stage 0 onwards.
@@ -243,10 +242,10 @@ if [ $stage -eq 1 ]; then
     --config-dir=$conf_dir \
     --corpus-dir=$GP_CORPUS \
     --wav-dir=/mnt/mscteach_home/s1531206/lid/wav \
-    --train-languages="$GP_LANGUAGES" \
-    --enroll-languages="$GP_LANGUAGES" \
-    --eval-languages="$GP_LANGUAGES" \
-    --test-languages="$GP_LANGUAGES" \
+    --train-languages="$GP_TRAIN_LANGUAGES" \
+    --enroll-languages="$GP_ENROLL_LANGUAGES" \
+    --eval-languages="$GP_EVAL_LANGUAGES" \
+    --test-languages="$GP_TEST_LANGUAGES" \
     --data-dir=$DATADIR \
     || exit 1;
 

@@ -1,4 +1,4 @@
-Arabic - Afro-Asiatic; Semitic; West Semitic; Central Semitic
+UkArabic - Afro-Asiatic; Semitic; West Semitic; Central Semitic
 Bulgarian - Indo-European; Balto-Slavic; Slavic; S Slavic; Eastern South Slavic
 Mandarin - Sino-Tibetan; Sinitic
 Croatian - Indo-European; Balto-Slavic; Slavic; S Slavic; Western; Serbo-Croatian....
