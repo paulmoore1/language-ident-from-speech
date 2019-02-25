@@ -35,7 +35,7 @@ mfcc_dir=$DATADIR/mfcc
 vaddir=$DATADIR/vad
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="JA KO PL PO RU SP SW TH TU WU VN"
+GP_LANGUAGES="KO PL PO RU SP SW TH TU WU VN"
 #GP_LANGUAGES="AR"
 
 echo "Running with languages: ${GP_LANGUAGES}"
@@ -43,7 +43,7 @@ echo "Running with languages: ${GP_LANGUAGES}"
 # Preparing lists of utterances (and a couple other auxiliary lists) based
 # on the train/enroll/eval/test splitting. The lists refer to the WAVs
 # generated in the previous stage.
-  # NOTE: The wav-dir as it is right now only works in the cluster!
+# NOTE: The wav-dir as it is right now only works in the cluster!
 echo "#### STAGE 1: Organising speakers into sets. ####"
 
 # Organise data into train, enroll, eval and test
@@ -107,7 +107,7 @@ for L in $GP_LANGUAGES; do
       --write-utt2num-frames false \
       --mfcc-config conf/mfcc.conf \
       --nj $num_jobs \
-      --cmd "$preprocess_cmd" \
+      --cmd "$train_cmd" \
       --compress true \
       $lang_dir/${data_subset} \
       $log_dir/make_mfcc/${data_subset} \
@@ -142,7 +142,7 @@ for L in $GP_LANGUAGES; do
         --write-utt2num-frames false \
         --mfcc-config conf/mfcc.conf \
         --nj $num_jobs \
-        --cmd "$preprocess_cmd" \
+        --cmd "$train_cmd" \
         --compress true \
         $lang_dir/${data_subset}_split_${time}s \
         $log_dir/make_mfcc/${data_subset}_split_${time}s \
@@ -212,7 +212,7 @@ for L in $GP_LANGUAGES; do
   steps/make_mfcc.sh \
   --mfcc-config conf/mfcc.conf \
   --nj $num_jobs \
-  --cmd "$preprocess_cmd" \
+  --cmd "$train_cmd" \
   ${train_data}_aug \
   $log_dir/make_mfcc/${L}_train_aug \
   $mfcc_dir
