@@ -4,15 +4,15 @@
 #SBATCH --partition=LongJobs
 #SBATCH --gres=gpu:2
 #SBATCH --time=3-08:00:00
-#SBATCH --output=outputs/ad_slavic.out
-#SBATCH --job-name=ad_slavic
+#SBATCH --output=outputs/ad_all_tr_no_ar.out
+#SBATCH --job-name=ad_all_tr_no_ar
 #SBATCH --mail-type=END
 #SBATCH --mail-user=lapilosew2003@gmail.com
 #SBATCH --open-mode=append
 
 # This is for experiments involving data augmentation
 # NB check that data augmentation actually occurs first!!!
-config_file=ad_slavic
+config_file=ad_all_tr_no_ar
 
 export STUDENT_ID=$(whoami)
 export HOME_DIR=/home/${STUDENT_ID}/language-ident-from-speech

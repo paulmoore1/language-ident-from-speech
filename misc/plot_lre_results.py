@@ -97,7 +97,7 @@ def main():
     plt.ylabel("Training length (seconds)")
     plt.yticks([0.5, 1.5, 2.5, 3.5])
     plt.title("Mean C-primary score")
-    plt.savefig("c_primary_heatmap.png")
+    plt.savefig("c_primary_heatmap.svg")
     plt.clf()
 
     sns.heatmap(accs_df, cmap="copper", annot=True, xticklabels="auto", yticklabels="auto")
@@ -106,7 +106,7 @@ def main():
     plt.ylabel("Training length (seconds)")
     plt.yticks([0.5, 1.5, 2.5, 3.5])
     plt.title("Mean Accuracies")
-    plt.savefig("accs_heatmap.png")
+    plt.savefig("accs_heatmap.svg")
 
 
 if __name__ == "__main__":

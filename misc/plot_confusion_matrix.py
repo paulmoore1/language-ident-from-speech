@@ -58,7 +58,7 @@ if __name__ == "__main__":
         ax.spines[direction].set_color('black')
         ax.spines[direction].set_visible(True)
     plt.title("Example language confusion matrix")
-    plt.savefig("conf_matrix_example.png")
+    plt.savefig("conf_matrix_example.svg")
     plt.clf()
 
     ax = sns.heatmap(norm_conf_matrix, cmap="binary", annot=True, fmt=".2f")
@@ -72,4 +72,4 @@ if __name__ == "__main__":
         ax.spines[direction].set_color('black')
         ax.spines[direction].set_visible(True)
     plt.title("Example language confusion matrix (normalised)")
-    plt.savefig("conf_matrix_norm_example.png")
+    plt.savefig("conf_matrix_norm_example.svg")
