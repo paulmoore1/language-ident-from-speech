@@ -155,7 +155,7 @@ if [ $stage -le 6 ]; then
     --trainer.optimization.momentum=0.5 \
     --trainer.optimization.num-jobs-initial=3 \
     --trainer.optimization.num-jobs-final=3 \
-    --trainer.optimization.initial-effective-lrate=0.001 \
+    --trainer.optimization.initial-effective-lrate=0.0001 \
     --trainer.optimization.final-effective-lrate=0.0001 \
     --trainer.optimization.minibatch-size=64 \
     --trainer.srand=$srand \

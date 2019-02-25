@@ -218,11 +218,11 @@ if [ "$use_preprocessed" = true ]; then
     --eval-languages="$GP_EVAL_LANGUAGES" \
     --test-languages="$GP_TEST_LANGUAGES" \
     --data-dir=$DATADIR \
-    --train-config-file-path=${conf_dir}/lre_configs/${lre_train_config}
-    --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config}
+    --train-config-file-path=${conf_dir}/lre_configs/${lre_train_config} \
+    --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config} \
     --enrollment-length=$enrollment_length \
     --evaluation-length=$evaluation_length \
-    --test-length=$test_length
+    --test-length=$test_length \
     > $processed_dir/output
   echo "Finished running"
   # !!!TODO Remove this!!!

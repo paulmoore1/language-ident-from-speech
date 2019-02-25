@@ -53,7 +53,7 @@ do
   --processed-dir=*)
   INDIR=`read_dirname $1`; shift ;;
   --data-augmentation=*)
-  use_data_augmentation=$1; shift ;;
+  use_data_augmentation=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --train-languages=*)
   TRAIN_LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --enroll-languages=*)
@@ -63,17 +63,17 @@ do
   --test-languages=*)
   TEST_LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --train-config-file-path=*)
-  train_file_path=`read_dirname $1`; shift ;;
+  train_file_path=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --enroll-config-file-path=*)
-  enroll_file_path=`read_dirname $1`; shift ;;
+  enroll_file_path=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --enrollment-length=*)
-  enrollment_length=$1; shift ;;
+  enrollment_length=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --evaluation-length=*)
-  evaluation_length=$1; shift ;;
+  evaluation_length=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --test-length=*)
-  test_length=$1; shift ;;
+  test_length=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --data-dir=*)
-  OUTDIR=`read_dirname $1`; shift ;;;
+  OUTDIR=`read_dirname $1`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
@@ -100,12 +100,12 @@ done
 
 if [ "$use_data_augmentation" = true ]; then
   echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
-  utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train ${train_dirs_clean[@]}
+  utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $OUTDIR/train ${train_dirs_clean[@]}
   echo "Combining training directories: $(echo ${train_dirs_aug[@]} | sed -e "s|${OUTDIR}||g")"
-  utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train_aug ${train_dirs_aug[@]}
+  utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $OUTDIR/train_aug ${train_dirs_aug[@]}
 else
   echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
-  utils/combine_data.sh --extra-files 'utt2len' $OUTDIR/train ${train_dirs_clean[@]}
+  utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $OUTDIR/train ${train_dirs_clean[@]}
 fi
 
 train_data=$OUTDIR/train
@@ -117,7 +117,7 @@ python local/shorten_languages.py \
   >> ${train_data}/data_organisation
 
 # For filtering the frames based on the new shortened utterances:
-utils/filter_scp.pl ${train_data}/utterances_shortened ${train_data}/wav.scp > $DATADIR/${data_subset}/wav.scp.temp
+utils/filter_scp.pl ${train_data}/utterances_shortened ${train_data}/wav.scp > ${train_data}/wav.scp.temp
 mv ${train_data}/wav.scp.temp ${train_data}/wav.scp
 # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
 utils/fix_data_dir.sh ${train_data}
@@ -158,12 +158,13 @@ for L in $ENROLL_LANGUAGES; do
   else
     echo "Directory not found: $enroll_dir_lang"
     exit 1
+  fi
 done
 
 enroll_data=$OUTDIR/enroll
 
-echo "Combining enrollment directories: $(echo ${enroll_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh ${enroll_data} ${enroll_dirs[@]}
+echo "Combining enrollment directories: $(echo ${enroll_dirs[@]} | sed -e "s|${OUTDIR}||g")"
+utils/combine_data.sh --extra-files 'utt2num_frames' ${enroll_data} ${enroll_dirs[@]}
 
 echo "Shortening languages for enrollment data"
 python ./local/shorten_languages.py \
@@ -172,8 +173,8 @@ python ./local/shorten_languages.py \
   >> ${enroll_data}/data_organisation
 
 # For filtering the frames based on the new shortened utterances:
-utils/filter_scp.pl ${enroll_data}/utterances_shortened ${enroll_data}/wav.scp > ${enroll_data}/wav.scp.temp
-mv ${enroll_data}/wav.scp.temp ${enroll_data}/wav.scp
+utils/filter_scp.pl ${enroll_data}/utterances_shortened ${enroll_data}/feats.scp > ${enroll_data}/feats.scp.temp
+mv ${enroll_data}/feats.scp.temp ${enroll_data}/feats.scp
 # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
 utils/fix_data_dir.sh ${enroll_data}
 # Fixes the lang2utt file
@@ -188,10 +189,11 @@ for L in $EVAL_LANGUAGES; do
   else
     echo "Directory not found: $eval_dir_lang"
     exit 1
+  fi
 done
 
-echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $OUTDIR/eval ${eval_dirs[@]}
+echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${OUTDIR}||g")"
+utils/combine_data.sh --extra-files 'utt2num_frames' $OUTDIR/eval ${eval_dirs[@]}
 
 test_dirs=()
 for L in $TEST_LANGUAGES; do
@@ -201,9 +203,10 @@ for L in $TEST_LANGUAGES; do
   else
     echo "Directory not found: $test_dir_lang"
     exit 1
+  fi
 done
 
-echo "Combining testing directories: $(echo ${test_dirs[@]} | sed -e "s|${datadir}||g")"
-utils/combine_data.sh $OUTDIR/test ${test_dirs[@]}
+echo "Combining testing directories: $(echo ${test_dirs[@]} | sed -e "s|${OUTDIR}||g")"
+utils/combine_data.sh --extra-files 'utt2num_frames' $OUTDIR/test ${test_dirs[@]}
 
 echo "Finished data preparation."
