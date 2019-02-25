@@ -222,8 +222,8 @@ if [ "$use_preprocessed" = true ]; then
     --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config}
     --enrollment-length=$enrollment_length \
     --evaluation-length=$evaluation_length \
-    --test-length=$test_length \
-    || exit 1;
+    --test-length=$test_length
+    > $processed_dir/output
   echo "Finished running"
   # !!!TODO Remove this!!!
   exit
