@@ -230,9 +230,6 @@ for L in $GP_LANGUAGES; do
   rm -rf ${train_data}_reverb
   rm -rf ${train_data}_babble
 
-  # Empty folder, just indicates completion
-  mkdir -p $lang_dir/completed
-
   # Get back necessary files for training
   utils/data/get_utt2num_frames.sh ${train_data}_combined
   sed -e 's?[0-9]*$??' ${train_data}_combined/utt2spk > ${train_data}_combined/utt2lang
