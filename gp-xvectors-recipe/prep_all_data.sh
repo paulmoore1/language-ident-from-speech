@@ -111,7 +111,7 @@ for L in $GP_LANGUAGES; do
       --compress true \
       $lang_dir/${data_subset} \
       $log_dir/make_mfcc/${data_subset} \
-      $mfcc_dir
+      $mfcc_dir/${L}
 
     echo "Fixing the directory to make sure everything is fine."
     utils/fix_data_dir.sh $lang_dir/${data_subset}
@@ -121,7 +121,7 @@ for L in $GP_LANGUAGES; do
       --cmd "$preprocess_cmd" \
       $lang_dir/${data_subset} \
       $log_dir/make_vad/${data_subset} \
-      $vaddir
+      $vaddir/${L}
 
     utils/fix_data_dir.sh $lang_dir/${data_subset}
 
@@ -146,7 +146,7 @@ for L in $GP_LANGUAGES; do
         --compress true \
         $lang_dir/${data_subset}_split_${time}s \
         $log_dir/make_mfcc/${data_subset}_split_${time}s \
-        $mfcc_dir
+        $mfcc_dir/${L}
 
       echo "Fixing the directory to make sure everything is fine."
       utils/fix_data_dir.sh $lang_dir/${data_subset}_split_${time}s
@@ -156,7 +156,7 @@ for L in $GP_LANGUAGES; do
         --cmd "$preprocess_cmd" \
         $lang_dir/${data_subset}_split_${time}s \
         $log_dir/make_vad/${data_subset}_split_${time}s \
-        $vaddir
+        $vaddir/${L}
 
       utils/fix_data_dir.sh ${lang_dir}/${data_subset}_split_${time}s
     done
@@ -215,7 +215,7 @@ for L in $GP_LANGUAGES; do
   --cmd "$train_cmd" \
   ${train_data}_aug \
   $log_dir/make_mfcc/${L}_train_aug \
-  $mfcc_dir
+  $mfcc_dir/${L}
 
   echo "Tidying up data"
 
