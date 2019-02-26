@@ -35,7 +35,7 @@ mfcc_dir=$DATADIR/mfcc
 vaddir=$DATADIR/vad
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="KO PL PO RU SP SW TH TU WU VN"
+GP_LANGUAGES="JA KO PL PO RU SP SW TH TU WU VN"
 #GP_LANGUAGES="AR"
 
 echo "Running with languages: ${GP_LANGUAGES}"
