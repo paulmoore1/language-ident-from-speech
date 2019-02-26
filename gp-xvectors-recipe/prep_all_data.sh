@@ -224,11 +224,6 @@ for L in $GP_LANGUAGES; do
   utils/combine_data.sh ${train_data}_combined ${train_data}_aug ${train_data}
   utils/fix_data_dir.sh ${train_data}_combined
 
-  # Remove unnecessary folders
-  rm -rf ${train_data}_music
-  rm -rf ${train_data}_noise
-  rm -rf ${train_data}_reverb
-  rm -rf ${train_data}_babble
   # Have the aug subset and clean data which is enough (both are separate)
 
   # Get back necessary files for training
