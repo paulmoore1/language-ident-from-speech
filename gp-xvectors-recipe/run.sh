@@ -225,8 +225,11 @@ if [ "$use_preprocessed" = true ]; then
     --test-length=$test_length \
     > $processed_dir/output
   echo "Finished running"
-  # !!!TODO Remove this!!!
-  exit
+  if [ "$run_all" = true ]; then
+    stage=3
+  else
+    exit
+  fi
 fi
 
 # Preparing lists of utterances (and a couple other auxiliary lists) based
