@@ -640,7 +640,7 @@ fi
 if [ $stage -eq 8 ]; then
   echo "#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####"
   # Make language-int map (essentially just indexing the languages 0 to L)
-  langs=($GP_LANGUAGES)
+  langs=($GP_ENROLL_LANGUAGES)
   i=0
   for l in "${langs[@]}"; do
     echo $l $i
