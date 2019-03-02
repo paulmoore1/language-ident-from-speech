@@ -51,6 +51,7 @@ skip_nnet_training=false
 use_model_from=NONE
 use_data_augmentation=false
 use_preprocessed=false
+aug_expt=
 
 while [ $# -gt 0 ];
 do
