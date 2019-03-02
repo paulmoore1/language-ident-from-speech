@@ -184,11 +184,6 @@ else
   echo "Model not found in $DATADIR/$use_model_from/nnet"
 fi
 
-DATADIR="${DATADIR}/$exp_name"
-mkdir -p $DATADIR
-mkdir -p $DATADIR/log
-echo "The experiment directory is: $DATADIR"
-
 echo "Running with training languages: ${GP_TRAIN_LANGUAGES}"
 echo "Running with enrollment languages: ${GP_ENROLL_LANGUAGES}"
 echo "Running with evaluation languages: ${GP_EVAL_LANGUAGES}"
@@ -206,6 +201,32 @@ if [ $stage -eq 42 ]; then
 
   echo "Finished stage 42."
 fi
+
+# If there is a clean experiment directory to use (implying a previous augmentation experiment)
+if [ ! -z "$aug_expt" ]; then
+  echo "Using clean data from augmented experiment"
+  if [ -d $DATADIR/$aug_expt ]; then
+    prefix=$DATADIR/$aug_expt
+    train_data=$prefix/train_clean
+    enroll_data=$prefix/enroll
+    eval_data=$prefix/eval
+    test_data=$prefix/test
+  else
+    echo "Error: augmented experiment directory not found"
+    exit 1
+  fi
+  # Skip to stage 3 since data already exists
+  if [ "$run_all" = true ]; then
+    stage=3
+  else
+    exit
+  fi
+fi
+
+DATADIR="${DATADIR}/$exp_name"
+mkdir -p $DATADIR
+mkdir -p $DATADIR/log
+echo "The experiment directory is: $DATADIR"
 
 if [ "$use_preprocessed" = true ]; then
   processed_dir=~/gp-data/all_preprocessed

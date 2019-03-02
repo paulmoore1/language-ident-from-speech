@@ -3,7 +3,7 @@
 # LANGUAGE_CODE TRAINING_TIME (s)
 # e.g. AR 600 gives 600 seconds of Arabic utterances
  # for the utt2num_frames file
-import os, sys
+import os, sys, shutil
 import argparse
 import numpy as np
 
@@ -14,6 +14,8 @@ def get_args():
                     help="Path to data directory that the shortening will be done on")
     parser.add_argument("--conf-file-path", type=str, required=True,
                     help="Path to configuration file that will be used")
+    parser.add_argument("--make-augmented", type=bool, default=False,
+                    help="Whether or not this is for an augmented dataset. If true makes an extra list 3x as long")
     args = parser.parse_args()
     return args
 
@@ -51,7 +53,7 @@ def parse_config(conf_file_path):
         lang_pairs.append((entry[0], int(entry[1])))
     return langs, lang_pairs
 
-def get_utterances(lang_data, target_seconds, output_path, summary_path):
+def get_utterances(lang_data, target_seconds, summary_path):
     # Target number of frames (seconds*100)
     target_frames = target_seconds*100
     assert len(lang_data) != 0, "Empty language data list!"
@@ -78,9 +80,11 @@ def get_utterances(lang_data, target_seconds, output_path, summary_path):
         n = len(lang_data)
         # Start by adding utterances until going over the target
         while (curr_num_frames < target_frames) and i < n:
-            temp_utterances.append(lang_data[i][0])
-            curr_num_frames += lang_data[i][1]
-            last_num_frames_added = lang_data[i][1]
+            utt = lang_data[i][0]
+            frames = lang_data[i][1]
+            temp_utterances.append(utt)
+            curr_num_frames += frames
+            last_num_frames_added = frames
             i += 1
         # If we ran out of data
         if i == n:
@@ -137,12 +141,10 @@ def get_utterances(lang_data, target_seconds, output_path, summary_path):
 
     summary = "Language: {}\tTarget #frames: {}\tActual #frames: {}\tError: {}%".format(lang_code, str(target_frames), str(final_number_frames), str(error_percent))
 
-    with open(output_path, "a+") as f:
-        for utterance in final_output_utterances:
-            f.write(utterance + "\n")
-
     with open(summary_path, "a+") as f:
         f.write(summary + "\n")
+
+    return final_output_utterances
 
 def find_last_utterance(search_data, target_frames):
     min_error = 999999
@@ -188,29 +190,43 @@ def main():
         if len(data[lang]) == 0:
             print("No utterances found for lanuage: {}".format(lang))
             continue
-        get_utterances(data[lang], target_seconds, output_path, summary_path)
+        utterances = get_utterances(data[lang], target_seconds, summary_path)
+        with open(output_path, "a+") as f:
+            if args.make_augmented:
+                for utterance in utterances:
+                    f.write("sp0.9-" + utterance + "\n")
+                    f.write(utterance + "\n")
+                    f.write("sp1.1-" + utterance + "\n")
+            else:
+                for utterance in utterances:
+                    f.write(utterance + "\n")
+
+        if args.make_augmented:
+            output_path_clean = os.path.join(data_dir, "utterances_shortened_clean")
+            summary_path_clean = os.path.join(data_dir, "utterances_shortened_clean_summary")
+            # Filter out utterances that were found already
+            for tuple in data[lang]:
+                utt = tuple[0]
+                if utt in utterances:
+                    data[lang].remove(tuple)
+
+            utterances_extra = get_utterances(data[lang], target_seconds*2, summary_path_clean)
+            # Combine extra list with original to get list 3x original length
+            utterances_extra += utterances
+            utterances_extra.sort()
+            with open(output_path_clean, "a+") as f:
+                for utterance in utterances_extra:
+                    f.write(utterance + "\n")
 
     print("Finished, summary of results stored in: {}".format(summary_path))
 
-    print("Filtering utt2len file since the default fixing ignores it")
+    print("Removing utt2len file since it's unnecessary")
     utt2len_file = os.path.join(data_dir, "utt2len")
-    # If file doesn't exist, return
-    if not os.path.exists(utt2len_file):
-        print("File not found in {}".format(utt2len_file))
+    # If file exists, remove
+    if os.path.exists(utt2len_file):
+        shutil.remove(utt2len_file)
     else:
-        with open(utt2len_file, "r") as f:
-            original_lines = f.read().splitlines()
-        with open(output_path, "r") as f:
-            valid_utterances = f.read().splitlines()
-        new_lines = []
-        for line in original_lines:
-            entry = line.split()
-            utterance = entry[0]
-            if utterance in valid_utterances:
-                new_lines.append(line)
-        with open(utt2len_file, "w") as f:
-            for line in new_lines:
-                f.write(line + "\n")
+        print("File not found in {}".format(utt2len_file))
 
 
 if __name__ == "__main__":

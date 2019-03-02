@@ -91,7 +91,7 @@ train_dirs_clean=()
 train_dirs_aug=()
 for L in $TRAIN_LANGUAGES; do
   if [ "$use_data_augmentation" = true ]; then
-    train_dirs_aug+=($INDIR/$L/${L}_train_aug)
+    train_dirs_aug+=($INDIR/$L/${L}_train_speeds)
     train_dirs_clean+=($INDIR/$L/${L}_train)
   else
     train_dirs_clean+=($INDIR/$L/${L}_train)
@@ -99,55 +99,59 @@ for L in $TRAIN_LANGUAGES; do
 done
 
 if [ "$use_data_augmentation" = true ]; then
+  train_clean=$OUTDIR/train_clean
+  train_aug=$OUTDIR/train_aug
   echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
-  utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $OUTDIR/train ${train_dirs_clean[@]}
+  utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $train_clean ${train_dirs_clean[@]}
   echo "Combining training directories: $(echo ${train_dirs_aug[@]} | sed -e "s|${OUTDIR}||g")"
-  utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $OUTDIR/train_aug ${train_dirs_aug[@]}
+  utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $train_aug ${train_dirs_aug[@]}
+
+  echo "Shortening languages for training data"
+  python local/shorten_languages.py \
+    --data-dir $train_clean \
+    --conf-file-path ${train_file_path} \
+    --make-augmented True \
+    >> ${train_clean}/data_organisation
+  # copy the utterances (with augmentation to the augmentation folder)
+  cp ${train_clean}/utterances_shortened ${train_aug}
+  cp ${train_clean}/utterances_shortened_summary ${train_aug}
+
+  # For filtering the frames in the clean data based on the new shortened utterances:
+  utils/filter_scp.pl ${train_clean}/utterances_shortened_clean ${train_clean}/wav.scp > ${train_clean}/wav.scp.temp
+  mv ${train_clean}/wav.scp.temp ${train_clean}/wav.scp
+  # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
+  utils/fix_data_dir.sh ${train_clean}
+  # Fixes the lang2utt file
+  ./local/utt2lang_to_lang2utt.pl ${train_clean}/utt2lang \
+  > ${train_clean}/lang2utt
+
+  # For filtering the frames in the augmented data based on the new shortened utterances:
+  utils/filter_scp.pl ${train_aug}/utterances_shortened ${train_aug}/wav.scp > ${train_aug}/wav.scp.temp
+  mv ${train_aug}/wav.scp.temp ${train_aug}/wav.scp
+  # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
+  utils/fix_data_dir.sh ${train_aug}
+  # Fixes the lang2utt file
+  ./local/utt2lang_to_lang2utt.pl ${train_aug}/utt2lang \
+  > ${train_aug}/lang2utt
 else
   echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
   utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $OUTDIR/train ${train_dirs_clean[@]}
-fi
+  train_data=$OUTDIR/train
 
-train_data=$OUTDIR/train
+  echo "Shortening languages for training data"
+  python local/shorten_languages.py \
+    --data-dir $train_data \
+    --conf-file-path ${train_file_path} \
+    >> ${train_data}/data_organisation
 
-echo "Shortening languages for training data"
-python local/shorten_languages.py \
-  --data-dir $train_data \
-  --conf-file-path ${train_file_path} \
-  >> ${train_data}/data_organisation
-
-# For filtering the frames based on the new shortened utterances:
-utils/filter_scp.pl ${train_data}/utterances_shortened ${train_data}/wav.scp > ${train_data}/wav.scp.temp
-mv ${train_data}/wav.scp.temp ${train_data}/wav.scp
-# Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
-utils/fix_data_dir.sh ${train_data}
-# Fixes the lang2utt file
-./local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang \
-> ${train_data}/lang2utt
-
-if [ "$use_data_augmentation" = true ]; then
-  # Get about 2.5x augmented data from the original number of utterances
-  num_utts=$(wc -l ${train_data}/utt2spk | cut -d' ' -f1)
-  target_aug_utts=$(echo ${num_utts}*2.5 | bc)
-  # Take a random subset of the augmentations
-  utils/subset_data_dir.sh ${train_data}_aug $target_aug_utts ${train_data}_aug_subset
-  utils/fix_data_dir.sh ${train_data}_aug_subset
-
-  # Make a backup of the training data
-  cp -r $train_data ${train_data}_clean
-
-  utils/combine_data.sh ${train_data}_combined ${train_data}_aug_subset ${train_data}_clean
-  rm -rf ${train_data}
-  mv ${train_data}_combined ${train_data}
+  # For filtering the frames based on the new shortened utterances:
+  utils/filter_scp.pl ${train_data}/utterances_shortened ${train_data}/wav.scp > ${train_data}/wav.scp.temp
+  mv ${train_data}/wav.scp.temp ${train_data}/wav.scp
+  # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
   utils/fix_data_dir.sh ${train_data}
-  rm -rf ${train_data}_aug
-
-  # Get back necessary files for training
-  #utils/data/get_utt2num_frames.sh ${train_data}
-  #sed -e 's?[0-9]*$??' ${train_data}/utt2spk > ${train_data}/utt2lang
-  #local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang > ${train_data}/lang2utt
-  #cp ${train_data}_clean/utterances_shortened_summary ${train_data}
-
+  # Fixes the lang2utt file
+  ./local/utt2lang_to_lang2utt.pl ${train_data}/utt2lang \
+  > ${train_data}/lang2utt
 fi
 
 enroll_dirs=()

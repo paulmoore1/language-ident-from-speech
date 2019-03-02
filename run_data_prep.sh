@@ -18,6 +18,6 @@ cd $HOME_DIR
 mkdir -p ${HOME_DIR}/outputs
 outputs_dir=${HOME_DIR}/outputs
 # Remove output file if it exists already
-echo "New expt" > $outputs_dir/"${config_file}.out"
+echo "New expt" > $outputs_dir/"data_prep.out"
 
 ./prep_all_data.sh
