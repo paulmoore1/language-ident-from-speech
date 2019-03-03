@@ -205,7 +205,8 @@ fi
 
 # If there is a clean experiment directory to use (implying a previous augmentation experiment)
 if [ ! -z "$aug_expt" ]; then
-  echo "Using clean data from augmented experiment"
+  echo "Using clean data from augmented experiment $aug_expt"
+  echo "directory = $DATADIR/$aug_expt"
   if [ -d $DATADIR/$aug_expt ]; then
     prefix=$DATADIR/$aug_expt
     train_data=$prefix/train_clean
