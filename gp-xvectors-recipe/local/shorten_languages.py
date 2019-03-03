@@ -224,7 +224,7 @@ def main():
     utt2len_file = os.path.join(data_dir, "utt2len")
     # If file exists, remove
     if os.path.exists(utt2len_file):
-        shutil.remove(utt2len_file)
+        os.remove(utt2len_file)
     else:
         print("File not found in {}".format(utt2len_file))
 
