@@ -120,7 +120,7 @@ root_data_dir=$DATADIR
 rirs_dir=$root_data_dir/RIRS_NOISES
 musan_dir=$root_data_dir/musan
 
-if [ -d $DATADIR/$exp_name ]; then
+if [ -d $root_data_dir/$exp_name ]; then
   echo "Experiment with name '$exp_name' already exists."
 fi
 
@@ -144,7 +144,7 @@ if [ ! -d $musan_dir ]; then
   done
 fi
 
-home_prefix=$DATADIR/$exp_name
+home_prefix=$root_data_dir/$exp_name
 train_data=$home_prefix/train
 enroll_data=$home_prefix/enroll
 eval_data=$home_prefix/eval
@@ -160,7 +160,7 @@ exp_dir=$home_prefix/exp
 
 # If using existing preprocessed data for computing x-vectors
 if [ ! -z "$use_dnn_egs_from" ]; then
-  home_prefix=$DATADIR/$use_dnn_egs_from
+  home_prefix=$root_data_dir/$use_dnn_egs_from
   echo "Using preprocessed data	from: $home_prefix"
 
   if [ ! -d $home_prefix ]; then
@@ -173,16 +173,16 @@ if [ ! -z "$use_dnn_egs_from" ]; then
   eval_data=$home_prefix/eval
   test_data=$home_prefix/test
   nnet_train_data=$home_prefix/nnet_train_data
-  preprocessed_data_dir=$DATADIR/$use_dnn_egs_from
+  preprocessed_data_dir=$root_data_dir/$use_dnn_egs_from
 fi
 
 # Check any requested model exists
-if [ -d $DATADIR/$use_model_from/nnet ]; then
+if [ -d $root_data_dir/$use_model_from/nnet ]; then
   skip_nnet_training=true
-  nnet_dir=$DATADIR/$use_model_from/nnet
+  nnet_dir=$root_data_dir/$use_model_from/nnet
   echo "Model found!"
 else
-  echo "Model not found in $DATADIR/$use_model_from/nnet"
+  echo "Model not found in $root_data_dir/$use_model_from/nnet"
 fi
 
 echo "Running with training languages: ${GP_TRAIN_LANGUAGES}"
@@ -206,9 +206,8 @@ fi
 # If there is a clean experiment directory to use (implying a previous augmentation experiment)
 if [ ! -z "$aug_expt" ]; then
   echo "Using clean data from augmented experiment $aug_expt"
-  echo "directory = $DATADIR/$aug_expt"
-  if [ -d $DATADIR/$aug_expt ]; then
-    prefix=$DATADIR/$aug_expt
+  if [ -d $root_data_dir/$aug_expt ]; then
+    prefix=$root_data_dir/$aug_expt
     train_data=$prefix/train_clean
     enroll_data=$prefix/enroll
     eval_data=$prefix/eval
@@ -223,9 +222,14 @@ if [ ! -z "$aug_expt" ]; then
   else
     exit
   fi
+else
+  # Check if using data augmentation (and not clean, then set training directory)
+  if [ "$use_data_augmentation" = true ]; then
+    train_data=$home_prefix/train_aug
+  fi
 fi
 
-DATADIR="${DATADIR}/$exp_name"
+DATADIR="${root_data_dir}/$exp_name"
 mkdir -p $DATADIR
 mkdir -p $DATADIR/log
 echo "The experiment directory is: $DATADIR"
