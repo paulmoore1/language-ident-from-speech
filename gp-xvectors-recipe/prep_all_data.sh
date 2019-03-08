@@ -35,7 +35,7 @@ mfcc_dir=$DATADIR/mfcc
 vaddir=$DATADIR/vad
 
 # Set the languages that will actually be processed
-GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN"
+GP_LANGUAGES="PO RU"
 #GP_LANGUAGES="AR"
 
 echo "Running with languages: ${GP_LANGUAGES}"
@@ -44,6 +44,7 @@ echo "Running with languages: ${GP_LANGUAGES}"
 # on the train/enroll/eval/test splitting. The lists refer to the WAVs
 # generated in the previous stage.
 # NOTE: The wav-dir as it is right now only works in the cluster!
+:<<TEMP
 echo "#### STAGE 1: Organising speakers into sets. ####"
 
 # Organise data into train, enroll, eval and test
@@ -57,7 +58,7 @@ echo "#### STAGE 1: Organising speakers into sets. ####"
   --test-languages="$GP_LANGUAGES" \
   --data-dir=$DATADIR \
   || exit 1;
-
+TEMP
 for L in $GP_LANGUAGES; do
   echo "Prepping language ${L}"
   lang_dir=$DATADIR/${L}
@@ -71,13 +72,13 @@ for L in $GP_LANGUAGES; do
   test_data=$lang_dir/${test}
 
 
-  for data_subset in ${train} ${enroll} ${eval} ${test}; do
-    utils/data/get_utt2num_frames.sh $lang_dir/${data_subset}
-  done
+#  for data_subset in ${train} ${enroll} ${eval} ${test}; do
+#    utils/data/get_utt2num_frames.sh $lang_dir/${data_subset}
+#  done
 
-  echo "Splitting data"
+#  echo "Splitting data"
   declare -a times=(3 10 30 60)
-  for data_subset in ${enroll} ${eval} ${test}; do
+  for data_subset in ${test}; do #${enroll} ${eval} ${test}; do
     # Make a backup
     mkdir -p $lang_dir/${data_subset}/.unsplit_backup
     cp -r $lang_dir/${data_subset}/* $lang_dir/${data_subset}/.unsplit_backup
@@ -92,42 +93,43 @@ for L in $GP_LANGUAGES; do
   done
 
   # Make features and compute the energy-based VAD for each dataset
-  echo "#### Calculating MFCCs and VAD for unsplit data ####"
-  for data_subset in ${train} ${enroll} ${eval} ${test}; do
-    num_speakers=$(cat $lang_dir/${data_subset}/spk2utt | wc -l)
-    if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
-      num_jobs=$MAXNUMJOBS
-    else
-      num_jobs=$num_speakers
-    fi
-    utils/fix_data_dir.sh $lang_dir/${data_subset}
+#  echo "#### Calculating MFCCs and VAD for unsplit data ####"
+#  for data_subset in ${train} ${enroll} ${eval} ${test}; do
+#    num_speakers=$(cat $lang_dir/${data_subset}/spk2utt | wc -l)
+#    if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
+#      num_jobs=$MAXNUMJOBS
+#    else
+#      num_jobs=$num_speakers
+#    fi
+#    utils/fix_data_dir.sh $lang_dir/${data_subset}
 
-    echo "Creating 23D MFCC features."
-    steps/make_mfcc.sh \
-      --write-utt2num-frames false \
-      --mfcc-config conf/mfcc.conf \
-      --nj $num_jobs \
-      --cmd "$train_cmd" \
-      --compress true \
-      $lang_dir/${data_subset} \
-      $log_dir/make_mfcc/${data_subset} \
-      $mfcc_dir/${L}
+#    echo "Creating 23D MFCC features."
+#    steps/make_mfcc.sh \
+#      --write-utt2num-frames false \
+#      --mfcc-config conf/mfcc.conf \
+#      --nj $num_jobs \
+#      --cmd "$train_cmd" \
+#      --compress true \
+#      $lang_dir/${data_subset} \
+#      $log_dir/make_mfcc/${data_subset} \
 
-    echo "Fixing the directory to make sure everything is fine."
-    utils/fix_data_dir.sh $lang_dir/${data_subset}
+#      $mfcc_dir/${L}
 
-    ./local/compute_vad_decision.sh \
-      --nj $num_jobs \
-      --cmd "$preprocess_cmd" \
-      $lang_dir/${data_subset} \
-      $log_dir/make_vad/${data_subset} \
-      $vaddir/${L}
+#    echo "Fixing the directory to make sure everything is fine."
+#    utils/fix_data_dir.sh $lang_dir/${data_subset}
 
-    utils/fix_data_dir.sh $lang_dir/${data_subset}
+#    ./local/compute_vad_decision.sh \
+#      --nj $num_jobs \
+#      --cmd "$preprocess_cmd" \
+#      $lang_dir/${data_subset} \
+#      $log_dir/make_vad/${data_subset} \
+#      $vaddir/${L}
 
-  done
+#    utils/fix_data_dir.sh $lang_dir/${data_subset}
+
+#  done
   echo "### Calcuating MFCCs and VAD for split data ####"
-  for data_subset in ${enroll} ${eval} ${test}; do
+  for data_subset in ${test}; do #${enroll} ${eval} ${test}; do
     for time in ${times[@]}; do
       num_speakers=$(cat $lang_dir/${data_subset}_split_${time}s/spk2utt | wc -l)
       if [ "$num_speakers" -gt "$MAXNUMJOBS" ]; then
@@ -162,78 +164,95 @@ for L in $GP_LANGUAGES; do
     done
   done
 
+#  aug_dir=$lang_dir/${L}_train_aug
+#  combined_dir=$lang_dir/${L}_train_combined
+
+#  for dir in ${aug_dir} ${combined_dir}; do
+#    utils/fix_data_dir.sh $dir
+#    steps/make_mfcc.sh \
+#      --write-utt2num-frames false \
+#      --mfcc-config conf/mfcc.conf \
+#      --nj $num_jobs \
+#      --cmd "$train_cmd" \
+#      --compress true \
+#      $dir \
+#      $log_dir/make_mfcc/${dir} \
+#      $mfcc_dir/${L}
+#  done
+
+
   echo "Finished stage 2."
 
 
   # Data augmentation step
-  frame_shift=0.01
-  awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $train_data/utt2num_frames > $train_data/reco2dur
+#  frame_shift=0.01
+#  awk -v frame_shift=$frame_shift '{print $1, $2*frame_shift;}' $train_data/utt2num_frames > $train_data/reco2dur
 
   # Make a version with reverberated speech
-  rvb_opts=()
-  rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/smallroom/rir_list")
-  rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/mediumroom/rir_list")
+#  rvb_opts=()
+#  rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/smallroom/rir_list")
+#  rvb_opts+=(--rir-set-parameters "0.5, $rirs_dir/simulated_rirs/mediumroom/rir_list")
 
   # Make a reverberated version of the training data.  Note that we don't add any
   # additive noise here.
   # Make sure we have permission to execute (can be weird)
-  chmod +x steps/data/augment_data_dir.py
-  steps/data/reverberate_data_dir.py \
-    "${rvb_opts[@]}" \
-    --speech-rvb-probability 1 \
-    --pointsource-noise-addition-probability 0 \
-    --isotropic-noise-addition-probability 0 \
-    --num-replications 1 \
-    --source-sampling-rate 16000 \
-    ${root_data_dir} \
-    ${train_data} ${train_data}_reverb
+#  chmod +x steps/data/augment_data_dir.py
+#  steps/data/reverberate_data_dir.py \
+#    "${rvb_opts[@]}" \
+#    --speech-rvb-probability 1 \
+#    --pointsource-noise-addition-probability 0 \
+#    --isotropic-noise-addition-probability 0 \
+#    --num-replications 1 \
+#    --source-sampling-rate 16000 \
+#    ${root_data_dir} \
+#    ${train_data} ${train_data}_reverb
   # Durations are the same
-  cp ${train_data}/utt2dur ${train_data}_reverb
-  cp ${train_data}/vad.scp ${train_data}_reverb
-  utils/copy_data_dir.sh --utt-suffix "-reverb" ${train_data}_reverb ${train_data}_reverb.new
-  rm -rf ${train_data}_reverb
-  mv ${train_data}_reverb.new ${train_data}_reverb
+#  cp ${train_data}/utt2dur ${train_data}_reverb
+#  cp ${train_data}/vad.scp ${train_data}_reverb
+#  utils/copy_data_dir.sh --utt-suffix "-reverb" ${train_data}_reverb ${train_data}_reverb.new
+#  rm -rf ${train_data}_reverb
+#  mv ${train_data}_reverb.new ${train_data}_reverb
 
 
   # Augment with musan_noise
-  steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
+#  steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
   # Augment with musan_music
-  steps/data/augment_data_dir.py --utt-suffix "music" --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "${musan_dir}/musan_music" ${train_data} ${train_data}_music
+#  steps/data/augment_data_dir.py --utt-suffix "music" --bg-snrs "15:10:8:5" --num-bg-noises "1" --bg-noise-dir "${musan_dir}/musan_music" ${train_data} ${train_data}_music
   # Augment with musan_speech
-  steps/data/augment_data_dir.py --utt-suffix "babble" --bg-snrs "20:17:15:13" --num-bg-noises "3:4:5:6:7" --bg-noise-dir "${musan_dir}/musan_speech" ${train_data} ${train_data}_babble
+#  steps/data/augment_data_dir.py --utt-suffix "babble" --bg-snrs "20:17:15:13" --num-bg-noises "3:4:5:6:7" --bg-noise-dir "${musan_dir}/musan_speech" ${train_data} ${train_data}_babble
 
   # Combine reverb, noise, music, and babble into one directory.
-  utils/combine_data.sh ${train_data}_aug ${train_data}_reverb ${train_data}_noise ${train_data}_music ${train_data}_babble
+#  utils/combine_data.sh ${train_data}_aug ${train_data}_reverb ${train_data}_noise ${train_data}_music ${train_data}_babble
 
   # Make MFCCs for the augmented data.  Note that we do not compute a new
   # vad.scp file here.  Instead, we use the vad.scp from the clean version of
   # the list.
-  echo "Making MFCCs for augmented data"
-  steps/make_mfcc.sh \
-  --mfcc-config conf/mfcc.conf \
-  --nj $num_jobs \
-  --cmd "$train_cmd" \
-  ${train_data}_aug \
-  $log_dir/make_mfcc/${L}_train_aug \
-  $mfcc_dir/${L}
+#  echo "Making MFCCs for augmented data"
+#  steps/make_mfcc.sh \
+#  --mfcc-config conf/mfcc.conf \
+#  --nj $num_jobs \
+#  --cmd "$train_cmd" \
+#  ${train_data}_aug \
+#  $log_dir/make_mfcc/${L}_train_aug \
+#  $mfcc_dir/${L}
 
-  echo "Tidying up data"
+#  echo "Tidying up data"
 
   # Combine the clean and augmented SWBD+SRE list.  This is now roughly
   # double the size of the original clean list.
-  utils/combine_data.sh ${train_data}_combined ${train_data}_aug ${train_data}
-  utils/fix_data_dir.sh ${train_data}_combined
+#  utils/combine_data.sh ${train_data}_combined ${train_data}_aug ${train_data}
+#  utils/fix_data_dir.sh ${train_data}_combined
 
   # Remove unnecessary folders
-  rm -rf ${train_data}_music
-  rm -rf ${train_data}_noise
-  rm -rf ${train_data}_reverb
-  rm -rf ${train_data}_babble
+#  rm -rf ${train_data}_music
+#  rm -rf ${train_data}_noise
+#  rm -rf ${train_data}_reverb
+#  rm -rf ${train_data}_babble
 
   # Get back necessary files for training
-  utils/data/get_utt2num_frames.sh ${train_data}_combined
-  sed -e 's?[0-9]*$??' ${train_data}_combined/utt2spk > ${train_data}_combined/utt2lang
-  local/utt2lang_to_lang2utt.pl ${train_data}_combined/utt2lang > ${train_data}_combined/lang2utt
+#  utils/data/get_utt2num_frames.sh ${train_data}_combined
+#  sed -e 's?[0-9]*$??' ${train_data}_combined/utt2spk > ${train_data}_combined/utt2lang
+#  local/utt2lang_to_lang2utt.pl ${train_data}_combined/utt2lang > ${train_data}_combined/lang2utt
 
-  echo "Done with data augmentation"
+#  echo "Done with data augmentation"
 done
