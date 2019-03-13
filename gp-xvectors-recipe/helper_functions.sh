@@ -5,7 +5,7 @@ whichMachine() {
 		echo "dice_sam"
 	elif [[ `echo ~` = /afs/inf.ed.ac.uk/user/* ]]; then
 		echo "dice_other"
-	elif [[ `echo ~` = "/c/Users/Paul" ]]; then
+	elif [[ `echo ~` = "/c/Users/Paul" ]] || [[ `echo ~` = "/home/paul" ]]; then
 		echo "paul"
 	elif [ -s /disk/scratch ]; then
 		if [[ "$(hostname)" == landonia* ]]; then
