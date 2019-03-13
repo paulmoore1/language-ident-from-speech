@@ -2,11 +2,16 @@
 # Assuming Kaldi is installed in the home directory
 #export KALDI_ROOT=~/kaldi
 
-source ~/.bashrc
-
 # This contains the locations of the tools and data required for running
 # the GlobalPhone experiments.
 source ./helper_functions.sh
+
+if [[ $(whichMachine) == paul ]]; then
+	source ~/source_me
+else
+  source ~/.bashrc
+fi
+
 
 [ -f conf/user_specific_config.sh ] && source ./conf/user_specific_config.sh \
 	|| echo "conf/user_specific_config.sh not found, create it by cloning " + \
@@ -43,6 +48,8 @@ elif [[ $(whichMachine) = "dice_other" ]]; then
 	GP_CORPUS=/group/corpora/public/global_phone
 elif [[ $(whichMachine) == cluster* ]]; then
 	GP_CORPUS=/disk/scratch/lid/global_phone
+elif [[ $(whichMachine) == "paul" ]]; then
+	echo "Paul's machine, don't need GlobalPhone directory"
 else
 	echo "NOT IMPLEMENTED: setting GlobalPhone directory."
 fi
@@ -62,6 +69,10 @@ if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
   elif [[ $(whichMachine) == dice* ]]; then
     echo "Conda environment not activated, trying to activate it."
     source activate lid || exit
+	elif [[ $(whichMachine) == paul ]]; then
+		echo "Conda environment not activated, sourcing miniconda and trying to activate it"
+		source ~/Miniconda3/etc/profile.d/conda.sh
+		conda activate lid || exit
   else
     echo "Conda environment not activated, trying to activate it."
     conda activate lid || exit

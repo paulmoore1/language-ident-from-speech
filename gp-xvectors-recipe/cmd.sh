@@ -4,7 +4,7 @@
 source ./helper_functions.sh
 
 # To run locally, use:
-if [[ $(whichMachine) = "sam" ]] || [[ $(whichMachine) = "dice"* ]]; then
+if [[ $(whichMachine) = "sam" ]] || [[ $(whichMachine) = "dice"* ]] || [[ $(whichMachine) == "paul" ]]; then
 	echo "Running locally."
 	export preprocess_cmd=run.pl
 	export train_cmd=run.pl

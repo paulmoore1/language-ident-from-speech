@@ -5,8 +5,10 @@ whichMachine() {
 		echo "dice_sam"
 	elif [[ `echo ~` = /afs/inf.ed.ac.uk/user/* ]]; then
 		echo "dice_other"
+	elif [[ `echo ~` = "/c/Users/Paul" ]]; then
+		echo "paul"
 	elif [ -s /disk/scratch ]; then
-		if [[ "$(hostname)" == landonia* ]]; then 
+		if [[ "$(hostname)" == landonia* ]]; then
 			echo "cluster_worker"
 		else
 			echo "cluster_head"

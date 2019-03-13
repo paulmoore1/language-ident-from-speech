@@ -32,7 +32,7 @@ usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \t       This shell script runs the GlobalPhone+X-vectors recipe.\n
 \t       Use like this: $0 <options>\n
 \t       --home-dir=DIRECTORY\tMain directory where recipe is stored
-\t       --exp-config=FILE\tConfig file with all kinds of options,\n
+\t       --config=FILE\tConfig file with all kinds of options,\n
 \t       \t\t\tsee conf/exp_default.conf for an example.\n
 \t       \t\t\tNOTE: Where arguments are passed on the command line,\n
 \t       \t\t\tthe values overwrite those found in the config file.\n\n
@@ -44,7 +44,7 @@ usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 exp_name="baseline"
 stage=-1
 run_all=false
-exp_config=NONE
+config=NONE
 num_epochs=3
 feature_type=mfcc
 skip_nnet_training=false
@@ -52,32 +52,36 @@ use_model_from=NONE
 use_data_augmentation=false
 use_preprocessed=false
 aug_expt=
+GP_CORPUS=
 
 while [ $# -gt 0 ];
 do
   case "$1" in
   --help) echo -e $usage; exit 0 ;;
-  --home-dir=*)
-  home_dir=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
-  --exp-config=*)
-  exp_config=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --config=*)
+  config=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
 echo -e $usage
 
+#--home-dir=*)
+#home_dir=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+
 # Run from the home directory
+home_dir=~/language-ident-from-speech/gp-xvectors-recipe
 cd $home_dir
 conf_dir=$home_dir/conf
 exp_conf_dir=$conf_dir/exp_configs
 
-if [ ! "$exp_config" == "NONE" ] && [ ! -f $exp_conf_dir/$exp_config ]; then
-  echo "Configuration file '${exp_config}' not found for this experiment."
+config="${config}.conf"
+if [ "$config" == "NONE" ] || [ ! -f $exp_conf_dir/${config} ]; then
+  echo "Configuration file '${config}' not found for this experiment in $exp_conf_dir."
   exit 1;
 fi
 
 # Source some variables from the experiment-specific config file
-source $exp_conf_dir/$exp_config || echo "Problems sourcing the experiment config file: $exp_conf_dir/$exp_config"
+source $exp_conf_dir/$config || echo "Problems sourcing the experiment config file: $exp_conf_dir/$config"
 
 echo "Running experiment: '$exp_name'"
 
@@ -112,7 +116,9 @@ fi
 # CHECKING FOR AND INSTALLING REQUIRED TOOLS:
 #  This recipe requires shorten (3.6.1) and sox (14.3.2).
 #  If they are not found, the local/gp_install.sh script will install them.
-./local/gp_check_tools.sh $home_dir path.sh || exit 1;
+if [[ $(whichMachine) != "paul" ]]; then
+  ./local/gp_check_tools.sh $home_dir path.sh || exit 1;
+fi
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
@@ -124,6 +130,7 @@ if [ -d $root_data_dir/$exp_name ]; then
   echo "Experiment with name '$exp_name' already exists."
 fi
 
+:<<"TEMP"
 if [ ! -d $rirs_dir ]; then
   echo "RIRS data not found. Downloading and unzipping"
   wget --no-check-certificate -P $root_data_dir http://www.openslr.org/resources/28/rirs_noises.zip
@@ -143,6 +150,7 @@ if [ ! -d $musan_dir ]; then
     mv $musan_dir/musan_${name}/utt2dur $musan_dir/musan_${name}/reco2dur
   done
 fi
+TEMP
 
 home_prefix=$root_data_dir/$exp_name
 train_data=$home_prefix/train
@@ -234,31 +242,6 @@ mkdir -p $DATADIR
 mkdir -p $DATADIR/log
 echo "The experiment directory is: $DATADIR"
 
-if [ "$use_preprocessed" = true ]; then
-  processed_dir=~/gp-data/all_preprocessed
-  ./local/prep_preprocessed.sh \
-    --config-dir=$conf_dir \
-    --processed-dir=$processed_dir \
-    --data-augmentation=$use_data_augmentation \
-    --train-languages="$GP_TRAIN_LANGUAGES" \
-    --enroll-languages="$GP_ENROLL_LANGUAGES" \
-    --eval-languages="$GP_EVAL_LANGUAGES" \
-    --test-languages="$GP_TEST_LANGUAGES" \
-    --data-dir=$DATADIR \
-    --train-config-file-path=${conf_dir}/lre_configs/${lre_train_config} \
-    --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config} \
-    --enrollment-length=$enrollment_length \
-    --evaluation-length=$evaluation_length \
-    --test-length=$test_length \
-    > $processed_dir/output
-  echo "Finished running"
-  if [ "$run_all" = true ]; then
-    stage=3
-  else
-    exit
-  fi
-fi
-
 # Preparing lists of utterances (and a couple other auxiliary lists) based
 # on the train/enroll/eval/test splitting. The lists refer to the WAVs
 # generated in the previous stage.
@@ -266,6 +249,31 @@ fi
 if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
   echo "#### STAGE 1: Organising speakers into sets. ####"
+  if [ "$use_preprocessed" = true ]; then
+    echo "Setting up preprocessed data"
+    processed_dir=$root_data_dir/all_preprocessed
+    ./local/prep_preprocessed.sh \
+      --config-dir=$conf_dir \
+      --processed-dir=$processed_dir \
+      --data-augmentation=$use_data_augmentation \
+      --train-languages="$GP_TRAIN_LANGUAGES" \
+      --enroll-languages="$GP_ENROLL_LANGUAGES" \
+      --eval-languages="$GP_EVAL_LANGUAGES" \
+      --test-languages="$GP_TEST_LANGUAGES" \
+      --data-dir=$DATADIR \
+      --train-config-file-path=${conf_dir}/lre_configs/${lre_train_config} \
+      --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config} \
+      --enrollment-length=$enrollment_length \
+      --evaluation-length=$evaluation_length \
+      --test-length=$test_length \
+      > $DATADIR/setup_summary.txt
+    echo "Finished running"
+    if [ "$run_all" = true ]; then
+      stage=3
+    else
+      exit
+    fi
+  fi
   (
   # Organise data into train, enroll, eval and test
   ./local/gp_data_organise.sh \
@@ -614,7 +622,10 @@ if [ $stage -eq 7 ]; then
   if [[ $(whichMachine) == cluster* ]]; then
     use_gpu=true
   else
-    use_gpu=false
+    if [[ $(whichMachine) == paul ]]; then
+      use_gpu=true
+    else
+      use_gpu=false
   fi
   remove_nonspeech=false
   # X-vectors for training the classifier
