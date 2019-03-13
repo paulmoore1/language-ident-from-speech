@@ -73,9 +73,10 @@ if [ $stage -le 4 ]; then
     --num-repeats 35 \
     "$data" \
     $egs_dir
+  stage=`expr $stage + 1`
 fi
 
-stage=`expr $stage + 1`
+
 
 if [ $stage -le 5 ]; then
   echo  "#### STAGE 5: Creating NN configs using the xconfig parser. ####";
@@ -132,19 +133,25 @@ EOF
   echo "output-node name=output input=tdnn6.affine" > $nnet_dir/extract.config
   echo "$max_chunk_size" > $nnet_dir/max_chunk_size
   echo "$min_chunk_size" > $nnet_dir/min_chunk_size
+
+  stage=`expr $stage + 1`
 fi
 
 source ./helper_functions.sh
 if [[ $(whichMachine) == cluster* ]]; then
   use_gpu=true
 else
-  use_gpu=false
+  if [[ $(whichMachine) == paul ]]; then
+    use_gpu=wait
+  else
+    use_gpu=false
+  fi
 fi
 
 dropout_schedule='0,0@0.20,0.1@0.50,0'
 srand=123
 
-stage=`expr $stage + 1`
+
 
 if [ $stage -le 6 ]; then
   echo  "#### STAGE 6: Training the network. ####"

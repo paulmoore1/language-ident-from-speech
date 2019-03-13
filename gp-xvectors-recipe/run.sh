@@ -584,7 +584,7 @@ fi
 # NOTE main things we need to work on are the num-repeats and num-jobs parameters
 # Runtime: ~8.5 hours
 # TO-DO: Find out the runtime without using GPUs.
-if [ $stage -eq 4 ]; then
+if [ $stage -ge 4 ] && [ $stage -le 6 ]; then
   echo "#### STAGE 4: Training the X-vector DNN. ####"
   if [ ! -z "$use_dnn_egs_from" ]; then
     ./local/run_xvector.sh \
@@ -597,7 +597,7 @@ if [ $stage -eq 4 ]; then
       --egs-dir $preprocessed_data_dir/nnet/egs
   else
     ./local/run_xvector.sh \
-      --stage 4 \
+      --stage $stage \
       --train-stage -1 \
       --num-epochs $num_epochs \
       --max-num-jobs $MAXNUMJOBS \
@@ -609,7 +609,7 @@ if [ $stage -eq 4 ]; then
   echo "Finished stage 4."
 
   if [ "$run_all" = true ]; then
-    stage=`expr $stage + 3`
+    stage=7
   else
     exit
   fi

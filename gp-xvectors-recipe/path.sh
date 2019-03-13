@@ -6,12 +6,7 @@
 # the GlobalPhone experiments.
 source ./helper_functions.sh
 
-if [[ $(whichMachine) == paul ]]; then
-	source ~/source_me
-else
-  source ~/.bashrc
-fi
-
+source ~/.bashrc
 
 [ -f conf/user_specific_config.sh ] && source ./conf/user_specific_config.sh \
 	|| echo "conf/user_specific_config.sh not found, create it by cloning " + \
@@ -77,6 +72,6 @@ if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
     echo "Conda environment not activated, trying to activate it."
     conda activate lid || exit
   fi
-#else
-  #echo "Conda environment '$CONDA_DEFAULT_ENV' active."
+else
+  echo "Conda environment '$CONDA_DEFAULT_ENV' active."
 fi
