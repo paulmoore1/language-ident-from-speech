@@ -246,34 +246,37 @@ echo "The experiment directory is: $DATADIR"
 # on the train/enroll/eval/test splitting. The lists refer to the WAVs
 # generated in the previous stage.
 # Runtime: Under 5 mins
+
+if [ "$use_preprocessed" = true ] && [ $stage -eq 1 ]; then
+  echo "Setting up preprocessed data"
+  processed_dir=$root_data_dir/all_preprocessed
+  ./local/prep_preprocessed.sh \
+    --config-dir=$conf_dir \
+    --processed-dir=$processed_dir \
+    --data-augmentation=$use_data_augmentation \
+    --train-languages="$GP_TRAIN_LANGUAGES" \
+    --enroll-languages="$GP_ENROLL_LANGUAGES" \
+    --eval-languages="$GP_EVAL_LANGUAGES" \
+    --test-languages="$GP_TEST_LANGUAGES" \
+    --data-dir=$DATADIR \
+    --train-config-file-path=${conf_dir}/lre_configs/${lre_train_config} \
+    --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config} \
+    --enrollment-length=$enrollment_length \
+    --evaluation-length=$evaluation_length \
+    --test-length=$test_length \
+    > $DATADIR/setup_summary.txt
+  echo "Finished running"
+  if [ "$run_all" = true ]; then
+    stage=3
+  else
+    exit
+  fi
+fi
+
 if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
   echo "#### STAGE 1: Organising speakers into sets. ####"
-  if [ "$use_preprocessed" = true ]; then
-    echo "Setting up preprocessed data"
-    processed_dir=$root_data_dir/all_preprocessed
-    ./local/prep_preprocessed.sh \
-      --config-dir=$conf_dir \
-      --processed-dir=$processed_dir \
-      --data-augmentation=$use_data_augmentation \
-      --train-languages="$GP_TRAIN_LANGUAGES" \
-      --enroll-languages="$GP_ENROLL_LANGUAGES" \
-      --eval-languages="$GP_EVAL_LANGUAGES" \
-      --test-languages="$GP_TEST_LANGUAGES" \
-      --data-dir=$DATADIR \
-      --train-config-file-path=${conf_dir}/lre_configs/${lre_train_config} \
-      --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config} \
-      --enrollment-length=$enrollment_length \
-      --evaluation-length=$evaluation_length \
-      --test-length=$test_length \
-      > $DATADIR/setup_summary.txt
-    echo "Finished running"
-    if [ "$run_all" = true ]; then
-      stage=3
-    else
-      exit
-    fi
-  fi
+
   (
   # Organise data into train, enroll, eval and test
   ./local/gp_data_organise.sh \
@@ -563,7 +566,7 @@ if [ $stage -eq 3 ]; then
   # wasteful, as it roughly doubles the amount of training data on disk.  After
   # creating training examples, this can be removed.
   ./local/prepare_feats_for_egs.sh \
-    --nj $MAXNUMJOBS \
+    --nj 40 \
     --cmd "$preprocess_cmd" \
     $train_data \
     $nnet_train_data \
@@ -621,18 +624,22 @@ if [ $stage -eq 7 ]; then
 
   if [[ $(whichMachine) == cluster* ]]; then
     use_gpu=true
+    nj=$MAXNUMJOBS
   else
     if [[ $(whichMachine) == paul ]]; then
-      use_gpu=true
+      use_gpu=wait
+      nj=1
     else
+      nj=$MAXNUMJOBS
       use_gpu=false
+    fi
   fi
   remove_nonspeech=false
   # X-vectors for training the classifier
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
-    --nj $MAXNUMJOBS \
+    --nj $nj \
     --stage 0 \
     --remove-nonspeech "$remove_nonspeech" \
     $nnet_dir \
@@ -643,7 +650,7 @@ if [ $stage -eq 7 ]; then
   ./local/extract_xvectors.sh \
     --cmd "$extract_cmd --mem 6G" \
     --use-gpu $use_gpu \
-    --nj $MAXNUMJOBS \
+    --nj $nj \
     --stage 0 \
     --remove-nonspeech "$remove_nonspeech" \
     $nnet_dir \
@@ -665,7 +672,7 @@ if [ $stage -eq 7 ]; then
   echo "Finished stage 7."
 
   if [ "$run_all" = true ]; then
-    stage=`expr $stage + 1`
+    stage=8
   else
     echo "Stage completed without continuing"
     exit

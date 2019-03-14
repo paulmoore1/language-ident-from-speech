@@ -19,7 +19,7 @@ cache_capacity=64 # Cache capacity for x-vector extractor
 chunk_size=-1     # The chunk size over which the embedding is extracted.
                   # If left unspecified, it uses the max_chunk_size in the nnet
                   # directory.
-use_gpu=false
+use_gpu=
 stage=0
 remove_nonspeech=true
 min_len=100
@@ -100,7 +100,7 @@ fi
 
 if [ $stage -le 0 ]; then
   echo "$0: extracting xvectors from nnet"
-  if $use_gpu; then
+  if [ "$use_gpu" = true ]; then
     for g in $(seq $nj); do
       $cmd --gpu 1 ${xvector_dir}/log/extract.$g.log \
         nnet3-xvector-compute --use-gpu=yes --min-chunk-size=$min_chunk_size --chunk-size=$chunk_size --cache-capacity=${cache_capacity} \
@@ -108,9 +108,18 @@ if [ $stage -le 0 ]; then
     done
     wait
   else
+    if [ "$use_gpu" = wait ]; then
+      for g in $(seq $nj); do
+        $cmd --gpu 1 ${xvector_dir}/log/extract.$g.log \
+          nnet3-xvector-compute --use-gpu=wait --min-chunk-size=$min_chunk_size --chunk-size=$chunk_size --cache-capacity=${cache_capacity} \
+          "$nnet" "`echo $feat | sed s/JOB/$g/g`" ark,scp:${xvector_dir}/xvector.$g.ark,${xvector_dir}/xvector.$g.scp || exit 1 &
+      done
+      wait
+    else
     $cmd JOB=1:$nj ${xvector_dir}/log/extract.JOB.log \
       nnet3-xvector-compute --use-gpu=no --min-chunk-size=$min_chunk_size --chunk-size=$chunk_size --cache-capacity=${cache_capacity} \
       "$nnet" "$feat" ark,scp:${xvector_dir}/xvector.JOB.ark,${xvector_dir}/xvector.JOB.scp || exit 1;
+    fi
   fi
 fi
 

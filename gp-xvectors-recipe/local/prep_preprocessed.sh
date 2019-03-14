@@ -185,6 +185,7 @@ utils/fix_data_dir.sh ${enroll_data}
 ./local/utt2lang_to_lang2utt.pl ${enroll_data}/utt2lang \
 > ${enroll_data}/lang2utt
 
+eval_data=$OUTDIR/eval
 eval_dirs=()
 for L in $EVAL_LANGUAGES; do
   eval_dir_lang=$INDIR/$L/${L}_eval_split_${evaluation_length}s
@@ -197,8 +198,13 @@ for L in $EVAL_LANGUAGES; do
 done
 
 echo "Combining evaluation directories: $(echo ${eval_dirs[@]} | sed -e "s|${OUTDIR}||g")"
-utils/combine_data.sh --extra-files 'utt2num_frames' $OUTDIR/eval ${eval_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2num_frames' ${eval_data} ${eval_dirs[@]}
 
+# Adds the lang2utt file
+./local/utt2lang_to_lang2utt.pl ${eval_data}/utt2lang \
+> ${eval_data}/lang2utt
+
+test_data=$OUTDIR/test
 test_dirs=()
 for L in $TEST_LANGUAGES; do
   test_dir_lang=$INDIR/$L/${L}_test_split_${test_length}s
@@ -211,6 +217,10 @@ for L in $TEST_LANGUAGES; do
 done
 
 echo "Combining testing directories: $(echo ${test_dirs[@]} | sed -e "s|${OUTDIR}||g")"
-utils/combine_data.sh --extra-files 'utt2num_frames' $OUTDIR/test ${test_dirs[@]}
+utils/combine_data.sh --extra-files 'utt2num_frames' ${test_data} ${test_dirs[@]}
+
+# Adds the lang2utt file
+./local/utt2lang_to_lang2utt.pl ${test_data}/utt2lang \
+> ${test_data}/lang2utt
 
 echo "Finished data preparation."

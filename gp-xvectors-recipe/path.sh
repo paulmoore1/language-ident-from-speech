@@ -56,7 +56,7 @@ fi
 #[ -f $KALDI_ROOT/tools/env.sh ] && source $KALDI_ROOT/tools/env.sh \
 #  || echo "env.sh not found or not working. Important tools won't be available."
 
-if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
+if [ -z ${CONDA_DEFAULT_ENV+x} ] || [ "${CONDA_DEFAULT_ENV}" = base ]; then
 	if [[ $(whichMachine) == cluster* ]]; then
     echo "Conda environment not activated, sourcing ~/.bashrc and activating the 'lid' env."
     source ~/.bashrc
@@ -66,7 +66,7 @@ if [ -z ${CONDA_DEFAULT_ENV+x} ]; then
     source activate lid || exit
 	elif [[ $(whichMachine) == paul ]]; then
 		echo "Conda environment not activated, sourcing miniconda and trying to activate it"
-		source ~/Miniconda3/etc/profile.d/conda.sh
+		source ~/.bashrc
 		conda activate lid || exit
   else
     echo "Conda environment not activated, trying to activate it."
