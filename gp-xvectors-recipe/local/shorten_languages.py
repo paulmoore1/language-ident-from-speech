@@ -36,7 +36,8 @@ def parse_utt2num_frames(utt2num_frames_path, langs):
                 # Skip utterances less than 3 seconds long (needed in allocate_egs.py)
                 if int(entry[1]) < 300:
                     continue
-                data[lang_code].append((entry[0], int(entry[1])))
+                else:
+                    data[lang_code].append((entry[0], int(entry[1])))
     return data
 
 def parse_config(conf_file_path):
@@ -82,6 +83,12 @@ def get_utterances(lang_data, target_seconds, summary_path):
         while (curr_num_frames < target_frames) and i < n:
             utt = lang_data[i][0]
             frames = lang_data[i][1]
+            if frames < 300:
+                print("*"*30)
+                print("Error: allowed utterance with < 300 frames ({}) through: {}".format(str(frames), utt))
+                print("*"*30)
+                del lang_data[i]
+                continue
             temp_utterances.append(utt)
             curr_num_frames += frames
             last_num_frames_added = frames
@@ -108,6 +115,10 @@ def get_utterances(lang_data, target_seconds, summary_path):
 
             (last_utterance, last_frames, error_after_last) = find_last_utterance(search_data, target_last_utterance_frames)
 
+            if last_frames < 300:
+                print("#"*30)
+                print("SERIOUS ERROR: utterance {} with {} frames added".format(last_utterance, str(last_frames)))
+                print("#"*30)
             # See if adding the extra frames actually helped or not
             if error_before_last < error_after_last:
                 add_last = False
@@ -177,11 +188,13 @@ def main():
 
     output_path = os.path.join(data_dir, "utterances_shortened")
     summary_path = os.path.join(data_dir, "utterances_shortened_summary")
-    # Delete files if they exist so that we can begin a new one from scratch each time
-    if os.path.exists(output_path):
-        os.remove(output_path)
-    if os.path.exists(summary_path):
-        os.remove(summary_path)
+    open(output_path, "w").close()
+    open(summary_path, "w").close()
+    if args.make_augmented:
+        output_path_clean = os.path.join(data_dir, "utterances_shortened_clean")
+        summary_path_clean = os.path.join(data_dir, "utterances_shortened_clean_summary")
+        open(output_path_clean, "w").close()
+        open(summary_path_clean, "w").close()
 
     for lang_pair in lang_pairs:
         lang = lang_pair[0]
@@ -202,16 +215,15 @@ def main():
                     f.write(utterance + "\n")
 
         if args.make_augmented:
-            output_path_clean = os.path.join(data_dir, "utterances_shortened_clean")
-            summary_path_clean = os.path.join(data_dir, "utterances_shortened_clean_summary")
             # Filter out utterances that were found already
-            for tuple in data[lang]:
-                utt = tuple[0]
-                if utt in utterances:
-                    data[lang].remove(tuple)
-
-            utterances_extra = get_utterances(data[lang], target_seconds*2, summary_path_clean)
-            # Combine extra list with original to get list 3x original length
+            data[lang] = [x for x in data[lang] if x[0] not in utterances]
+            utterances_extra = []
+            if len(data[lang]) == 0:
+                with open(summary_path_clean, "a+") as f:
+                    f.write(lang + " Error - ran out of data\n")
+            else:
+                utterances_extra = get_utterances(data[lang], target_seconds*2, summary_path_clean)
+                # Combine extra list with original to get list 3x original length
             utterances_extra += utterances
             utterances_extra.sort()
             with open(output_path_clean, "a+") as f:
