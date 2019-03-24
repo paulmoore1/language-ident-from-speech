@@ -40,7 +40,7 @@ Required arguments:\n
   --test-languages=STR\tSpace separated list of two letter language codes for testing\n
 ";
 
-if [ $# -lt 13 ]; then
+if [ $# -lt 14 ]; then
   error_exit $usage;
 fi
 
@@ -54,6 +54,8 @@ do
   INDIR=`read_dirname $1`; shift ;;
   --data-augmentation=*)
   use_data_augmentation=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --rirs-augmentation=*)
+  use_rirs_augmentation=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --train-languages=*)
   TRAIN_LANGUAGES=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --enroll-languages=*)
@@ -86,21 +88,23 @@ train_dirs_clean=()
 train_dirs_aug=()
 if [ "$TRAIN_LANGUAGES" != "SKIP" ]; then
   for L in $TRAIN_LANGUAGES; do
-    if [ "$use_data_augmentation" = true ]; then
+    if [ "$use_data_augmentation" = true ] && [ "$use_rirs_augmentation" = true ]; then
+      train_dirs_aug+=($INDIR/$L/${L}_train_rirs_aug_combined)
+    elif [ "$use_data_augmentation" = true ] && [ "$use_rirs_augmentation" != true ]; then
       train_dirs_aug+=($INDIR/$L/${L}_train_speeds)
-      train_dirs_clean+=($INDIR/$L/${L}_train)
-    else
-      train_dirs_clean+=($INDIR/$L/${L}_train)
+    elif [ "$use_data_augmentation" != true ] && [ "$use_rirs_augmentation" = true ]; then
+      train_dirs_aug+=($INDIR/$L/${L}_train_rirs_combined)
     fi
+    train_dirs_clean+=($INDIR/$L/${L}_train)
   done
 
   mkdir -p $OUTDIR/train
 
-  if [ "$use_data_augmentation" = true ]; then
+  if [ "$use_data_augmentation" = true ] || [ "$use_rirs_augmentation" = true ]; then
     train_clean=$OUTDIR/train_clean
     train_aug=$OUTDIR/train_aug
     echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
-    utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $train_clean ${train_dirs_clean[@]}
+    utils/combine_data.sh --extra-files 'utt2num_frames utt2len utt2num_frames_reference' $train_clean ${train_dirs_clean[@]}
     echo "Combining training directories: $(echo ${train_dirs_aug[@]} | sed -e "s|${OUTDIR}||g")"
     utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $train_aug ${train_dirs_aug[@]}
 
@@ -108,15 +112,17 @@ if [ "$TRAIN_LANGUAGES" != "SKIP" ]; then
     python local/shorten_languages.py \
       --data-dir $train_clean \
       --conf-file-path ${train_file_path} \
-      --make-augmented True \
+      --make-augmented $use_data_augmentation \
+      --make-rirs $use_rirs_augmentation \
+      --is-training True \
       >> ${train_clean}/data_organisation
     # copy the utterances (with augmentation to the augmentation folder)
     cp ${train_clean}/utterances_shortened ${train_aug}
     cp ${train_clean}/utterances_shortened_summary ${train_aug}
 
     # For filtering the frames in the clean data based on the new shortened utterances:
-    utils/filter_scp.pl ${train_clean}/utterances_shortened_clean ${train_clean}/wav.scp > ${train_clean}/wav.scp.temp
-    mv ${train_clean}/wav.scp.temp ${train_clean}/wav.scp
+    utils/filter_scp.pl ${train_clean}/utterances_shortened_clean ${train_clean}/feats.scp > ${train_clean}/feats.scp.temp
+    mv ${train_clean}/feats.scp.temp ${train_clean}/feats.scp
     # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
     utils/fix_data_dir.sh ${train_clean}
     # Fixes the lang2utt file
@@ -124,8 +130,8 @@ if [ "$TRAIN_LANGUAGES" != "SKIP" ]; then
     > ${train_clean}/lang2utt
 
     # For filtering the frames in the augmented data based on the new shortened utterances:
-    utils/filter_scp.pl ${train_aug}/utterances_shortened ${train_aug}/wav.scp > ${train_aug}/wav.scp.temp
-    mv ${train_aug}/wav.scp.temp ${train_aug}/wav.scp
+    utils/filter_scp.pl ${train_aug}/utterances_shortened ${train_aug}/feats.scp > ${train_aug}/feats.scp.temp
+    mv ${train_aug}/feats.scp.temp ${train_aug}/feats.scp
     # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
     utils/fix_data_dir.sh ${train_aug}
     # Fixes the lang2utt file
@@ -133,13 +139,14 @@ if [ "$TRAIN_LANGUAGES" != "SKIP" ]; then
     > ${train_aug}/lang2utt
   else
     echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
-    utils/combine_data.sh --extra-files 'utt2num_frames utt2len' $OUTDIR/train ${train_dirs_clean[@]}
+    utils/combine_data.sh --extra-files 'utt2num_frames utt2len utt2num_frames_reference' $OUTDIR/train ${train_dirs_clean[@]}
     train_data=$OUTDIR/train
 
     echo "Shortening languages for training data"
     python local/shorten_languages.py \
       --data-dir $train_data \
       --conf-file-path ${train_file_path} \
+      --is-training True \
       >> ${train_data}/data_organisation
 
     # For filtering the frames based on the new shortened utterances:
@@ -155,6 +162,7 @@ fi
 
 # Process enrollment data
 if [ "$ENROLL_LANGUAGES" != "SKIP" ]; then
+
   enroll_dirs=()
   for L in $ENROLL_LANGUAGES; do
     enroll_dir_lang=$INDIR/$L/${L}_enroll_split_${enrollment_length}s
@@ -165,6 +173,7 @@ if [ "$ENROLL_LANGUAGES" != "SKIP" ]; then
       exit 1
     fi
   done
+
   enroll_data=$OUTDIR/enroll
   mkdir -p $enroll_data
 
@@ -175,6 +184,7 @@ if [ "$ENROLL_LANGUAGES" != "SKIP" ]; then
   python ./local/shorten_languages.py \
     --data-dir $enroll_data \
     --conf-file-path ${enroll_file_path} \
+    --is-training False \
     >> ${enroll_data}/data_organisation
 
   # For filtering the frames based on the new shortened utterances:
@@ -188,7 +198,12 @@ if [ "$ENROLL_LANGUAGES" != "SKIP" ]; then
 fi
 
 if [ "$EVAL_LANGUAGES" != "SKIP" ]; then
-  eval_data=$OUTDIR/eval
+  # If skipping training, need to indicate length in seconds
+  if [ "$TRAIN_LANGUAGES" = "SKIP" ]; then
+    eval_data=$OUTDIR/eval_${evaluation_length}s
+  else
+    eval_data=$OUTDIR/eval
+  fi
   mkdir -p $eval_data
   eval_dirs=()
   for L in $EVAL_LANGUAGES; do
@@ -207,6 +222,7 @@ if [ "$EVAL_LANGUAGES" != "SKIP" ]; then
   # Adds the lang2utt file
   ./local/utt2lang_to_lang2utt.pl ${eval_data}/utt2lang \
   > ${eval_data}/lang2utt
+
 fi
 
 if [ "$TEST_LANGUAGES" != "SKIP" ]; then

@@ -43,6 +43,10 @@ classes="ark:cat $train_utt2lang | utils/sym2int.pl -f 2 $languages - |"
 # Create priors to rebalance the model. The following script rebalances
 # the languages as ( count(lang_test) / count(lang_train) )^(prior_scale).
 echo "Re-balancing the model using non-uniform priors"
+echo $languages
+echo $prior_scale
+echo $test_utt2lang
+echo $train_utt2lang
 ./local/balance_priors_to_test.pl \
     <(utils/filter_scp.pl -f 1 \
       $train_dir/xvector.scp $train_utt2lang) \

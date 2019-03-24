@@ -30,19 +30,13 @@ usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \t       This shell script evaluates the performance of a classifier on\n
 \t       utterances of lengths 3 and 10s
 \t       Use like this: $0 <options>\n
-\t       --home-dir=DIRECTORY\tMain directory where recipe is stored
 \t       --config=FILE\tConfig file with all kinds of options,\n
 \t       \t\t\tsee conf/exp_default.conf for an example.\n
-\t       \t\t\tNOTE: Where arguments are passed on the command line,\n
-\t       \t\t\tthe values overwrite those found in the config file.\n\n
-\t       If no stage number is provided, either all stages\n
-\t       will be run (--run-all=true) or no stages at all.\n
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
 # Default option values
 exp_name="baseline"
-stage=-1
-run_all=false
+test_length=3
 config=NONE
 num_epochs=3
 feature_type=mfcc
@@ -62,7 +56,6 @@ do
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
-echo -e $usage
 
 #--home-dir=*)
 #home_dir=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
@@ -80,9 +73,9 @@ if [ "$config" == "NONE" ] || [ ! -f $exp_conf_dir/${config} ]; then
 fi
 
 # Source some variables from the experiment-specific config file
-source $exp_conf_dir/$config || echo "Problems sourcing the experiment config file: $exp_conf_dir/$config"; exit 1
+source $exp_conf_dir/$config #|| echo "Problems sourcing the experiment config file: $exp_conf_dir/$config"; exit 1
 
-echo "Running experiment: '$exp_name'"
+echo "Running experiment for '$use_model_from'"
 
 [ -f helper_functions.sh ] && source ./helper_functions.sh \
   || echo "helper_functions.sh not found. Won't be able to set environment variables and similar."
@@ -105,63 +98,85 @@ fi
 
 . ./path.sh || { echo "Cannot source path.sh"; exit 1; }
 
-root_data_dir=$DATADIR
+original_dir=$DATADIR/$use_model_from
 
 # Check any requested model exists
-model_dir=$root_data_dir/$use_model_from/exp/classifier
+model_dir=$original_dir/exp/classifier
+nnet_dir=$original_dir/nnet
+exp_dir=$original_dir/exp
 if [ ! -d $model_dir ]; then
-  echo "Error: model not found in ${model_dir}"
+  echo "Error: model not found in ${model_dir}"; exit 1
+elif [ ! -d $nnet_dir ]; then
+  echo "Error: nnet not found in ${nnet_dir}"; exit 1
+elif [ ! -d $exp_dir ]; then
+  echo "Error: exp dir not found in ${exp_dir}"; exit 1
 fi
 
-for evaluation_length in (3 10); do
-  DATADIR="${root_data_dir}/$exp_name/extra_eval/length_${evaluation_length}s"
-  mkdir -p $DATADIR
-  exp_dir=$DATADIR
-  echo "The experiment directory is: $DATADIR"
-
-  echo "Setting up preprocessed data"
-  processed_dir=$root_data_dir/all_preprocessed
-  ./local/prep_preprocessed.sh \
-    --config-dir=$conf_dir \
-    --processed-dir=$processed_dir \
-    --data-augmentation=$use_data_augmentation \
-    --train-languages="SKIP" \
-    --enroll-languages="SKIP" \
-    --eval-languages="$GP_EVAL_LANGUAGES" \
-    --test-languages="$GP_TEST_LANGUAGES" \
-    --data-dir=$DATADIR \
-    --train-config-file-path=${conf_dir}/lre_configs/${lre_train_config} \
-    --enroll-config-file-path=${conf_dir}/lre_configs/${lre_enroll_config} \
-    --enrollment-length=$enrollment_length \
-    --evaluation-length=$evaluation_length \
-    --test-length=$test_length
-  echo "Finished running"
-
-  eval_data=$DATADIR/eval
+for evaluation_length in 3 10; do
+  echo "The experiment directory is: $original_dir"
+  ev=${evaluation_length}s
+  eval_data=$original_dir/eval_${ev}
+  if [ ! -d $eval_data ]; then
+    echo "Setting up preprocessed data"
+    ./local/prep_preprocessed.sh \
+      --config-dir=$conf_dir \
+      --processed-dir=$DATADIR/all_preprocessed \
+      --data-augmentation=false \
+      --rirs-augmentation=false \
+      --train-languages="SKIP" \
+      --enroll-languages="SKIP" \
+      --eval-languages="$GP_EVAL_LANGUAGES" \
+      --test-languages="SKIP" \
+      --data-dir=$original_dir \
+      --train-config-file-path=${conf_dir}/lre_configs \
+      --enroll-config-file-path=${conf_dir}/lre_configs \
+      --enrollment-length=30 \
+      --evaluation-length=$evaluation_length \
+      --test-length=$test_length
+    echo "Finished running"
+  fi
+  if [ ! -d $eval_data ]; then
+    echo "Error: eval data not found in ${eval_data}"; exit 1
+  fi
 
   remove_nonspeech=false
-  exit 0
-  # X-vectors for end-to-end evaluation
-  ./local/extract_xvectors.sh \
-    --cmd "$extract_cmd --mem 6G" \
-    --use-gpu $use_gpu \
-    --nj 1 \
-    --stage 0 \
-    --remove-nonspeech "$remove_nonspeech" \
-    $nnet_dir \
-    $eval_data \
-    $exp_dir/xvectors_eval &
 
-  # X-vectors for testing (final evaluation)
-  #./local/extract_xvectors.sh \
-  #  --cmd "$extract_cmd --mem 6G" \
-  #  --use-gpu $use_gpu \
-  #  --nj $MAXNUMJOBS \
-  #  --stage 0 \
-  #  $nnet_dir \
-  #  $test_data \
-  #  $exp_dir/xvectors_test &
-  wait;
+  if [[ $(whichMachine) == cluster* ]]; then
+    use_gpu=true
+    nj=$MAXNUMJOBS
+  else
+    if [[ $(whichMachine) == paul ]]; then
+      use_gpu=wait
+      nj=1
+    else
+      nj=$MAXNUMJOBS
+      use_gpu=false
+    fi
+  fi
+
+  if [ ! -f $exp_dir/results/results_${ev} ]; then
+    # X-vectors for end-to-end evaluation
+    ./local/extract_xvectors.sh \
+      --cmd "$extract_cmd --mem 6G" \
+      --use-gpu $use_gpu \
+      --nj $nj \
+      --stage 0 \
+      --remove-nonspeech "$remove_nonspeech" \
+      $nnet_dir \
+      $eval_data \
+      $exp_dir/xvectors_eval_${ev} &
+
+    # X-vectors for testing (final evaluation)
+    #./local/extract_xvectors.sh \
+    #  --cmd "$extract_cmd --mem 6G" \
+    #  --use-gpu $use_gpu \
+    #  --nj $MAXNUMJOBS \
+    #  --stage 0 \
+    #  $nnet_dir \
+    #  $test_data \
+    #  $exp_dir/xvectors_test &
+    wait;
+  fi
 
   # Make language-int map (essentially just indexing the languages 0 to L)
   langs=($GP_EVAL_LANGUAGES)
@@ -174,20 +189,21 @@ for evaluation_length in (3 10); do
   mkdir -p $exp_dir/results
   mkdir -p $exp_dir/classifier
 
-  # Training the log reg model and classifying test set samples
-  ./local/test_logistic_regression.sh \
-    --test-dir $exp_dir/xvectors_eval \
-    --model-dir $model_dir \
-    --classification-file $exp_dir/results/classification \
-    --test-utt2lang $eval_data/utt2lang \
-    --languages conf/test_languages.list \
-    > $exp_dir/classifier/logistic-regression.log
+  if [ ! -f $exp_dir/results/results_${ev} ]; then
+    # Training the log reg model and classifying test set samples
+    ./local/test_logistic_regression.sh \
+      --test-dir $exp_dir/xvectors_eval_${ev} \
+      --model-dir $model_dir \
+      --classification-file $exp_dir/results/classification_${ev} \
+      --test-utt2lang $eval_data/utt2lang \
+      --languages conf/test_languages.list \
+      > $exp_dir/classifier/logistic-regression_${ev}.log
 
 
-  ./local/compute_results.py \
-    --classification-file $exp_dir/results/classification \
-    --output-file $exp_dir/results/results \
-    --language-list "$GP_ENROLL_LANGUAGES" \
-    2>$exp_dir/results/compute_results.log
-
+    ./local/compute_results.py \
+      --classification-file $exp_dir/results/classification_${ev} \
+      --output-file $exp_dir/results/results_${ev} \
+      --language-list "$GP_EVAL_LANGUAGES" \
+      2>$exp_dir/results/compute_results_${ev}.log
+  fi
 done

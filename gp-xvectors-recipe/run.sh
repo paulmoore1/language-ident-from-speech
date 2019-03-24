@@ -50,6 +50,7 @@ feature_type=mfcc
 skip_nnet_training=false
 use_model_from=NONE
 use_data_augmentation=false
+use_rirs_augmentation=false
 use_preprocessed=false
 aug_expt=
 GP_CORPUS=
@@ -64,9 +65,6 @@ do
   esac
 done
 echo -e $usage
-
-#--home-dir=*)
-#home_dir=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
 
 # Run from the home directory
 home_dir=~/language-ident-from-speech/gp-xvectors-recipe
@@ -126,8 +124,34 @@ root_data_dir=$DATADIR
 rirs_dir=$root_data_dir/RIRS_NOISES
 musan_dir=$root_data_dir/musan
 
+check_user_continue(){
+  echo "Experiment $1 already found.\n"
+  read -p "Do you want to continue (repeat expt)? [y/n]" -r
+  # Avoid using negated form since that doesn't work properly in some shells
+  if [[ $REPLY =~ ^[Yy].*$ ]]
+  then
+    echo "Continuing..."
+  else
+    echo "Exiting"
+    exit
+  fi
+}
+
 if [ -d $root_data_dir/$exp_name ]; then
-  echo "Experiment with name '$exp_name' already exists."
+  #check_user_continue $exp_name;
+  if [ -d $root_data_dir/${exp_name}_2 ]; then
+    #check_user_continue ${exp_name}_2;
+    if [ -d $root_data_dir/${exp_name}_3 ]; then
+      echo "Already repeated 3x"
+      exit
+    else
+      # Exp #3 directory doesn't exist
+      exp_name=${exp_name}_3
+    fi
+  else
+    # Exp #2 directory doesn't exist
+    exp_name=${exp_name}_2
+  fi
 fi
 
 :<<"TEMP"
@@ -185,12 +209,16 @@ if [ ! -z "$use_dnn_egs_from" ]; then
 fi
 
 # Check any requested model exists
-if [ -d $root_data_dir/$use_model_from/nnet ]; then
-  skip_nnet_training=true
+if [ -d $root_data_dir/$use_model_from/nnet ] && [ "$skip_nnet_training" = true ]; then
   nnet_dir=$root_data_dir/$use_model_from/nnet
   echo "Model found!"
-else
+  GP_TRAIN_LANGUAGES="SKIP"
+
+elif [ ! -d $root_data_dir/$use_model_from/nnet ] && [ "$skip_nnet_training" = true ]; then
   echo "Model not found in $root_data_dir/$use_model_from/nnet"
+  exit
+else
+  echo "Training model as normal"
 fi
 
 echo "Running with training languages: ${GP_TRAIN_LANGUAGES}"
@@ -232,8 +260,10 @@ if [ ! -z "$aug_expt" ]; then
   fi
 else
   # Check if using data augmentation (and not clean, then set training directory)
-  if [ "$use_data_augmentation" = true ]; then
+  if [ "$use_data_augmentation" = true ] || [ "$use_rirs_augmentation" = true ]; then
     train_data=$home_prefix/train_aug
+  else
+    echo "No augmentation done"
   fi
 fi
 
@@ -254,6 +284,7 @@ if [ "$use_preprocessed" = true ] && [ $stage -eq 1 ]; then
     --config-dir=$conf_dir \
     --processed-dir=$processed_dir \
     --data-augmentation=$use_data_augmentation \
+    --rirs-augmentation=$use_rirs_augmentation \
     --train-languages="$GP_TRAIN_LANGUAGES" \
     --enroll-languages="$GP_ENROLL_LANGUAGES" \
     --eval-languages="$GP_EVAL_LANGUAGES" \
@@ -266,7 +297,9 @@ if [ "$use_preprocessed" = true ] && [ $stage -eq 1 ]; then
     --test-length=$test_length \
     > $DATADIR/setup_summary.txt
   echo "Finished running"
-  if [ "$run_all" = true ]; then
+  if [ "$run_all" = true ] && [ "$skip_nnet_training" = true ]; then
+    stage=7
+  elif [ "$run_all" = true ]; then
     stage=3
   else
     exit

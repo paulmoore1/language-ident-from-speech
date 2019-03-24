@@ -43,6 +43,12 @@ mkdir -p $dir/log
 mkdir -p $data_out
 featdir=$(utils/make_absolute.sh $dir)
 
+num_speakers=$(cat $data_in/utt2spk | wc -l)
+echo $num_speakers
+if [ $num_speakers -lt $nj ]; then
+  nj=$num_speakers
+fi
+
 for n in $(seq $nj); do
   # the next command does nothing unless $featdir/storage/ exists, see
   # utils/create_data_link.pl for more info.
@@ -54,6 +60,8 @@ cp $data_in/spk2utt $data_out/spk2utt
 cp $data_in/utt2lang $data_out/utt2lang
 cp $data_in/lang2utt $data_out/lang2utt
 cp $data_in/wav.scp $data_out/wav.scp
+cp $data_in/utt2dur $data_out/utt2dur
+
 
 write_num_frames_opt="--write-num-frames=ark,t:$featdir/log/utt2num_frames.JOB"
 

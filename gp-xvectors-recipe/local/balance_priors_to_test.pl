@@ -3,10 +3,10 @@ use warnings; #sed replacement for -w perl parameter
 # Copyright 2014 David Snyder
 # Apache 2.0.
 #
-# This script produces a vector used by logistic-regression-copy to 
+# This script produces a vector used by logistic-regression-copy to
 # rescale the logistic regression model which reduces bias due to unbalanced
 # classes. This script relies only on the distribution of the test data;
-# alternatively, a uniform prior can be used (see run_logistic_regression.sh). 
+# alternatively, a uniform prior can be used (see run_logistic_regression.sh).
 
 # The scale parameter controls how sensitive the priors are to the
 # distribution of the test data. Typically this ranges from 0.5

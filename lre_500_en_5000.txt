@@ -1,0 +1,12 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 	 This shell script runs the GlobalPhone+X-vectors recipe.
+ 	 Use like this: ./gp-xvectors-recipe/run.sh <options>
+ 	 --home-dir=DIRECTORY	Main directory where recipe is stored 	 --config=FILE	Config file with all kinds of options,
+ 	 			see conf/exp_default.conf for an example.
+ 	 			NOTE: Where arguments are passed on the command line,
+ 	 			the values overwrite those found in the config file.
+
+ 	 If no stage number is provided, either all stages
+ 	 will be run (--run-all=true) or no stages at all.
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Configuration file 'lre_500_en_5000.conf' not found for this experiment in /home/paul/language-ident-from-speech/gp-xvectors-recipe/conf/exp_configs.

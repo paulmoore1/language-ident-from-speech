@@ -2,7 +2,7 @@
 # Will also fix split enroll/test/validation data if it exists.
 # NB - feats/vad needs to be recalculated - recombing isn't possible
 
-import argparse, fileinput, os, sys,  shutil, fnmatch
+import argparse, fileinput, os, sys,  shutil, fnmatch, re
 from os.path import isfile, join, exists
 def get_args():
     parser = argparse.ArgumentParser(description="Removes unneeded folders and fixes split data")
@@ -94,7 +94,7 @@ def main():
     assert exists(data_dir), "Directory not found at {}".format(data_dir)
     os.chdir(data_dir)
     changed_files = []
-
+    """
     for dirpath, dirnames, filenames in os.walk("."):
         for filename in [f for f in filenames if f.endswith(".scp") and not f.endswith("wav.scp")]:
             file_path = join(dirpath, filename)
@@ -107,8 +107,9 @@ def main():
     with open("file-change-stats.txt", "w+") as f:
         for file in changed_files:
             f.write(file + "\n")
-
-    langs_to_check = [ lang for lang in os.listdir(data_dir) if os.path.isdir(os.path.join(data_dir, lang)) ]
+    """
+    pattern = r'[A-Z][A-Z]'
+    langs_to_check = [lang for lang in os.listdir(data_dir) if re.search(pattern, lang)]
     langs_to_check = [x for x in langs_to_check if x not in ("mfcc", "vad", "log", "output")]
     for lang in langs_to_check:
         exp_dir = os.path.join(data_dir, lang)

@@ -1,0 +1,17 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 	 This shell script runs the GlobalPhone+X-vectors recipe.
+ 	 Use like this: ./gp-xvectors-recipe/run.sh <options>
+ 	 --home-dir=DIRECTORY	Main directory where recipe is stored 	 --config=FILE	Config file with all kinds of options,
+ 	 			see conf/exp_default.conf for an example.
+ 	 			NOTE: Where arguments are passed on the command line,
+ 	 			the values overwrite those found in the config file.
+
+ 	 If no stage number is provided, either all stages
+ 	 will be run (--run-all=true) or no stages at all.
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Running experiment: 'da_aug_tr_1000'
+Running all stages starting with 1.
+Running locally.
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+Model not found in /home/paul/gp-data/NONE/nnet

@@ -1,0 +1,78 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 	 This shell script runs the GlobalPhone+X-vectors recipe.
+ 	 Use like this: ./gp-xvectors-recipe/run.sh <options>
+ 	 --home-dir=DIRECTORY	Main directory where recipe is stored 	 --config=FILE	Config file with all kinds of options,
+ 	 			see conf/exp_default.conf for an example.
+ 	 			NOTE: Where arguments are passed on the command line,
+ 	 			the values overwrite those found in the config file.
+
+ 	 If no stage number is provided, either all stages
+ 	 will be run (--run-all=true) or no stages at all.
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Running experiment: 'ad_slavic_tr_no_pl'
+Running all stages starting with 1.
+Running locally.
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+Model not found in /home/paul/gp-data/NONE/nnet
+Running with training languages: BG CR CZ RU
+Running with enrollment languages: BG CR CZ PL RU
+Running with evaluation languages: BG CR CZ PL RU
+Running with test languages: BG CR CZ PL RU
+No augmentation done
+The experiment directory is: /home/paul/gp-data/ad_slavic_tr_no_pl_2
+Setting up preprocessed data
+Finished running
+#### STAGE 3: Preprocessing for X-vector training examples. ####
+./local/prepare_feats_for_egs.sh --nj 40 --cmd run.pl /home/paul/gp-data/ad_slavic_tr_no_pl_2/train /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet_train_data /home/paul/gp-data/ad_slavic_tr_no_pl_2/x_vector_features
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+2002
+./local/prepare_feats_for_egs.sh: Succeeded creating xvector features for train
+utils/data/get_utt2num_frames.sh: /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet_train_data/utt2num_frames already present!
+fix_data_dir.sh: kept all 2002 utterances.
+fix_data_dir.sh: old files are kept in /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet_train_data/.backup
+Finished stage 3.
+#### STAGE 4: Training the X-vector DNN. ####
+Running locally.
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+Running locally.
+Taking data from: /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet_train_data
+Storing training examples in: /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet/egs
+Storing TDNN in: /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet
+#### STAGE 4: Getting NN training egs. ####
+./local/get_egs.sh --cmd run.pl --nj 144 --stage 0 --frames-per-iter 50000000 --frames-per-iter-diagnostic 100000 --min-frames-per-chunk 150 --max-frames-per-chunk 250 --num-diagnostic-archives 3 --num-repeats 35 /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet_train_data /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet/egs
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+./local/get_egs.sh: Preparing train and validation lists
+./local/get_egs.sh: Producing 100 archives for training
+./local/get_egs.sh: Reducing num-jobs 144 to number of training archives 100
+./local/get_egs.sh: Allocating training examples
+./local/get_egs.sh: Allocating training subset examples
+./local/get_egs.sh: Allocating validation examples
+./local/get_egs.sh: Generating training examples on disk
+./local/get_egs.sh: Generating training subset examples on disk
+./local/get_egs.sh: Generating validation examples on disk
+./local/get_egs.sh: Shuffling order of archives on disk
+./local/get_egs.sh: Finished preparing training examples
+#### STAGE 5: Creating NN configs using the xconfig parser. ####
+./local/run_xvector.sh: creating neural net configs using the xconfig parser
+#### STAGE 6: Training the network. ####
+steps/nnet3/train_raw_dnn.py --stage=-1 --cmd=run.pl --trainer.optimization.proportional-shrink 10 --trainer.optimization.momentum=0.5 --trainer.optimization.num-jobs-initial=3 --trainer.optimization.num-jobs-final=3 --trainer.optimization.initial-effective-lrate=0.0001 --trainer.optimization.final-effective-lrate=0.0001 --trainer.optimization.minibatch-size=64 --trainer.srand=123 --trainer.max-param-change=2 --trainer.num-epochs=7 --trainer.dropout-schedule=0,0@0.20,0.1@0.50,0 --trainer.shuffle-buffer-size=1000 --egs.frames-per-eg=1 --egs.dir=/home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet/egs --cleanup.remove-egs false --cleanup.preserve-model-interval=10 --use-gpu=wait --dir=/home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet
+['steps/nnet3/train_raw_dnn.py', '--stage=-1', '--cmd=run.pl', '--trainer.optimization.proportional-shrink', '10', '--trainer.optimization.momentum=0.5', '--trainer.optimization.num-jobs-initial=3', '--trainer.optimization.num-jobs-final=3', '--trainer.optimization.initial-effective-lrate=0.0001', '--trainer.optimization.final-effective-lrate=0.0001', '--trainer.optimization.minibatch-size=64', '--trainer.srand=123', '--trainer.max-param-change=2', '--trainer.num-epochs=7', '--trainer.dropout-schedule=0,0@0.20,0.1@0.50,0', '--trainer.shuffle-buffer-size=1000', '--egs.frames-per-eg=1', '--egs.dir=/home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet/egs', '--cleanup.remove-egs', 'false', '--cleanup.preserve-model-interval=10', '--use-gpu=wait', '--dir=/home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet']
+Finished stage 4.
+#### STAGE 7: Extracting X-vectors from the trained DNN. ####
+./local/extract_xvectors.sh --cmd run.pl --mem 6G --use-gpu wait --nj 1 --stage 0 --remove-nonspeech false /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet /home/paul/gp-data/ad_slavic_tr_no_pl_2/enroll /home/paul/gp-data/ad_slavic_tr_no_pl_2/exp/xvectors_enroll
+./local/extract_xvectors.sh --cmd run.pl --mem 6G --use-gpu wait --nj 1 --stage 0 --remove-nonspeech false /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet /home/paul/gp-data/ad_slavic_tr_no_pl_2/eval /home/paul/gp-data/ad_slavic_tr_no_pl_2/exp/xvectors_eval
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+No such file /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet/final.raw
+No such file /home/paul/gp-data/ad_slavic_tr_no_pl_2/nnet/final.raw
+Finished stage 7.
+#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####
+Finished stage 8.
+#### STAGE 9: Calculating results. ####
+Finished stage 9.
