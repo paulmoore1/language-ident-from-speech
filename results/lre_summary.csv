@@ -1,0 +1,2 @@
+expname,training_length,enrollment_length,seed,classification_3s,classification_10s,classification_30s,accuracy_3s,accuracy_10s,accuracy_30s,c_primary_3s,c_primary_10s,c_primary_30s
+lre_tr_500_en_5000_3,500,5000,3,blank,blank,blank,blank,blank,blank,blank,blank,blank

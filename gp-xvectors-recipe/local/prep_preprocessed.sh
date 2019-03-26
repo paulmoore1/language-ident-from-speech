@@ -199,11 +199,7 @@ fi
 
 if [ "$EVAL_LANGUAGES" != "SKIP" ]; then
   # If skipping training, need to indicate length in seconds
-  if [ "$TRAIN_LANGUAGES" = "SKIP" ]; then
-    eval_data=$OUTDIR/eval_${evaluation_length}s
-  else
-    eval_data=$OUTDIR/eval
-  fi
+  eval_data=$OUTDIR/eval_${evaluation_length}s
   mkdir -p $eval_data
   eval_dirs=()
   for L in $EVAL_LANGUAGES; do

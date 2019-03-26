@@ -136,10 +136,12 @@ check_user_continue(){
     exit
   fi
 }
+is_second=false
+is_third=false
 
-if [ -d $root_data_dir/$exp_name ]; then
+if [ -d $root_data_dir/$exp_name ] && [ $stage -eq 1 ]; then
   #check_user_continue $exp_name;
-  if [ -d $root_data_dir/${exp_name}_2 ]; then
+  if [ -d $root_data_dir/${exp_name}_2 ] && [ $stage -eq 1 ]; then
     #check_user_continue ${exp_name}_2;
     if [ -d $root_data_dir/${exp_name}_3 ]; then
       echo "Already repeated 3x"
@@ -147,12 +149,15 @@ if [ -d $root_data_dir/$exp_name ]; then
     else
       # Exp #3 directory doesn't exist
       exp_name=${exp_name}_3
+      is_third=true
     fi
   else
     # Exp #2 directory doesn't exist
     exp_name=${exp_name}_2
+    is_second=true
   fi
 fi
+
 
 :<<"TEMP"
 if [ ! -d $rirs_dir ]; then
@@ -179,7 +184,7 @@ TEMP
 home_prefix=$root_data_dir/$exp_name
 train_data=$home_prefix/train
 enroll_data=$home_prefix/enroll
-eval_data=$home_prefix/eval
+eval_data=$home_prefix/eval_${evaluation_length}s
 test_data=$home_prefix/test
 tamil_data=$home_prefix/tamil
 log_dir=$home_prefix/log
@@ -202,21 +207,38 @@ if [ ! -z "$use_dnn_egs_from" ]; then
 
   train_data=$home_prefix/train
   enroll_data=$home_prefix/enroll
-  eval_data=$home_prefix/eval
+  eval_data=$home_prefix/eval_${evaluation_length}s
   test_data=$home_prefix/test
   nnet_train_data=$home_prefix/nnet_train_data
   preprocessed_data_dir=$root_data_dir/$use_dnn_egs_from
 fi
 
+if [ "$is_second" = true ]; then
+  old_expt_dir=$root_data_dir/${use_model_from}_2
+elif [ "$is_third" = true ]; then
+  old_expt_dir=$root_data_dir/${use_model_from}_3
+else
+  old_expt_dir=$root_data_dir/${use_model_from}
+fi
+
 # Check any requested model exists
-if [ -d $root_data_dir/$use_model_from/nnet ] && [ "$skip_nnet_training" = true ]; then
-  nnet_dir=$root_data_dir/$use_model_from/nnet
+if [ -d $old_expt_dir/nnet ] && [ "$skip_nnet_training" = true ]; then
+  nnet_dir=$old_expt_dir/nnet
   echo "Model found!"
   GP_TRAIN_LANGUAGES="SKIP"
-
+  # Copy old evaluation X-vectors since they won't change.
+  cp -r $old_expt_dir/exp/xvectors_eval_30s $exp_dir/xvectors_eval_30s
+  cp -r $old_expt_dir/exp/xvectors_eval_10s $exp_dir/xvectors_eval_10s
+  cp -r $old_expt_dir/exp/xvectors_eval_3s $exp_dir/xvectors_eval_3s
+  GP_EVAL_LANGUAGES="SKIP"
 elif [ ! -d $root_data_dir/$use_model_from/nnet ] && [ "$skip_nnet_training" = true ]; then
-  echo "Model not found in $root_data_dir/$use_model_from/nnet"
-  exit
+  if [ -f $nnet_dir/final.raw ]; then
+    echo "Using own model in $nnet_dir"
+  else
+    echo "Model not found in $root_data_dir/$use_model_from/nnet"
+    exit
+  fi
+
 else
   echo "Training model as normal"
 fi
@@ -241,12 +263,17 @@ fi
 
 # If there is a clean experiment directory to use (implying a previous augmentation experiment)
 if [ ! -z "$aug_expt" ]; then
+  if [ "$is_second" = true ]; then
+    aug_expt=${aug_expt}_2
+  elif [ "$is_third" = true ]; then
+    aug_expt=${aug_expt}_3
+  fi
   echo "Using clean data from augmented experiment $aug_expt"
   if [ -d $root_data_dir/$aug_expt ]; then
     prefix=$root_data_dir/$aug_expt
     train_data=$prefix/train_clean
     enroll_data=$prefix/enroll
-    eval_data=$prefix/eval
+    eval_data=$prefix/eval_${evaluation_length}s
     test_data=$prefix/test
   else
     echo "Error: augmented experiment directory not found"
@@ -297,13 +324,16 @@ if [ "$use_preprocessed" = true ] && [ $stage -eq 1 ]; then
     --test-length=$test_length \
     > $DATADIR/setup_summary.txt
   echo "Finished running"
-  if [ "$run_all" = true ] && [ "$skip_nnet_training" = true ]; then
-    stage=7
-  elif [ "$run_all" = true ]; then
-    stage=3
-  else
-    exit
-  fi
+fi
+
+if [ "$run_all" = true ] && [ "$skip_nnet_training" = true ]; then
+  stage=7
+elif [ "$run_all" = true ] && [ "$use_preprocessed" = true ]; then
+  stage=3
+elif [ "$run_all" = true ]; then
+  stage=1
+else
+  exit
 fi
 
 if [ $stage -eq 1 ]; then
@@ -668,27 +698,30 @@ if [ $stage -eq 7 ]; then
     fi
   fi
   remove_nonspeech=false
-  # X-vectors for training the classifier
-  ./local/extract_xvectors.sh \
-    --cmd "$extract_cmd --mem 6G" \
-    --use-gpu $use_gpu \
-    --nj $nj \
-    --stage 0 \
-    --remove-nonspeech "$remove_nonspeech" \
-    $nnet_dir \
-    $enroll_data \
-    $exp_dir/xvectors_enroll &
-
-  # X-vectors for end-to-end evaluation
-  ./local/extract_xvectors.sh \
-    --cmd "$extract_cmd --mem 6G" \
-    --use-gpu $use_gpu \
-    --nj $nj \
-    --stage 0 \
-    --remove-nonspeech "$remove_nonspeech" \
-    $nnet_dir \
-    $eval_data \
-    $exp_dir/xvectors_eval &
+  if [ ! -d $exp_dir/xvectors_enroll ]; then
+    # X-vectors for training the classifier
+    ./local/extract_xvectors.sh \
+      --cmd "$extract_cmd --mem 6G" \
+      --use-gpu $use_gpu \
+      --nj $nj \
+      --stage 0 \
+      --remove-nonspeech "$remove_nonspeech" \
+      $nnet_dir \
+      $enroll_data \
+      $exp_dir/xvectors_enroll &
+  fi
+  if [ ! -d $exp_dir/xvectors_eval_30s ]; then
+    # X-vectors for end-to-end evaluation
+    ./local/extract_xvectors.sh \
+      --cmd "$extract_cmd --mem 6G" \
+      --use-gpu $use_gpu \
+      --nj $nj \
+      --stage 0 \
+      --remove-nonspeech "$remove_nonspeech" \
+      $nnet_dir \
+      $eval_data \
+      $exp_dir/xvectors_eval_30s &
+  fi
 
   # X-vectors for testing (final evaluation)
   #./local/extract_xvectors.sh \
@@ -733,13 +766,13 @@ if [ $stage -eq 8 ]; then
     --prior-scale 0.70 \
     --conf conf/logistic-regression.conf \
     --train-dir $exp_dir/xvectors_enroll \
-    --test-dir $exp_dir/xvectors_eval \
+    --test-dir $exp_dir/xvectors_eval_30s \
     --model-dir $exp_dir/classifier \
-    --classification-file $exp_dir/results/classification \
+    --classification-file $exp_dir/results/classification_30s \
     --train-utt2lang $enroll_data/utt2lang \
     --test-utt2lang $eval_data/utt2lang \
     --languages conf/test_languages.list \
-    > $exp_dir/classifier/logistic-regression.log
+    > $exp_dir/classifier/logistic-regression_30s.log
 
   echo "Finished stage 8."
 
@@ -755,10 +788,15 @@ if [ $stage -eq 9 ]; then
   echo "#### STAGE 9: Calculating results. ####"
 
   ./local/compute_results.py \
-    --classification-file $exp_dir/results/classification \
-    --output-file $exp_dir/results/results \
+    --classification-file $exp_dir/results/classification_30s \
+    --output-file $exp_dir/results/results_30s \
     --language-list "$GP_ENROLL_LANGUAGES" \
-    2>$exp_dir/results/compute_results.log
+    2>$exp_dir/results/compute_results_30s.log
 
   echo "Finished stage 9."
+fi
+if [ $(ls $exp_dir/results | wc -l) -eq 3 ]; then
+  echo "The experiment $exp_name finished correctly" | mail -v -s "$exp_name" paulmooreukmkok@gmail.com
+else
+  echo "The experiment $exp_name did not finish correctly" | mail -v -s "$exp_name" paulmooreukmkok@gmail.com
 fi

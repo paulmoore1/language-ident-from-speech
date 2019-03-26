@@ -1,0 +1,115 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 	 This shell script runs the GlobalPhone+X-vectors recipe.
+ 	 Use like this: ./gp-xvectors-recipe/run.sh <options>
+ 	 --home-dir=DIRECTORY	Main directory where recipe is stored 	 --config=FILE	Config file with all kinds of options,
+ 	 			see conf/exp_default.conf for an example.
+ 	 			NOTE: Where arguments are passed on the command line,
+ 	 			the values overwrite those found in the config file.
+
+ 	 If no stage number is provided, either all stages
+ 	 will be run (--run-all=true) or no stages at all.
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Running experiment: 'ad_all_tr_no_ar'
+Running all stages starting with 1.
+Running locally.
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+Training model as normal
+Running with training languages: BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN
+Running with enrollment languages: AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN
+Running with evaluation languages: AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN
+Running with test languages: AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN
+No augmentation done
+The experiment directory is: /home/paul/gp-data/ad_all_tr_no_ar
+Setting up preprocessed data
+Finished running
+#### STAGE 3: Preprocessing for X-vector training examples. ####
+./local/prepare_feats_for_egs.sh --nj 40 --cmd run.pl /home/paul/gp-data/ad_all_tr_no_ar/train /home/paul/gp-data/ad_all_tr_no_ar/nnet_train_data /home/paul/gp-data/ad_all_tr_no_ar/x_vector_features
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+9461
+./local/prepare_feats_for_egs.sh: Succeeded creating xvector features for train
+utils/data/get_utt2num_frames.sh: /home/paul/gp-data/ad_all_tr_no_ar/nnet_train_data/utt2num_frames already present!
+fix_data_dir.sh: kept all 9461 utterances.
+fix_data_dir.sh: old files are kept in /home/paul/gp-data/ad_all_tr_no_ar/nnet_train_data/.backup
+Finished stage 3.
+#### STAGE 4: Training the X-vector DNN. ####
+Running locally.
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+Running locally.
+Taking data from: /home/paul/gp-data/ad_all_tr_no_ar/nnet_train_data
+Storing training examples in: /home/paul/gp-data/ad_all_tr_no_ar/nnet/egs
+Storing TDNN in: /home/paul/gp-data/ad_all_tr_no_ar/nnet
+#### STAGE 4: Getting NN training egs. ####
+./local/get_egs.sh --cmd run.pl --nj 144 --stage 0 --frames-per-iter 50000000 --frames-per-iter-diagnostic 100000 --min-frames-per-chunk 150 --max-frames-per-chunk 250 --num-diagnostic-archives 3 --num-repeats 35 /home/paul/gp-data/ad_all_tr_no_ar/nnet_train_data /home/paul/gp-data/ad_all_tr_no_ar/nnet/egs
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+./local/get_egs.sh: Preparing train and validation lists
+./local/get_egs.sh: Producing 100 archives for training
+./local/get_egs.sh: Reducing num-jobs 144 to number of training archives 100
+./local/get_egs.sh: Allocating training examples
+./local/get_egs.sh: Allocating training subset examples
+./local/get_egs.sh: Allocating validation examples
+./local/get_egs.sh: Generating training examples on disk
+./local/get_egs.sh: Generating training subset examples on disk
+./local/get_egs.sh: Generating validation examples on disk
+./local/get_egs.sh: Shuffling order of archives on disk
+./local/get_egs.sh: Finished preparing training examples
+#### STAGE 5: Creating NN configs using the xconfig parser. ####
+./local/run_xvector.sh: creating neural net configs using the xconfig parser
+#### STAGE 6: Training the network. ####
+/home/paul/gp-data/ad_all_tr_no_ar/nnet: num-iters=233 nj=3..3 num-params=4.5M dim=23->17 combine=-0.06->-0.06 (over 1) loglike:train/valid[154,232]=(-0.126,-0.088/-0.72,-0.69) accuracy:train/valid[154,232]=(1.0000,1.0000/0.784,0.784)
+steps/nnet3/train_raw_dnn.py --stage=-1 --cmd=run.pl --trainer.optimization.proportional-shrink 10 --trainer.optimization.momentum=0.5 --trainer.optimization.num-jobs-initial=3 --trainer.optimization.num-jobs-final=3 --trainer.optimization.initial-effective-lrate=0.0001 --trainer.optimization.final-effective-lrate=0.0001 --trainer.optimization.minibatch-size=64 --trainer.srand=123 --trainer.max-param-change=2 --trainer.num-epochs=7 --trainer.dropout-schedule=0,0@0.20,0.1@0.50,0 --trainer.shuffle-buffer-size=1000 --egs.frames-per-eg=1 --egs.dir=/home/paul/gp-data/ad_all_tr_no_ar/nnet/egs --cleanup.remove-egs false --cleanup.preserve-model-interval=10 --use-gpu=wait --dir=/home/paul/gp-data/ad_all_tr_no_ar/nnet
+['steps/nnet3/train_raw_dnn.py', '--stage=-1', '--cmd=run.pl', '--trainer.optimization.proportional-shrink', '10', '--trainer.optimization.momentum=0.5', '--trainer.optimization.num-jobs-initial=3', '--trainer.optimization.num-jobs-final=3', '--trainer.optimization.initial-effective-lrate=0.0001', '--trainer.optimization.final-effective-lrate=0.0001', '--trainer.optimization.minibatch-size=64', '--trainer.srand=123', '--trainer.max-param-change=2', '--trainer.num-epochs=7', '--trainer.dropout-schedule=0,0@0.20,0.1@0.50,0', '--trainer.shuffle-buffer-size=1000', '--egs.frames-per-eg=1', '--egs.dir=/home/paul/gp-data/ad_all_tr_no_ar/nnet/egs', '--cleanup.remove-egs', 'false', '--cleanup.preserve-model-interval=10', '--use-gpu=wait', '--dir=/home/paul/gp-data/ad_all_tr_no_ar/nnet']
+Finished stage 4.
+#### STAGE 7: Extracting X-vectors from the trained DNN. ####
+./local/extract_xvectors.sh --cmd run.pl --mem 6G --use-gpu wait --nj 1 --stage 0 --remove-nonspeech false /home/paul/gp-data/ad_all_tr_no_ar/nnet /home/paul/gp-data/ad_all_tr_no_ar/eval_30s /home/paul/gp-data/ad_all_tr_no_ar/exp/xvectors_eval_30s
+./local/extract_xvectors.sh --cmd run.pl --mem 6G --use-gpu wait --nj 1 --stage 0 --remove-nonspeech false /home/paul/gp-data/ad_all_tr_no_ar/nnet /home/paul/gp-data/ad_all_tr_no_ar/enroll /home/paul/gp-data/ad_all_tr_no_ar/exp/xvectors_enroll
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+Paul's machine, don't need GlobalPhone directory
+Conda environment 'lid' active.
+./local/extract_xvectors.sh: using /home/paul/gp-data/ad_all_tr_no_ar/nnet/extract.config to extract xvectors
+./local/extract_xvectors.sh: using /home/paul/gp-data/ad_all_tr_no_ar/nnet/extract.config to extract xvectors
+Removing features with less than 100 frames...
+Removing features with less than 100 frames...
+fix_data_dir.sh: kept 10627 utterances out of 10658
+fix_data_dir.sh: kept 14921 utterances out of 14986
+fix_data_dir.sh: old files are kept in /home/paul/gp-data/ad_all_tr_no_ar/exp/xvectors_enroll/.backup
+fix_data_dir.sh: old files are kept in /home/paul/gp-data/ad_all_tr_no_ar/exp/xvectors_eval_30s/.backup
+./local/extract_xvectors.sh: extracting xvectors for /home/paul/gp-data/ad_all_tr_no_ar/enroll (taking lists of utts from /home/paul/gp-data/ad_all_tr_no_ar/exp/xvectors_enroll)
+./local/extract_xvectors.sh: extracting xvectors from nnet
+./local/extract_xvectors.sh: extracting xvectors for /home/paul/gp-data/ad_all_tr_no_ar/eval_30s (taking lists of utts from /home/paul/gp-data/ad_all_tr_no_ar/exp/xvectors_eval_30s)
+./local/extract_xvectors.sh: extracting xvectors from nnet
+./local/extract_xvectors.sh: combining xvectors across jobs
+./local/extract_xvectors.sh: computing mean of xvectors for each language
+./local/extract_xvectors.sh: combining xvectors across jobs
+./local/extract_xvectors.sh: computing mean of xvectors for each language
+Finished stage 7.
+#### STAGE 8: Training logistic regression classifier and classifying test utterances. ####
+Finished stage 8.
+#### STAGE 9: Calculating results. ####
+Accuracy: 0.798 (11906/14921 classified correctly)
+Confusion matrix:
+    AR   BG   CH   CR   CZ   FR   GE   JA   KO   PL   PO   RU   SP   SW   TH   TU   WU   VN  
+AR  161  0    8    24   13   0    2    2    0    5    38   78   37   48   0    17   0    0   
+BG  0    689  2    3    8    0    2    0    0    62   34   25   0    1    3    0    1    0   
+CH  50   0    586  0    0    0    0    5    43   5    19   12   2    1    5    4    1    0   
+CR  1    0    1    375  7    1    1    0    1    17   0    123  35   15   0    28   0    0   
+CZ  4    1    3    0    768  0    2    3    1    221  3    9    3    6    5    1    0    0   
+FR  1    0    2    2    0    789  0    0    0    31   1    3    0    8    0    1    1    0   
+GE  95   0    19   1    17   1    731  4    0    27   33   79   0    14   0    52   0    0   
+JA  1    1    30   0    8    0    2    251  31   0    2    0    13   2    2    6    0    0   
+KO  7    0    31   2    6    1    0    16   675  0    1    5    35   20   2    5    0    0   
+PL  2    5    0    3    2    0    1    1    0    983  2    17   0    0    1    1    0    4   
+PO  11   3    1    12   2    0    0    1    1    3    468  80   28   29   1    1    0    2   
+RU  1    2    15   165  24   14   1    10   3    17   15   1045 38   7    0    21   15   0   
+SP  44   2    0    8    0    0    0    1    4    3    17   64   417  98   0    11   0    0   
+SW  1    1    0    97   5    1    2    0    5    4    3    61   32   990  0    5    0    0   
+TH  22   0    2    0    0    0    0    1    2    0    0    0    0    0    1153 0    0    1   
+TU  3    1    0    53   13   0    0    0    29   24   20   52   2    2    0    542  0    0   
+WU  3    0    27   2    0    1    0    3    7    0    4    3    6    14   0    6    130  0   
+VN  1    1    1    0    3    0    0    1    0    0    0    0    0    0    0    0    1    1153
+C_primary value: 0.296
+Finished stage 9.
