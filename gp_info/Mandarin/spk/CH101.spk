@@ -1,0 +1,33 @@
+;timestamp: Tue Aug 12 14:02:03 MET DST 1997
+;BEGIN
+;LANGUAGE:Mandarin 
+;SUPERVISOR:Tianshi WEI 
+;TAPELABEL:22 
+;RECORD DATE:
+;ARTICLE READORDER:c0615.003,c0615.007,c0615.008,c0615.009,c0615.002,a0614.003,a0614.002,a0614.010,b0614.007 
+;TOPIC ARTICLE c0615.003:internationalPolitics 
+;TOPIC ARTICLE c0615.007:internationalPolitics 
+;TOPIC ARTICLE c0615.008:economy 
+;TOPIC ARTICLE c0615.009:economy 
+;TOPIC ARTICLE c0615.002:internationalPolitics 
+;TOPIC ARTICLE a0614.003:internationalEconomy 
+;TOPIC ARTICLE a0614.002:internationalPolitics 
+;TOPIC ARTICLE a0614.010:internationalPolitics 
+;TOPIC ARTICLE b0614.007:internationalEconomy 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:101 
+;NATIVE LANGUAGE:Mandarin 
+;RAISED IN:Peking 
+;DIALECT:Standard Chinese 
+;SEX:male 
+;AGE:20 
+;OCCUPATION:student
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE: 
+;ENVIRONMENT NOISE:middle 
+;RECORD CONDITIONS: 
+;COMMENTS: 
+;END

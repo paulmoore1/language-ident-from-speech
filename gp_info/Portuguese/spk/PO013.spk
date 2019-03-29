@@ -1,0 +1,35 @@
+;timestamp: Fri Apr 25 21:22:45 MET DST 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:D 
+;RECORD DATE:June 19, 1996
+;ARTICLE READORDER:1b,2b,3b,4b,6b,7b,1d,3d,4d,6d,7d 
+;TOPIC ARTICLE 1b:other 
+;TOPIC ARTICLE 2b:internationalPolitics 
+;TOPIC ARTICLE 3b:economy 
+;TOPIC ARTICLE 4b:internationalPolitics 
+;TOPIC ARTICLE 6b:nationalPolitics 
+;TOPIC ARTICLE 7b:nationalPolitics 
+;TOPIC ARTICLE 1d:internationalPolitics 
+;TOPIC ARTICLE 3d:nationalPolitics 
+;TOPIC ARTICLE 4d:other 
+;TOPIC ARTICLE 6d:economy 
+;TOPIC ARTICLE 7d:other 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:013 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Rondonia 
+;DIALECT: 
+;SEX:female 
+;AGE:29 
+;OCCUPATION:teacher
+;COLD OR ALLERGY:sick 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private small 
+;ENVIRONMENT NOISE:middle 
+;RECORD CONDITIONS:Testperson sitzt an einem Tisch, niemand in der naehe. 
+;COMMENTS:Hund im Hitergrund. Die Testperson hat manchmal bei Fehler Kommentare gemacht und Satzt erneut gelesen. Artikel 4b unterbrochen und anschliessend erneut gelesen. 
+;END

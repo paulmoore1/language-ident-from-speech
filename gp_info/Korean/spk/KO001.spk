@@ -1,0 +1,30 @@
+;timestamp: Thu Nov 12 11:26:54 MET 1998
+;BEGIN
+;LANGUAGE:Korean 
+;SUPERVISOR:Keal-Chun CHO 
+;TAPELABEL:kor01 
+;RECORD DATE:September 10, 1996
+;ARTICLE READORDER:pi0003,pi0004,ww0001,ww0002,pa0002,pa0003 
+;TOPIC ARTICLE pi0003:nationalPolitics 
+;TOPIC ARTICLE pi0004:nationalEconomy 
+;TOPIC ARTICLE ww0001:economy 
+;TOPIC ARTICLE ww0002:economy 
+;TOPIC ARTICLE pa0002:internationalPolitics 
+;TOPIC ARTICLE pa0003:internationalEconomy 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:001 
+;NATIVE LANGUAGE:Korean 
+;RAISED IN:Chonnam 
+;DIALECT:Chonnam 
+;SEX:female 
+;AGE:24 
+;OCCUPATION:nurse
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:office small 
+;ENVIRONMENT NOISE:middle 
+;RECORD CONDITIONS: 
+;COMMENTS: 
+;END

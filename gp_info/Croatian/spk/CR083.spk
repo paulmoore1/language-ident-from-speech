@@ -1,0 +1,33 @@
+;timestamp: Mon Mar 30 15:35:13 MET DST 1998
+;BEGIN
+;LANGUAGE:Croatian 
+;SUPERVISOR:Sanela HABIBIJA 
+;TAPELABEL:cro10 
+;RECORD DATE:September 15, 1997
+;ARTICLE READORDER:19.7_h2,19.7_h3,19.7_h7,20.7_h6,21.7_h3,23.7_h3,14.7_h2,hna0005,hna0026 
+;TOPIC ARTICLE 19.7_h2:nationalPolitics 
+;TOPIC ARTICLE 19.7_h3:internationalPolitics 
+;TOPIC ARTICLE 19.7_h7:nationalEconomy 
+;TOPIC ARTICLE 20.7_h6:internationalEconomy 
+;TOPIC ARTICLE 21.7_h3:internationalPolitics 
+;TOPIC ARTICLE 23.7_h3:internationalPolitics 
+;TOPIC ARTICLE 14.7_h2:nationalEconomy 
+;TOPIC ARTICLE hna0005:other 
+;TOPIC ARTICLE hna0026:internationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:083 
+;NATIVE LANGUAGE:Croatian 
+;RAISED IN:Osijek, Croatia 
+;DIALECT:Standard Croatian 
+;SEX:female 
+;AGE:19 
+;OCCUPATION:student
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private small 
+;ENVIRONMENT NOISE:quiet 
+;RECORD CONDITIONS:keine Zuhoerer 
+;COMMENTS:lebt in Deutschland seit 4 Jahren 
+;END

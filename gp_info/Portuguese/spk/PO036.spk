@@ -1,0 +1,40 @@
+;timestamp: Fri Jun 13 16:37:31 MET DST 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:K 
+;RECORD DATE:July 24, 1996
+;ARTICLE READORDER:1e,2e,3e,4e,5e,6e,1c,2c,3c,4c,5c,6c,7c,2a,4a,5a 
+;TOPIC ARTICLE 1e:nationalPolitics 
+;TOPIC ARTICLE 2e:nationalPolitics 
+;TOPIC ARTICLE 3e:internationalPolitics 
+;TOPIC ARTICLE 4e:other 
+;TOPIC ARTICLE 5e:nationalPolitics 
+;TOPIC ARTICLE 6e:other 
+;TOPIC ARTICLE 1c:other 
+;TOPIC ARTICLE 2c:internationalPolitics 
+;TOPIC ARTICLE 3c:other 
+;TOPIC ARTICLE 4c:sports 
+;TOPIC ARTICLE 5c:sports 
+;TOPIC ARTICLE 6c:sports 
+;TOPIC ARTICLE 7c:sports 
+;TOPIC ARTICLE 2a:economy 
+;TOPIC ARTICLE 4a:nationalPolitics 
+;TOPIC ARTICLE 5a:internationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:036 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Sao Paulo 
+;DIALECT:Paulista 
+;SEX:male 
+;AGE:19 
+;OCCUPATION:student
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:no audience 
+;ENVIRONMENT NOISE:quiet 
+;RECORD CONDITIONS:Testperson sitzt auf einer Kauch. 
+;COMMENTS:Record level sehr hoch bei Artikel 1e. 
+;END

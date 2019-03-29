@@ -1,0 +1,34 @@
+;timestamp: Wed Mar 19 00:39:41 MET 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:B 
+;RECORD DATE:June 13, 1996
+;ARTICLE READORDER:1e,2e,3e,4e,5e,6e,7e,8e,9e,10e 
+;TOPIC ARTICLE 1e:nationalPolitics 
+;TOPIC ARTICLE 2e:nationalPolitics 
+;TOPIC ARTICLE 3e:internationalPolitics 
+;TOPIC ARTICLE 4e:other 
+;TOPIC ARTICLE 5e:nationalPolitics 
+;TOPIC ARTICLE 6e:other 
+;TOPIC ARTICLE 7e:nationalPolitics 
+;TOPIC ARTICLE 8e:internationalPolitics 
+;TOPIC ARTICLE 9e:other 
+;TOPIC ARTICLE 10e:internationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:005 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Rio de Janeiro 
+;DIALECT:Carioca 
+;SEX:female 
+;AGE:31 
+;OCCUPATION:missionary
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private small 
+;ENVIRONMENT NOISE:quiet 
+;RECORD CONDITIONS:Testperson sitzt auf dem Boden. 
+;COMMENTS:Der erste Artikel hat Hintergrudgeraeusche (Wind). 
+;END

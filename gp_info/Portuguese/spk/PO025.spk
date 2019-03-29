@@ -1,0 +1,36 @@
+;timestamp: Tue May 20 21:33:48 MET DST 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:H 
+;RECORD DATE:June 18, 1996
+;ARTICLE READORDER:1b,2b,3b,4b,6b,7b,1c,2c,3c,4c,5c,6c 
+;TOPIC ARTICLE 1b:other 
+;TOPIC ARTICLE 2b:internationalPolitics 
+;TOPIC ARTICLE 3b:economy 
+;TOPIC ARTICLE 4b:internationalPolitics 
+;TOPIC ARTICLE 6b:nationalPolitics 
+;TOPIC ARTICLE 7b:nationalPolitics 
+;TOPIC ARTICLE 1c:other 
+;TOPIC ARTICLE 2c:internationalPolitics 
+;TOPIC ARTICLE 3c:other 
+;TOPIC ARTICLE 4c:sports 
+;TOPIC ARTICLE 5c:sports 
+;TOPIC ARTICLE 6c:sports 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:025 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Acre 
+;DIALECT: 
+;SEX:male 
+;AGE:21 
+;OCCUPATION:missionary
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private small 
+;ENVIRONMENT NOISE:quiet 
+;RECORD CONDITIONS:Testperson sitzt auf dem Fussboden, niemand in der naehe. 
+;COMMENTS:Waehrend der Aufnahme war das Mikrophon nicht richtig positioniert. Testperson hat einmal gelacht. 
+;END

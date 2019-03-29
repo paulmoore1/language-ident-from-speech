@@ -1,0 +1,40 @@
+;timestamp: Wed Jun  4 23:30:42 MET DST 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:J 
+;RECORD DATE:July 23, 1996
+;ARTICLE READORDER:1e,2e,3e,4e,5e,6e,1f,2f,3f,4f,5f,6f,2a,4a,5a,3d 
+;TOPIC ARTICLE 1e:nationalPolitics 
+;TOPIC ARTICLE 2e:nationalPolitics 
+;TOPIC ARTICLE 3e:internationalPolitics 
+;TOPIC ARTICLE 4e:other 
+;TOPIC ARTICLE 5e:nationalPolitics 
+;TOPIC ARTICLE 6e:other 
+;TOPIC ARTICLE 1f:other 
+;TOPIC ARTICLE 2f:internationalPolitics 
+;TOPIC ARTICLE 3f:other 
+;TOPIC ARTICLE 4f:natwirt 
+;TOPIC ARTICLE 5f:other 
+;TOPIC ARTICLE 6f:other 
+;TOPIC ARTICLE 2a:economy 
+;TOPIC ARTICLE 4a:nationalPolitics 
+;TOPIC ARTICLE 5a:internationalPolitics 
+;TOPIC ARTICLE 3d:nationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:033 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Sao Paulo 
+;DIALECT:Paulista 
+;SEX:female 
+;AGE:34 
+;OCCUPATION:homemaker
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private small 
+;ENVIRONMENT NOISE:loud 
+;RECORD CONDITIONS:Testperson sitzt auf einer Kauch, ein einjaehriges Kind in der Umgebung. 
+;COMMENTS:Recording level bei Artikel 1e-6e zu leise. Artikel 3f wurde unterbrochen. 
+;END

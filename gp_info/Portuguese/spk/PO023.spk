@@ -1,0 +1,38 @@
+;timestamp: Wed May  7 15:07:35 MET DST 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:G 
+;RECORD DATE:July 15, 1996
+;ARTICLE READORDER:1b,2b,3b,4b,6b,7b,1c,2c,3c,4c,5c,6c,7c,1d 
+;TOPIC ARTICLE 1b:other 
+;TOPIC ARTICLE 2b:internationalPolitics 
+;TOPIC ARTICLE 3b:economy 
+;TOPIC ARTICLE 4b:internationalPolitics 
+;TOPIC ARTICLE 6b:nationalPolitics 
+;TOPIC ARTICLE 7b:nationalPolitics 
+;TOPIC ARTICLE 1c:other 
+;TOPIC ARTICLE 2c:internationalPolitics 
+;TOPIC ARTICLE 3c:other 
+;TOPIC ARTICLE 4c:sports 
+;TOPIC ARTICLE 5c:sports 
+;TOPIC ARTICLE 6c:sports 
+;TOPIC ARTICLE 7c:sports 
+;TOPIC ARTICLE 1d:internationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:023 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Maranhao 
+;DIALECT:Maranhaense 
+;SEX:male 
+;AGE:33 
+;OCCUPATION:student
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:office small 
+;ENVIRONMENT NOISE:quiet 
+;RECORD CONDITIONS:Testperson sitzt an einem Tisch. 
+;COMMENTS:Klimaanlage laeuft im Hintergrund. 
+;END

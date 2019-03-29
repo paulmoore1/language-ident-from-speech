@@ -1,0 +1,31 @@
+;timestamp: Thu May 15 21:31:07 MET DST 1997
+;BEGIN
+;LANGUAGE:Russian 
+;SUPERVISOR:Orest MIKHAILIOUK 
+;TAPELABEL:B2-07	 
+;RECORD DATE:July 1997 
+;ARTICLE READORDER:49,54,51,50,55,53,63 
+;TOPIC ARTICLE 49:nationalPolitics 
+;TOPIC ARTICLE 54:nationalPolitics 
+;TOPIC ARTICLE 51:nationalEconomy 
+;TOPIC ARTICLE 50:nationalEconomy 
+;TOPIC ARTICLE 55:nationalPolitics 
+;TOPIC ARTICLE 53:internationalPolitics 
+;TOPIC ARTICLE 63:nationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:015 
+;NATIVE LANGUAGE:Russian 
+;RAISED IN:Minsk 
+;DIALECT: 
+;SEX:male 
+;AGE:21 
+;OCCUPATION:student
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:kleines Zimmer 
+;ENVIRONMENT NOISE:middle 
+;RECORD CONDITIONS: 
+;COMMENTS:nuschelt 
+;END
