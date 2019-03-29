@@ -6,7 +6,7 @@ expt_dirs=$(find $data_dir -maxdepth 1 -mindepth 1 -type d \
 -not -path "*all_preprocessed*")
 for dir in $expt_dirs; do
   if [ ! -f $dir/exp/results/results_30s ]; then
-    echo "No results found for $dir"
+    echo "No 30s results found for $dir !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     continue
   fi
   expname=$(basename $dir)
@@ -23,14 +23,15 @@ for dir in $expt_dirs; do
   > gp-xvectors-recipe/conf/eval_configs/expconf.conf
   echo "Trying $expname"
   if [ $(ls $dir/exp/results | wc -l) -ne 9 ]; then
-  ./gp-xvectors-recipe/run_extra_eval.sh --config=expconf
-  wait;
+    echo "Adding 3s and 10s results..." 
+    ./gp-xvectors-recipe/run_extra_eval.sh --config=expconf
+    wait;
     if [ $(ls $dir/exp/results | wc -l) -eq 9 ]; then
       echo "Finished getting extra X-vectors" | mail -v -s "$expname" paulmooreukmkok@gmail.com
     else
       echo "Error getting extra results"  | mail -v -s "$expname" paulmooreukmkok@gmail.com
     fi
   else
-  echo "Finished already"
+  echo "Finished already ###################################"
   fi
 done

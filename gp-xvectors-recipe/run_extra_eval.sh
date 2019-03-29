@@ -107,7 +107,12 @@ exp_dir=$original_dir/exp
 if [ ! -d $model_dir ]; then
   echo "Error: model not found in ${model_dir}"; exit 1
 elif [ ! -d $nnet_dir ]; then
-  echo "Error: nnet not found in ${nnet_dir}"; exit 1
+  # If all the x vectors have been extracted already (for length expts)
+  if [ -d $exp_dir/xvectors_enroll ] && [ -d $exp_dir/xvectors_eval_3s ] && [ -d $exp_dir/xvectors_eval_10s ]; then
+    echo "Using existing xvectors"
+  else
+    echo "Error: nnet not found in ${nnet_dir}"; exit 1
+  fi
 elif [ ! -d $exp_dir ]; then
   echo "Error: exp dir not found in ${exp_dir}"; exit 1
 fi
@@ -154,7 +159,7 @@ for evaluation_length in 3 10; do
     fi
   fi
 
-  if [ ! -f $exp_dir/results/results_${ev} ]; then
+  if [ ! -d $exp_dir/xvectors_eval_${ev} ]; then
     # X-vectors for end-to-end evaluation
     ./local/extract_xvectors.sh \
       --cmd "$extract_cmd --mem 6G" \

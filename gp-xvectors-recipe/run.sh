@@ -221,15 +221,20 @@ else
   old_expt_dir=$root_data_dir/${use_model_from}
 fi
 
+
 # Check any requested model exists
-if [ -d $old_expt_dir/nnet ] && [ "$skip_nnet_training" = true ]; then
+if [ -f $old_expt_dir/nnet/final.raw ] && [ "$skip_nnet_training" = true ]; then
   nnet_dir=$old_expt_dir/nnet
+  eval_data=$old_expt_dir/eval_${evaluation_length}s
   echo "Model found!"
+  echo "The nnet directory is $nnet_dir"
   GP_TRAIN_LANGUAGES="SKIP"
+  mkdir -p $exp_dir
   # Copy old evaluation X-vectors since they won't change.
   cp -r $old_expt_dir/exp/xvectors_eval_30s $exp_dir/xvectors_eval_30s
   cp -r $old_expt_dir/exp/xvectors_eval_10s $exp_dir/xvectors_eval_10s
   cp -r $old_expt_dir/exp/xvectors_eval_3s $exp_dir/xvectors_eval_3s
+
   GP_EVAL_LANGUAGES="SKIP"
 elif [ ! -d $root_data_dir/$use_model_from/nnet ] && [ "$skip_nnet_training" = true ]; then
   if [ -f $nnet_dir/final.raw ]; then
@@ -247,6 +252,7 @@ echo "Running with training languages: ${GP_TRAIN_LANGUAGES}"
 echo "Running with enrollment languages: ${GP_ENROLL_LANGUAGES}"
 echo "Running with evaluation languages: ${GP_EVAL_LANGUAGES}"
 echo "Running with test languages: ${GP_TEST_LANGUAGES}"
+
 
 # The most time-consuming stage: Converting SHNs to WAVs. Should be done only once;
 # then, this script can be run from stage 0 onwards.
@@ -759,20 +765,24 @@ if [ $stage -eq 8 ]; then
   done > conf/test_languages.list
 
   mkdir -p $exp_dir/results
-  mkdir -p $exp_dir/classifier
 
-  # Training the log reg model and classifying test set samples
-  ./local/run_logistic_regression.sh \
-    --prior-scale 0.70 \
-    --conf conf/logistic-regression.conf \
-    --train-dir $exp_dir/xvectors_enroll \
-    --test-dir $exp_dir/xvectors_eval_30s \
-    --model-dir $exp_dir/classifier \
-    --classification-file $exp_dir/results/classification_30s \
-    --train-utt2lang $enroll_data/utt2lang \
-    --test-utt2lang $eval_data/utt2lang \
-    --languages conf/test_languages.list \
-    > $exp_dir/classifier/logistic-regression_30s.log
+  if [ ! -d $exp_dir/classifier ]; then
+
+    mkdir -p $exp_dir/classifier
+
+    # Training the log reg model and classifying test set samples
+    ./local/run_logistic_regression.sh \
+      --prior-scale 0.70 \
+      --conf conf/logistic-regression.conf \
+      --train-dir $exp_dir/xvectors_enroll \
+      --test-dir $exp_dir/xvectors_eval_30s \
+      --model-dir $exp_dir/classifier \
+      --classification-file $exp_dir/results/classification_30s \
+      --train-utt2lang $enroll_data/utt2lang \
+      --test-utt2lang $eval_data/utt2lang \
+      --languages conf/test_languages.list \
+      > $exp_dir/classifier/logistic-regression_30s.log
+  fi
 
   echo "Finished stage 8."
 

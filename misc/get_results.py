@@ -153,7 +153,7 @@ def main():
 
     for idx, exp_set in enumerate(exp_sets):
         if len(exp_set) == 0:
-            print("Nothing found here")
+            print("Nothing found here: {}".format(csv_names[idx]))
             continue
         headers = get_csv_header_row(exp_set[0])
         data_rows = []
