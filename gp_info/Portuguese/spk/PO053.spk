@@ -1,0 +1,35 @@
+;timestamp: Fri Jul  4 10:39:18 MET DST 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:O 
+;RECORD DATE:August 12, 1996
+;ARTICLE READORDER:7y,6y,8y,9y,10y,11y,12y,13y,14y,15y,1y 
+;TOPIC ARTICLE 7y:other 
+;TOPIC ARTICLE 6y:other 
+;TOPIC ARTICLE 8y:sports 
+;TOPIC ARTICLE 9y:other 
+;TOPIC ARTICLE 10y:other 
+;TOPIC ARTICLE 11y:nationalPolitics 
+;TOPIC ARTICLE 12y:nationalPolitics 
+;TOPIC ARTICLE 13y:internationalPolitics 
+;TOPIC ARTICLE 14y:other 
+;TOPIC ARTICLE 15y:other 
+;TOPIC ARTICLE 1y:nationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:053 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Sao Paulo 
+;DIALECT:Paulista 
+;SEX:male 
+;AGE:20 
+;OCCUPATION:student
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:office small 
+;ENVIRONMENT NOISE:loud 
+;RECORD CONDITIONS:Testperson sitzt auf einem Tisch. 
+;COMMENTS: 
+;END

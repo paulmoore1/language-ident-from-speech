@@ -1,0 +1,34 @@
+;timestamp: Mon Jun 30 11:04:35 MET DST 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:N 
+;RECORD DATE:August 07, 1996
+;ARTICLE READORDER:1y,2y,3y,4y,5y,6y,7y,8y,9y,10y 
+;TOPIC ARTICLE 1y:nationalPolitics 
+;TOPIC ARTICLE 2y:other 
+;TOPIC ARTICLE 3y:other 
+;TOPIC ARTICLE 4y:economy 
+;TOPIC ARTICLE 5y:nationalPolitics 
+;TOPIC ARTICLE 6y:other 
+;TOPIC ARTICLE 7y:other 
+;TOPIC ARTICLE 8y:sports 
+;TOPIC ARTICLE 9y:other 
+;TOPIC ARTICLE 10y:other 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:048 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Maceio 
+;DIALECT: 
+;SEX:male 
+;AGE:21 
+;OCCUPATION:student
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private small 
+;ENVIRONMENT NOISE:middle 
+;RECORD CONDITIONS:Testperson sitzt auf einer Kouch. 
+;COMMENTS:Keine Pause zwischen Artikel 5y,6y und 9y,10y. 
+;END

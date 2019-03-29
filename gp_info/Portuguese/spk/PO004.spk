@@ -1,0 +1,31 @@
+;timestamp: Wed Mar 19 00:58:56 MET 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:A 
+;RECORD DATE:June 10, 1996
+;ARTICLE READORDER:1d,2d,3d,4d,5d,6d,7d 
+;TOPIC ARTICLE 1d:internationalPolitics 
+;TOPIC ARTICLE 2d: 
+;TOPIC ARTICLE 3d:nationalPolitics 
+;TOPIC ARTICLE 4d:other 
+;TOPIC ARTICLE 5d:nationalPolitics 
+;TOPIC ARTICLE 6d:economy 
+;TOPIC ARTICLE 7d:other 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:004 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Fortaleza 
+;DIALECT:Nordestino 
+;SEX:female 
+;AGE:30 
+;OCCUPATION:missionary
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private big 
+;ENVIRONMENT NOISE:middle 
+;RECORD CONDITIONS:Testperson sitzt an einem Tisch, keine Leute in der Umgebung. 
+;COMMENTS:Voegel ausserhalb des Raumes. 
+;END

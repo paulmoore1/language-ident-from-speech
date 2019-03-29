@@ -1,0 +1,33 @@
+;timestamp: Thu Apr  2 10:51:19 MET DST 1998
+;BEGIN
+;LANGUAGE:Mandarin 
+;SUPERVISOR:Xingrong Weng 
+;TAPELABEL:8 
+;RECORD DATE:July 02, 1996
+;ARTICLE READORDER:b0602.004,b0512.008,b0512.011,a0516.009,b0610.003,f0520.002,b0520.014,b0526.002,c0514.004 
+;TOPIC ARTICLE b0602.004:internationalPolitics 
+;TOPIC ARTICLE b0512.008:nationalPolitics 
+;TOPIC ARTICLE b0512.011:internationalEconomy 
+;TOPIC ARTICLE a0516.009:internationalPolitics 
+;TOPIC ARTICLE b0610.003:nationalPolitics 
+;TOPIC ARTICLE f0520.002:internationalEconomy 
+;TOPIC ARTICLE b0520.014:nationalPolitics 
+;TOPIC ARTICLE b0526.002:nationalPolitics 
+;TOPIC ARTICLE c0514.004:nationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:060 
+;NATIVE LANGUAGE:Mandarin 
+;RAISED IN:Liaoning 
+;DIALECT:Dongbei 
+;SEX:male 
+;AGE:30 
+;OCCUPATION:engineer
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE: 
+;ENVIRONMENT NOISE:quiet 
+;RECORD CONDITIONS: 
+;COMMENTS:es fehlen "Beschreibung des Aufnahmeorts" und "Aufnahmesituation" 
+;END

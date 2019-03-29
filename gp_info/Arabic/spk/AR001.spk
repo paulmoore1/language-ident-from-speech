@@ -1,0 +1,30 @@
+;timestamp: Wed Feb 10 08:56:31 MET 1999
+;BEGIN
+;LANGUAGE:Arabic 
+;SUPERVISOR:Olfa KARBOUL 
+;TAPELABEL:1 
+;RECORD DATE:July 27, 1996
+;ARTICLE READORDER:t1,t2,t3,t4,t5,t6 
+;TOPIC ARTICLE t1:nationalPolitics 
+;TOPIC ARTICLE t2:internationalPolitics 
+;TOPIC ARTICLE t3:internationalPolitics 
+;TOPIC ARTICLE t4:internationalPolitics 
+;TOPIC ARTICLE t5:nationalPolitics 
+;TOPIC ARTICLE t6:nationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:001 
+;NATIVE LANGUAGE:Arabic 
+;RAISED IN:Tunis 
+;DIALECT:Tunisian 
+;SEX:female 
+;AGE:21 
+;OCCUPATION:Abitur
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private small 
+;ENVIRONMENT NOISE:quiet 
+;RECORD CONDITIONS:sitzt auf dem Stuhl 
+;COMMENTS: 
+;END

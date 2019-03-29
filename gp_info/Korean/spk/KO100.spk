@@ -1,0 +1,26 @@
+;timestamp: Fri Feb 12 14:22:04 MET 1999
+;BEGIN
+;LANGUAGE:Korean 
+;SUPERVISOR:Keal-Chun CHO 
+;TAPELABEL:kor16 
+;RECORD DATE:  , 
+;ARTICLE READORDER:pi1019,ww1057 
+;TOPIC ARTICLE pi1019:nationalPolitics 
+;TOPIC ARTICLE ww1057:economy 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:100 
+;NATIVE LANGUAGE:Korean 
+;RAISED IN: 
+;DIALECT: 
+;SEX:male 
+;AGE: 
+;OCCUPATION:
+;COLD OR ALLERGY: 
+;SMOKER: 
+;RECORDING SETUP ------------
+;RECORD PLACE: 
+;ENVIRONMENT NOISE: 
+;RECORD CONDITIONS: 
+;COMMENTS: should be male (assume the database contains 50 male/female speaker 
+;END

@@ -1,0 +1,28 @@
+;timestamp: Thu May 28 11:19:09 MET DST 1998
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT + Raul FALLER 
+;TAPELABEL:PO20 
+;RECORD DATE:October 20, 1997
+;ARTICLE READORDER:natpol1,natpol2,natpol3,natpol4 
+;TOPIC ARTICLE natpol1:nationalPolitics 
+;TOPIC ARTICLE natpol2:nationalPolitics 
+;TOPIC ARTICLE natpol3:nationalPolitics 
+;TOPIC ARTICLE natpol4:nationalPolitics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:101 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Sao Paulo 
+;DIALECT:Paulista 
+;SEX:female 
+;AGE:48 
+;OCCUPATION:artist
+;COLD OR ALLERGY:well 
+;SMOKER:smoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private big 
+;ENVIRONMENT NOISE:quiet 
+;RECORD CONDITIONS:Testperson sitzt am Tisch, Aufnahmeleiter gegenueber  
+;COMMENTS: 
+;END

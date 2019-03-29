@@ -1,0 +1,39 @@
+;timestamp: Fri Jun 13 17:20:14 MET DST 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:L 
+;RECORD DATE:August 03, 1996
+;ARTICLE READORDER:1e,2e,3e,4e,5e,6e,1f,2f,3f,4f,5f,6f,7f,1d,2d 
+;TOPIC ARTICLE 1e:nationalPolitics 
+;TOPIC ARTICLE 2e:nationalPolitics 
+;TOPIC ARTICLE 3e:internationalPolitics 
+;TOPIC ARTICLE 4e:other 
+;TOPIC ARTICLE 5e:nationalPolitics 
+;TOPIC ARTICLE 6e:other 
+;TOPIC ARTICLE 1f:other 
+;TOPIC ARTICLE 2f:internationalPolitics 
+;TOPIC ARTICLE 3f:nationalPolitics 
+;TOPIC ARTICLE 4f:natwirt 
+;TOPIC ARTICLE 5f:other 
+;TOPIC ARTICLE 6f:other 
+;TOPIC ARTICLE 7f:other 
+;TOPIC ARTICLE 1d:internationalPolitics 
+;TOPIC ARTICLE 2d: 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:037 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Sao Paulo 
+;DIALECT:Paulista 
+;SEX:female 
+;AGE:23 
+;OCCUPATION:student
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private big 
+;ENVIRONMENT NOISE:middle 
+;RECORD CONDITIONS:Testperson sitzt auf einer Kauch, mehrere Person in der Umgebung. 
+;COMMENTS:Artikel 7f wurde frueher beendet. Record level zu niedrig. Pause anstatt Stop gedrueckt zwischen diesem und naechsten Sprecher. 
+;END

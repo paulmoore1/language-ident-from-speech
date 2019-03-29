@@ -1,0 +1,36 @@
+;timestamp: Wed May  7 15:03:34 MET DST 1997
+;BEGIN
+;LANGUAGE:Portuguese 
+;SUPERVISOR:Caleb EVERETT 
+;TAPELABEL:F 
+;RECORD DATE:June 21, 1996
+;ARTICLE READORDER:1b,2b,3b,4b,6b,7b,1d,3d,4d,5d,6d,7d 
+;TOPIC ARTICLE 1b:other 
+;TOPIC ARTICLE 2b:internationalPolitics 
+;TOPIC ARTICLE 3b:economy 
+;TOPIC ARTICLE 4b:internationalPolitics 
+;TOPIC ARTICLE 6b:nationalPolitics 
+;TOPIC ARTICLE 7b:nationalPolitics 
+;TOPIC ARTICLE 1d:internationalPolitics 
+;TOPIC ARTICLE 3d:nationalPolitics 
+;TOPIC ARTICLE 4d:other 
+;TOPIC ARTICLE 5d:nationalPolitics 
+;TOPIC ARTICLE 6d:economy 
+;TOPIC ARTICLE 7d:other 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:019 
+;NATIVE LANGUAGE:Portuguese 
+;RAISED IN:Minas Gerais 
+;DIALECT:Mineiro 
+;SEX:female 
+;AGE:22 
+;OCCUPATION:student
+;COLD OR ALLERGY:sick 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private small 
+;ENVIRONMENT NOISE:middle 
+;RECORD CONDITIONS:Testperson sitzt an einem Tisch. 
+;COMMENTS:Der erste Artikel wurde ueber einer Testaufnahme aufgenommen. Artikel 3b, 7b, 4d wurde unterbrochen, angehalten und nach einer Pause weiter aufgenommen.  
+;END

@@ -1,0 +1,28 @@
+;timestamp: Mon Mar 30 13:50:01 MET DST 1998
+;BEGIN
+;LANGUAGE:Croatian 
+;SUPERVISOR:Sanela HABIBIJA 
+;TAPELABEL:cro1 
+;RECORD DATE:August 03, 1996
+;ARTICLE READORDER:07.1_bh,07.1_hrv,08.1_bh,08.1_h1 
+;TOPIC ARTICLE 07.1_bh:nationalPolitics 
+;TOPIC ARTICLE 07.1_hrv:nationalPolitics 
+;TOPIC ARTICLE 08.1_bh:nationalPolitics 
+;TOPIC ARTICLE 08.1_h1:politics 
+;SPEAKERDATA -------------
+;NAME OF SPEAKER:xxx
+;SPEAKER ID:003 
+;NATIVE LANGUAGE:Croatian 
+;RAISED IN:Zagreb, Croatia 
+;DIALECT:Zagreb dialect 
+;SEX:male 
+;AGE:65 
+;OCCUPATION:pensioner
+;COLD OR ALLERGY:well 
+;SMOKER:nonsmoking 
+;RECORDING SETUP ------------
+;RECORD PLACE:private small 
+;ENVIRONMENT NOISE:quiet 
+;RECORD CONDITIONS:keine anderen Zuhoerer 
+;COMMENTS: 
+;END
