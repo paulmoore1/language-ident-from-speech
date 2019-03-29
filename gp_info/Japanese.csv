@@ -1,0 +1,150 @@
+language,spk_id,gender,age,native_language,dialect
+Japanese,001,male,24,Japanese,Standard Japanese
+Japanese,002,male,23,Japanese,Standard Japanese (Sanukiben)
+Japanese,003,male,23,Japanese,Tosa-ben
+Japanese,004,male,24,Japanese,Standard Japanese
+Japanese,005,male,24,Japanese,Standard Japanese
+Japanese,006,male,31,Japanese,Osaka-ben
+Japanese,007,male,28,Japanese,Standard Japanese
+Japanese,008,male,32,Japanese,Standard Japanese
+Japanese,009,female,28,Japanese,Sozo-ben
+Japanese,010,male,36,Japanese,Standard Japanese (Kurumeben)
+Japanese,011,female,47,Japanese,Hakodate-ben
+Japanese,012,male,27,Japanese,Standard Japanese
+Japanese,013,male,57,Japanese,Standard Japanese
+Japanese,014,male,22,Japanese,Totigi-ben
+Japanese,015,male,23,Japanese,Okayama-ben
+Japanese,016,male,26,Japanese,Okayama-ben
+Japanese,017,male,26,Japanese,Kansai-ben
+Japanese,018,male,22,Japanese,some Kansai-ben
+Japanese,019,male,19,Japanese,Standard Japanese
+Japanese,020,male,23,Japanese,Standard Japanese
+Japanese,021,male,21,Japanese,Standard Japanese
+Japanese,022,male,29,Japanese,Osaka-ben
+Japanese,023,female,27,Japanese,Osaka-ben
+Japanese,024,male,22,Japanese,Yamagata-ben
+Japanese,025,male,20,Japanese,Hokaido-ben
+Japanese,026,male,20,Japanese,Standard Japanese
+Japanese,027,male,22,Japanese,Standard Japanese
+Japanese,028,male,23,Japanese,Standard Japanese
+Japanese,029,male,19,Japanese,Fukushima-ben
+Japanese,030,female,20,Japanese,Standard Japanese
+Japanese,031,male,22,Japanese,Standard Japanese
+Japanese,032,male,18,Japanese,Standard Japanese
+Japanese,033,male,21,Japanese,Standard Japanese
+Japanese,034,male,19,Japanese,Yokohama-ben
+Japanese,035,male,23,Japanese,Standard Japanese
+Japanese,036,male,21,Japanese,Osaka-ben
+Japanese,037,male,25,Japanese,Standard Japanese
+Japanese,038,male,21,Japanese,Standard Japanese
+Japanese,039,male,22,Japanese,Standard Japanese
+Japanese,040,male,24,Japanese,Standard Japanese
+Japanese,041,male,20,Japanese,Nagaoka-ben
+Japanese,042,male,21,Japanese,Hiroshima-ben
+Japanese,043,female,21,Japanese,Standard Japanese
+Japanese,044,male,21,Japanese,Standard Japanese
+Japanese,045,male,22,Japanese,Standard Japanese
+Japanese,046,male,21,Japanese,Standard Japanese
+Japanese,047,female,34,Japanese,Tochigi-ben
+Japanese,048,female,34,Japanese,Tounou-ben
+Japanese,049,male,19,Japanese,Standard Japanese
+Japanese,050,male,20,Japanese,Standard Japanese
+Japanese,051,male,22,Japanese,Standard Japanese
+Japanese,052,male,27,Japanese,Niigata-ben
+Japanese,053,male,19,Japanese,Standard Japanese
+Japanese,054,male,23,Japanese,Standard Japanese
+Japanese,055,male,29,Japanese,"Matsuyamaben,Fukuoka-ben"
+Japanese,056,male,23,Japanese,Standard Japanese
+Japanese,057,female,28,Japanese,Hiroshima-ben
+Japanese,058,male,24,Japanese,Standard Japanese
+Japanese,059,male,19,Japanese,Standard Japanese
+Japanese,060,male,22,Japanese,Standard Japanese
+Japanese,061,male,19,Japanese,Standard Japanese
+Japanese,062,male,21,Japanese,Standard Japanese
+Japanese,063,male,20,Japanese,Standard Japanese
+Japanese,064,male,20,Japanese,Standard Japanese
+Japanese,065,male,19,Japanese,Ibaragi-ben
+Japanese,066,male,21,Japanese,Standard Japanese
+Japanese,067,male,25,Japanese,Standard Japanese
+Japanese,068,male,22,Japanese,Hakata-ben
+Japanese,069,male,21,Japanese,Kyusyu-ben
+Japanese,070,male,20,Japanese,Standard Japanese
+Japanese,071,male,20,Japanese,Hiroshima-ben
+Japanese,072,male,20,Japanese,Saga-ben
+Japanese,073,male,20,Japanese,Standard Japanese
+Japanese,074,male,18,Japanese,Standard Japanese
+Japanese,075,male,18,Japanese,Standard Japanese
+Japanese,076,male,20,Japanese,Standard Japanese
+Japanese,077,male,21,Japanese,Standard Japanese
+Japanese,078,male,19,Japanese,Standard Japanese
+Japanese,079,male,21,Japanese,Standard Japanese
+Japanese,080,male,20,Japanese,Standard Japanese
+Japanese,081,female,20,Japanese,Standard Japanese
+Japanese,082,female,81,Japanese,Standard Japanese
+Japanese,083,female,17,Japanese,Standard Japanese
+Japanese,084,female,19,Japanese,Standard Japanese
+Japanese,085,male,21,Japanese,Sanin-ben
+Japanese,086,male,19,Japanese,Ibaragi-ben
+Japanese,087,male,22,Japanese,Hakata-ben
+Japanese,088,male,20,Japanese,Standard Japanese
+Japanese,089,male,19,Japanese,Fukushima-ben
+Japanese,090,female,47,Japanese,Standard Japanese
+Japanese,091,male,25,Japanese,Standard Japanese
+Japanese,092,male,19,Japanese,Standard Japanese
+Japanese,093,female,23,Japanese,Standard Japanese
+Japanese,094,male,24,Japanese,Standard Japanese
+Japanese,095,male,19,Japanese,Tochigi-ben
+Japanese,096,male,24,Japanese,Tosa-ben
+Japanese,097,male,19,Japanese,Okinawa-ben
+Japanese,098,male,24,Japanese,Standard Japanese
+Japanese,099,male,23,Japanese,Standard Japanese
+Japanese,100,male,23,Japanese,Standard Japanese
+Japanese,101,male,22,Japanese,Kansai-ben
+Japanese,102,male,23,Japanese,Miyazaki-ben
+Japanese,103,male,22,Japanese,Imaji-ben
+Japanese,104,male,22,Japanese,Ibaragi-ben
+Japanese,105,female,26,Japanese,Standard Japanese
+Japanese,106,male,23,Japanese,Kansai-ben
+Japanese,107,male,25,Japanese,Standard Japanese
+Japanese,108,male,28,Japanese,Kansai-ben
+Japanese,109,male,19,Japanese,Standard Japanese
+Japanese,110,male,27,Japanese,Standard Japanese
+Japanese,111,male,20,Japanese,Tohoku-ben
+Japanese,112,male,23,Japanese,Kansai-ben
+Japanese,113,male,21,Japanese,Standard Japanese
+Japanese,114,female,22,Japanese,some Toyama-ben
+Japanese,115,male,22,Japanese,Standard Japanese
+Japanese,116,male,19,Japanese,Standard Japanese
+Japanese,117,male,23,Japanese,Standard Japanese
+Japanese,118,male,22,Japanese,Standard Japanese
+Japanese,200,female,20,Japanese,TOTTORI-ben
+Japanese,201,female,20,Japanese,OKAUYAMA-ben
+Japanese,202,female,20,Japanese,OOITA-ben
+Japanese,203,female,20,Japanese,TOKYO-ben
+Japanese,204,female,20,Japanese,CHIBA-ben
+Japanese,205,female,20,Japanese,SAITAMA-ben
+Japanese,206,female,20,Japanese,HOKKAIDO-ben
+Japanese,207,female,20,Japanese,TOKYO-ben
+Japanese,208,female,10,Japanese,HANAGAWA-ben
+Japanese,209,female,20,Japanese,KAGOSHIMA-ben
+Japanese,210,female,50,Japanese,
+Japanese,211,female,20,Japanese,Tohoku-ben
+Japanese,212,female,20,Japanese,FUKUI-ben
+Japanese,213,female,20,Japanese,Saitama-ben
+Japanese,214,female,20,Japanese,no dialect
+Japanese,215,female,10,Japanese,KAGOSHIMA-ben
+Japanese,216,female,20,Japanese,TOKYO-ben
+Japanese,217,female,20,Japanese,HUKUOKA-ben
+Japanese,218,female,20,Japanese,SAITAMA-ben
+Japanese,219,female,20,Japanese,
+Japanese,220,female,20,Japanese,SAITAMA-ben
+Japanese,221,female,20,Japanese,CHIBA-ben
+Japanese,222,female,20,Japanese,TOKYO-ben
+Japanese,223,female,27,Japanese,"Matsuyamaben,Osaka-ben"
+Japanese,224,female,20,Japanese,TOKYO-ben
+Japanese,225,female,20,Japanese,HIROSHIMA-ben
+Japanese,226,female,20,Japanese,TOHOKU-ben
+Japanese,227,female,,Japanese,TOKYO-ben
+Japanese,228,,,Japanese,
+Japanese,323,male,22,Japanese,Standard Japanese
+Japanese,423,male,19,Japanese,Standard Japanese

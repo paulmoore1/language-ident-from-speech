@@ -16,6 +16,8 @@ for dir in $expt_dirs; do
     GP_EVAL_LANGUAGES="BG CR CZ PO RU"
   elif [[ $expname == da_* ]]; then
     GP_EVAL_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU VN"
+  elif [[ $expname == lre_* ]]; then
+    continue
   else
     GP_EVAL_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN"
   fi
@@ -23,7 +25,7 @@ for dir in $expt_dirs; do
   > gp-xvectors-recipe/conf/eval_configs/expconf.conf
   echo "Trying $expname"
   if [ $(ls $dir/exp/results | wc -l) -ne 9 ]; then
-    echo "Adding 3s and 10s results..." 
+    echo "Adding 3s and 10s results..."
     ./gp-xvectors-recipe/run_extra_eval.sh --config=expconf
     wait;
     if [ $(ls $dir/exp/results | wc -l) -eq 9 ]; then

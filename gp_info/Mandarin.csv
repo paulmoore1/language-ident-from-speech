@@ -1,0 +1,133 @@
+language,spk_id,gender,age,native_language,dialect
+Mandarin,001,female,26,Mandarin,Kentong
+Mandarin,002,female,32,Mandarin,Standard Chinese
+Mandarin,003,female,28,Mandarin,Kentong
+Mandarin,004,female,32,Mandarin,Kentong
+Mandarin,005,male,27,Mandarin,Anhui
+Mandarin,006,female,37,Mandarin,Standard Chinese
+Mandarin,007,male,33,Mandarin,Standard Chinese
+Mandarin,008,female,27,Mandarin,Guizhou
+Mandarin,009,female,32,Mandarin,Standard Chinese
+Mandarin,010,male,32,Mandarin,Wuhan
+Mandarin,011,female,30,Mandarin,Wuhan
+Mandarin,012,male,34,Mandarin,Jolin
+Mandarin,013,female,38,Mandarin,Standard Chinese
+Mandarin,014,male,26,Mandarin,Ketong
+Mandarin,015,female,44,Mandarin,Schanghai
+Mandarin,016,male,45,Mandarin,Guizhou
+Mandarin,017,female,40,Mandarin,Shandong
+Mandarin,018,female,30,Mandarin,Nanjing
+Mandarin,019,female,26,Mandarin,Hanzhong
+Mandarin,020,male,32,Mandarin,Hunan
+Mandarin,021,female,38,Mandarin,Anhui
+Mandarin,022,female,28,Mandarin,
+Mandarin,023,male,18,Mandarin,Chaozhou
+Mandarin,024,female,25,Mandarin,Schanghai
+Mandarin,025,female,27,Mandarin,Kentong
+Mandarin,026,male,18,Mandarin,Standard Chinese
+Mandarin,027,female,26,Mandarin,Kentong
+Mandarin,028,female,26,Mandarin,Peiking
+Mandarin,029,female,22,Mandarin,Kentong
+Mandarin,030,female,21,Mandarin,Kentong
+Mandarin,031,female,21,Mandarin,Standard Chinese
+Mandarin,032,female,21,Mandarin,Standard Chinese
+Mandarin,033,female,21,Mandarin,Kentong
+Mandarin,034,female,21,Mandarin,Hunan
+Mandarin,035,female,21,Mandarin,Schanghai
+Mandarin,036,female,21,Mandarin,Wuhan
+Mandarin,037,female,21,Mandarin,Standard Chinese
+Mandarin,038,female,21,Mandarin,Chaozhou
+Mandarin,039,male,22,Mandarin,Sichuan
+Mandarin,040,male,22,Mandarin,Kentong
+Mandarin,041,male,,Mandarin,Kentong
+Mandarin,042,male,21,Mandarin,Nanjing
+Mandarin,043,male,21,Mandarin,Kentong
+Mandarin,044,male,18,Mandarin,Standard Chinese
+Mandarin,045,female,27,Mandarin,
+Mandarin,046,female,24,Mandarin,Kentong
+Mandarin,047,female,22,Mandarin,Kentong
+Mandarin,048,female,22,Mandarin,Yangjiang
+Mandarin,049,male,22,Mandarin,Kentong
+Mandarin,050,male,22,Mandarin,Chaozhou
+Mandarin,051,female,33,Mandarin,Standard Chinese
+Mandarin,052,male,30,Mandarin,Standard Chinese
+Mandarin,053,female,33,Mandarin,Standard Chinese
+Mandarin,054,male,22,Mandarin,Kentong
+Mandarin,055,male,22,Mandarin,Kentong
+Mandarin,056,male,22,Mandarin,Kentong
+Mandarin,057,female,26,Mandarin,Kentong
+Mandarin,058,female,28,Mandarin,Kentong
+Mandarin,059,female,26,Mandarin,Kentong
+Mandarin,060,male,30,Mandarin,Dongbei
+Mandarin,061,male,20,Mandarin,Jiangzhe
+Mandarin,062,female,23,Mandarin,Standard Chinese
+Mandarin,063,female,25,Mandarin,Ketong
+Mandarin,064,female,23,Mandarin,Sichuan
+Mandarin,065,male,22,Mandarin,Xinjiang
+Mandarin,066,male,21,Mandarin,Henan
+Mandarin,067,female,21,Mandarin,Standard Chinese
+Mandarin,068,male,20,Mandarin,Hubei
+Mandarin,069,female,20,Mandarin,Hubei
+Mandarin,070,male,20,Mandarin,Hubei
+Mandarin,071,female,20,Mandarin,Hubei
+Mandarin,072,male,21,Mandarin,Hubei
+Mandarin,073,male,21,Mandarin,Standard Chinese
+Mandarin,074,male,21,Mandarin,Fujian
+Mandarin,075,male,21,Mandarin,Standard Chinese
+Mandarin,076,male,19,Mandarin,Hunan
+Mandarin,077,male,20,Mandarin,Hubei
+Mandarin,078,male,19,Mandarin,Shandong
+Mandarin,079,male,20,Mandarin,Tianjin
+Mandarin,080,male,20,Mandarin,Standard Chinese
+Mandarin,081,male,20,Mandarin,Standard Chinese
+Mandarin,082,male,18,Mandarin,Jianxi
+Mandarin,083,male,20,Mandarin,Standard Chinese
+Mandarin,084,male,20,Mandarin,Standard Chinese
+Mandarin,085,female,20,Mandarin,Standard Chinese
+Mandarin,086,female,20,Mandarin,Standard Chinese
+Mandarin,087,female,20,Mandarin,Standard Chinese
+Mandarin,088,female,20,Mandarin,Standard Chinese
+Mandarin,089,female,21,Mandarin,Ketong
+Mandarin,090,female,21,Mandarin,Standard Chinese
+Mandarin,091,female,20,Mandarin,Hunan
+Mandarin,092,male,20,Mandarin,Shandong
+Mandarin,093,male,19,Mandarin,Shandong
+Mandarin,094,male,21,Mandarin,Hubei
+Mandarin,095,female,19,Mandarin,Anhui
+Mandarin,096,female,20,Mandarin,Hubei
+Mandarin,097,female,20,Mandarin,Henan
+Mandarin,098,female,21,Mandarin,Hubei
+Mandarin,099,male,19,Mandarin,Zhejiang
+Mandarin,100,male,21,Mandarin,Hunan
+Mandarin,101,male,20,Mandarin,Standard Chinese
+Mandarin,102,male,20,Mandarin,Jiangsu
+Mandarin,103,male,20,Mandarin,Hubei
+Mandarin,104,male,19,Mandarin,Shandong
+Mandarin,105,female,19,Mandarin,Henan
+Mandarin,106,female,19,Mandarin,Henan
+Mandarin,107,female,20,Mandarin,Jiangsu
+Mandarin,108,female,20,Mandarin,Wuhan
+Mandarin,109,female,20,Mandarin,Hunan
+Mandarin,110,female,20,Mandarin,Hunan
+Mandarin,111,male,20,Mandarin,Standard Chinese
+Mandarin,112,male,20,Mandarin,Hubei
+Mandarin,113,male,17,Mandarin,Hubei
+Mandarin,114,male,20,Mandarin,Ketong
+Mandarin,115,male,20,Mandarin,Anhui
+Mandarin,116,male,22,Mandarin,Shanxi
+Mandarin,117,female,20,Mandarin,Wuhan
+Mandarin,118,female,19,Mandarin,Hubei
+Mandarin,119,female,19,Mandarin,Wuhan
+Mandarin,120,female,20,Mandarin,Henan
+Mandarin,121,male,21,Mandarin,Hubei
+Mandarin,122,male,21,Mandarin,Henan
+Mandarin,123,female,20,Mandarin,Jiangsu
+Mandarin,124,male,20,Mandarin,Hubei
+Mandarin,125,female,20,Mandarin,Wuhan
+Mandarin,126,female,20,Mandarin,Wuhan
+Mandarin,127,male,20,Mandarin,Standard Chinese
+Mandarin,128,male,20,Mandarin,Standard Chinese
+Mandarin,129,male,20,Mandarin,Hubei
+Mandarin,130,male,21,Mandarin,Standard Chinese
+Mandarin,131,male,21,Mandarin,Hubei
+Mandarin,132,male,19,Mandarin,Hunan

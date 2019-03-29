@@ -2,14 +2,388 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="27acaceb-0d08-4b77-b03f-38267fae0953" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/gp-xvectors-recipe/cmd.sh" beforeDir="false" afterPath="$PROJECT_DIR$/gp-xvectors-recipe/cmd.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gp-xvectors-recipe/conf/general_config.sh" beforeDir="false" afterPath="$PROJECT_DIR$/gp-xvectors-recipe/conf/general_config.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gp-xvectors-recipe/helper_functions.sh" beforeDir="false" afterPath="$PROJECT_DIR$/gp-xvectors-recipe/helper_functions.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gp-xvectors-recipe/path.sh" beforeDir="false" afterPath="$PROJECT_DIR$/gp-xvectors-recipe/path.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gp-xvectors-recipe/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/gp-xvectors-recipe/run.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gp-xvectors-recipe/steps" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gp-xvectors-recipe/utils" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup/environment.yml" beforeDir="false" afterPath="$PROJECT_DIR$/setup/environment.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/misc/gp_info.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/language-ident-from-speech.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/language-ident-from-speech.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp-xvectors-recipe/conf/test_languages_fix.list" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ005.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ016.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ016.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ024.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ027.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ028.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ029.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ029.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ030.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ031.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ032.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ033.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ034.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ035.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ035.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ036.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ037.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ039.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ040.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ041.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ041.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ042.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ043.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ044.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ044.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ045.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ046.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ047.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ048.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ049.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ050.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ050.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ051.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ051.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ052.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ053.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ054.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ054.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ055.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ056.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ057.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ058.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ059.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ060.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ061.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ062.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ063.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ064.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ065.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ066.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ067.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ068.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ069.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ070.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ070.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ071.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ072.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ072.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ073.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ073.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ074.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ075.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ076.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ077.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ078.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ079.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ079.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ080.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ080.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ081.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ082.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ083.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ084.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ085.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ086.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ087.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ088.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ089.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ090.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ090.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ091.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ092.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ092.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ093.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ094.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ095.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ096.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ097.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ098.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ099.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ100.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ100.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ101.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ101.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Czech/spk/CZ102.spk" beforeDir="false" afterPath="$PROJECT_DIR$/gp_info/Czech/spk/CZ102.spk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/German/spk_non_native/GE080.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/German/spk_non_native/GE081.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/German/spk_non_native/GE082.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/German/spk_non_native/GE083.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/German/spk_non_native/GE084.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/German/spk_non_native/GE085.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA001.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA002.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA003.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA004.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA005.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA006.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA007.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA008.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA009.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA010.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA011.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA012.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA013.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA014.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA015.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA016.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA017.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA018.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA019.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA020.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA021.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA022.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA023.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA024.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA025.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA026.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA027.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA028.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA029.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA030.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA031.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA032.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA033.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA034.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA035.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA036.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA037.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA038.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA039.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA040.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA041.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA042.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA043.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA044.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA045.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA046.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA047.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA048.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA049.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA050.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA051.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA052.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA053.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA054.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA055.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA056.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA057.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA058.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA059.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA060.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA061.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA062.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA063.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA064.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA065.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA066.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA067.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA068.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA069.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA070.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA071.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA072.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA073.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA074.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA075.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA076.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA077.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA078.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA079.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA080.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA081.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA082.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA083.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA084.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA085.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA086.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA087.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA088.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA089.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA090.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA091.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA092.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA093.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA094.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA095.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA096.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA097.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA098.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA099.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA100.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA101.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA102.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Hausa/spk/HA103.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA001.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA002.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA004.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA005.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA006.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA007.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA008.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA010.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA012.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA013.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA014.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA015.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA016.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA017.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA020.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA021.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA023.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA025.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA026.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA027.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA029.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA032.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA033.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA034.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA035.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA036.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA038.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA039.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA040.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA042.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA043.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA044.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA045.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA047.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA048.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA050.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA051.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA052.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA053.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA054.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA055.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA056.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA057.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA061.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA062.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA063.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA066.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA067.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA068.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA071.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA072.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA073.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA078.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA079.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA080.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA081.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA082.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA084.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA087.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA088.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA092.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA093.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA094.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA095.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA096.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA097.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA099.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA100.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA101.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Swahili/spk/SA102.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA001.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA002.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA003.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA004.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA005.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA006.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA007.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA008.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA009.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA010.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA011.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA012.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA013.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA014.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA015.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA016.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA017.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA018.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA019.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA020.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA021.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA022.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA023.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA024.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA025.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA026.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA027.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA028.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA029.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA030.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA031.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA032.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA033.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA034.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA035.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA036.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA037.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA038.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA039.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA040.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA041.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA042.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA043.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA044.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA045.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA046.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA047.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA048.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA049.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA050.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA051.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA052.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA053.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA054.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA055.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA056.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA057.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA058.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA059.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA060.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA061.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA062.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA063.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA064.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA065.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA066.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA067.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA068.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA069.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA070.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA071.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA072.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA073.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA074.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA075.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA076.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA077.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA078.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA079.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA080.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA081.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA082.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA083.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA084.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA085.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA086.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA087.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA088.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA089.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA090.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA091.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA092.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA093.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA094.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA095.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA096.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA097.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA098.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA099.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA100.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA101.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA102.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA103.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA104.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA105.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA106.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA107.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA108.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA109.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA110.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA111.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA112.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA113.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA114.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA115.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA116.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA117.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA118.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gp_info/Ukrainian/spk/UA119.spk" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux_run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/linux_run.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,21 +392,55 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/run.sh">
+    <leaf>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/linux_run.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3456">
-              <caret line="87" column="9" selection-start-line="87" selection-start-column="5" selection-end-line="87" selection-end-column="11" />
+            <state relative-caret-position="435">
+              <caret line="29" selection-start-line="29" selection-end-line="29" />
             </state>
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/misc/gp_info.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="599">
+              <caret line="60" column="35" lean-forward="true" selection-start-line="60" selection-start-column="35" selection-end-line="60" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/conf/lang_codes.txt">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/conf/test_languages.list">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/linux_run.sh" />
+        <option value="$PROJECT_DIR$/misc/gp_info.py" />
+      </list>
+    </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="1210" />
@@ -52,6 +460,27 @@
               <item name="language-ident-from-speech" type="b2602c69:ProjectViewProjectNode" />
               <item name="language-ident-from-speech" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="language-ident-from-speech" type="b2602c69:ProjectViewProjectNode" />
+              <item name="language-ident-from-speech" type="462c0819:PsiDirectoryNode" />
+              <item name="gp-xvectors-recipe" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="language-ident-from-speech" type="b2602c69:ProjectViewProjectNode" />
+              <item name="language-ident-from-speech" type="462c0819:PsiDirectoryNode" />
+              <item name="gp-xvectors-recipe" type="462c0819:PsiDirectoryNode" />
+              <item name="conf" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="language-ident-from-speech" type="b2602c69:ProjectViewProjectNode" />
+              <item name="language-ident-from-speech" type="462c0819:PsiDirectoryNode" />
+              <item name="gp_info" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="language-ident-from-speech" type="b2602c69:ProjectViewProjectNode" />
+              <item name="language-ident-from-speech" type="462c0819:PsiDirectoryNode" />
+              <item name="misc" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -59,11 +488,15 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../MLP" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Bash" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -77,6 +510,35 @@
       </list>
     </option>
   </component>
+  <component name="RunManager">
+    <configuration name="gp_info" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="language-ident-from-speech" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/misc" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/misc/gp_info.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.gp_info" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -89,31 +551,49 @@
       <updated>1552387761091</updated>
       <workItem from="1552406317249" duration="81000" />
       <workItem from="1552406422110" duration="1335000" />
+      <workItem from="1553867593784" duration="2011000" />
+      <workItem from="1553869623658" duration="87000" />
+      <workItem from="1553869723582" duration="183000" />
+      <workItem from="1553869910125" duration="12000" />
+      <workItem from="1553869925361" duration="134000" />
+      <workItem from="1553870069187" duration="109000" />
+      <workItem from="1553870188837" duration="101000" />
+      <workItem from="1553877198506" duration="57000" />
+      <workItem from="1553877367936" duration="4118000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1416000" />
+    <option name="totallyTimeSpent" value="8228000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <frame x="66" y="-4" width="1855" height="1085" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21677852" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49847096" visible="true" weight="0.2114001" />
+      <window_info id="Structure" order="1" sideWeight="0.50152904" side_tool="true" weight="0.20697288" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32925585" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32925585" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" weight="0.32905984" />
       <window_info anchor="bottom" id="Version Control" order="11" />
-      <window_info anchor="bottom" id="Python Console" order="12" />
+      <window_info anchor="bottom" id="Python Console" order="12" weight="0.32925585" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -123,6 +603,9 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/language_ident_from_speech$gp_info.coverage" NAME="gp_info Coverage Results" MODIFIED="1553880811987" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/misc" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/helper_functions.sh">
@@ -136,8 +619,84 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/run.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3456">
+        <state relative-caret-position="15">
           <caret line="87" column="9" selection-start-line="87" selection-start-column="5" selection-end-line="87" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/misc/fix_wav_directory.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/conf/test_spk.list">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/misc/get_results.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1710">
+          <caret line="9" column="20" lean-forward="true" selection-start-line="9" selection-start-column="20" selection-end-line="9" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp_info/Arabic/spk/AR001.spk">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="40" lean-forward="true" selection-start-line="9" selection-start-column="40" selection-end-line="9" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp_info/Spanish.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp_info/Mandarin.csv">
+      <provider selected="true" editor-type-id="csv-text-editor" />
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/linux_run.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="435">
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/conf/lang_codes.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/conf/test_languages.list">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp_info/Czech.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="6" selection-start-line="8" selection-start-column="6" selection-end-line="8" selection-end-column="6" />
+        </state>
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp_info/Arabic.csv">
+      <provider selected="true" editor-type-id="csv-text-editor">
+        <state relative-caret-position="-630" />
+      </provider>
+      <provider editor-type-id="csv-table-editor">
+        <state showInfoPanel="true" fixedHeaders="false" rowLines="3" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/conf/train_spk.list">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gp-xvectors-recipe/conf/test_languages_fix.list">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/misc/gp_info.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="599">
+          <caret line="60" column="35" lean-forward="true" selection-start-line="60" selection-start-column="35" selection-end-line="60" selection-end-column="35" />
         </state>
       </provider>
     </entry>
