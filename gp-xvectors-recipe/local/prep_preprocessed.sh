@@ -74,6 +74,8 @@ do
   evaluation_length=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --test-length=*)
   test_length=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
+  --shorten-data=*)
+  shorten_data=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
   --data-dir=*)
   OUTDIR=`read_dirname $1`; shift ;;
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
@@ -141,17 +143,18 @@ if [ "$TRAIN_LANGUAGES" != "SKIP" ]; then
     echo "Combining training directories: $(echo ${train_dirs_clean[@]} | sed -e "s|${OUTDIR}||g")"
     utils/combine_data.sh --extra-files 'utt2num_frames utt2len utt2num_frames_reference' $OUTDIR/train ${train_dirs_clean[@]}
     train_data=$OUTDIR/train
-
+    if [ "$shorten_data" == true ]; then
     echo "Shortening languages for training data"
-    python local/shorten_languages.py \
-      --data-dir $train_data \
-      --conf-file-path ${train_file_path} \
-      --is-training True \
-      >> ${train_data}/data_organisation
+      python local/shorten_languages.py \
+        --data-dir $train_data \
+        --conf-file-path ${train_file_path} \
+        --is-training True \
+        >> ${train_data}/data_organisation
 
-    # For filtering the frames based on the new shortened utterances:
-    utils/filter_scp.pl ${train_data}/utterances_shortened ${train_data}/wav.scp > ${train_data}/wav.scp.temp
-    mv ${train_data}/wav.scp.temp ${train_data}/wav.scp
+      # For filtering the frames based on the new shortened utterances:
+      utils/filter_scp.pl ${train_data}/utterances_shortened ${train_data}/wav.scp > ${train_data}/wav.scp.temp
+      mv ${train_data}/wav.scp.temp ${train_data}/wav.scp
+    fi
     # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
     utils/fix_data_dir.sh ${train_data}
     # Fixes the lang2utt file
@@ -179,17 +182,18 @@ if [ "$ENROLL_LANGUAGES" != "SKIP" ]; then
 
   echo "Combining enrollment directories: $(echo ${enroll_dirs[@]} | sed -e "s|${OUTDIR}||g")"
   utils/combine_data.sh --extra-files 'utt2num_frames' ${enroll_data} ${enroll_dirs[@]}
+  if [ "$shorten_data" == true ]; then
+    echo "Shortening languages for enrollment data"
+    python ./local/shorten_languages.py \
+      --data-dir $enroll_data \
+      --conf-file-path ${enroll_file_path} \
+      --is-training False \
+      >> ${enroll_data}/data_organisation
 
-  echo "Shortening languages for enrollment data"
-  python ./local/shorten_languages.py \
-    --data-dir $enroll_data \
-    --conf-file-path ${enroll_file_path} \
-    --is-training False \
-    >> ${enroll_data}/data_organisation
-
-  # For filtering the frames based on the new shortened utterances:
-  utils/filter_scp.pl ${enroll_data}/utterances_shortened ${enroll_data}/feats.scp > ${enroll_data}/feats.scp.temp
-  mv ${enroll_data}/feats.scp.temp ${enroll_data}/feats.scp
+    # For filtering the frames based on the new shortened utterances:
+    utils/filter_scp.pl ${enroll_data}/utterances_shortened ${enroll_data}/feats.scp > ${enroll_data}/feats.scp.temp
+    mv ${enroll_data}/feats.scp.temp ${enroll_data}/feats.scp
+  fi
   # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
   utils/fix_data_dir.sh ${enroll_data}
   # Fixes the lang2utt file

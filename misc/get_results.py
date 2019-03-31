@@ -82,6 +82,8 @@ def get_expname_data(expname):
             length = int("".join(filter(lambda x: x.isdigit(), expname)))
         return [expname, rirs, aug, clean, baseline, length, seed]
     elif expname.startswith("lre"):
+        if "baseline" in expname:
+            return [expname, "all", "all", seed]
         entry = expname.split("_")
         training_length = int(entry[2])
         enrollment_length = int(entry[4])

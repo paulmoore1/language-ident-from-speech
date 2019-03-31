@@ -52,6 +52,11 @@ use_model_from=NONE
 use_data_augmentation=false
 use_rirs_augmentation=false
 use_preprocessed=false
+shorten_data=true
+evaluation_length=30
+test_length=30
+enrollment_length=30
+use_dnn_egs_from=
 aug_expt=
 GP_CORPUS=
 
@@ -287,7 +292,9 @@ if [ ! -z "$aug_expt" ]; then
   fi
   # Skip to stage 3 since data already exists
   if [ "$run_all" = true ]; then
-    stage=3
+    if [ $stage -lt 3 ]; then
+      stage=3
+    fi
   else
     exit
   fi
@@ -304,6 +311,7 @@ DATADIR="${root_data_dir}/$exp_name"
 mkdir -p $DATADIR
 mkdir -p $DATADIR/log
 echo "The experiment directory is: $DATADIR"
+ev=${evaluation_length}s
 
 # Preparing lists of utterances (and a couple other auxiliary lists) based
 # on the train/enroll/eval/test splitting. The lists refer to the WAVs
@@ -328,19 +336,25 @@ if [ "$use_preprocessed" = true ] && [ $stage -eq 1 ]; then
     --enrollment-length=$enrollment_length \
     --evaluation-length=$evaluation_length \
     --test-length=$test_length \
+    --shorten-data=$shorten_data \
     > $DATADIR/setup_summary.txt
   echo "Finished running"
 fi
 
 if [ "$run_all" = true ] && [ "$skip_nnet_training" = true ]; then
-  stage=7
+  if [ $stage -lt 7 ]; then
+    stage=7
+  fi
 elif [ "$run_all" = true ] && [ "$use_preprocessed" = true ]; then
-  stage=3
+  if [ $stage -lt 3 ]; then
+    stage=3
+  fi
 elif [ "$run_all" = true ]; then
   stage=1
 else
   exit
 fi
+
 
 if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
@@ -374,6 +388,7 @@ if [ $stage -eq 1 ]; then
 
     # For filtering the frames based on the new shortened utterances:
     utils/filter_scp.pl $enroll_data/utterances_shortened $enroll_data/wav.scp > $enroll_data/wav.scp.temp
+    mv $enroll_data/wav.scp.temp $enroll_daa/wav.scp > $enroll_data/wav.scp.temp
     mv $enroll_data/wav.scp.temp $enroll_data/wav.scp
     # Fixes utt2spk, spk2utt, utt2lang, utt2num_frames files
     utils/fix_data_dir.sh $enroll_data
@@ -629,7 +644,6 @@ fi
 # Now we prepare the features to generate examples for xvector training.
 # Runtime: ~2 mins
 if [ $stage -eq 3 ]; then
-  # NOTE silence not being removed
   echo "#### STAGE 3: Preprocessing for X-vector training examples. ####"
   # This script applies CMVN and removes nonspeech frames.  Note that this is somewhat
   # wasteful, as it roughly doubles the amount of training data on disk.  After
@@ -643,6 +657,17 @@ if [ $stage -eq 3 ]; then
 
 	utils/data/get_utt2num_frames.sh $nnet_train_data
   utils/fix_data_dir.sh $nnet_train_data
+
+  # Now, we need to remove features that are too short after removing silence
+  # frames.  We want atleast 5s (500 frames) per utterance.
+	#echo "Removing short features..."
+  #min_len=300
+  #mv $nnet_train_data/utt2num_frames $nnet_train_data/utt2num_frames.bak
+  #awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $nnet_train_data/utt2num_frames.bak > $nnet_train_data/utt2num_frames
+  #utils/filter_scp.pl $nnet_train_data/utt2num_frames $nnet_train_data/utt2spk > $nnet_train_data/utt2spk.new
+  #mv $nnet_train_data/utt2spk.new $nnet_train_data/utt2spk
+  #utils/fix_data_dir.sh $nnet_train_data
+
 
   echo "Finished stage 3."
 
@@ -716,7 +741,7 @@ if [ $stage -eq 7 ]; then
       $enroll_data \
       $exp_dir/xvectors_enroll &
   fi
-  if [ ! -d $exp_dir/xvectors_eval_30s ]; then
+  if [ ! -d $exp_dir/xvectors_eval_${ev} ]; then
     # X-vectors for end-to-end evaluation
     ./local/extract_xvectors.sh \
       --cmd "$extract_cmd --mem 6G" \
@@ -726,7 +751,7 @@ if [ $stage -eq 7 ]; then
       --remove-nonspeech "$remove_nonspeech" \
       $nnet_dir \
       $eval_data \
-      $exp_dir/xvectors_eval_30s &
+      $exp_dir/xvectors_eval_${ev} &
   fi
 
   # X-vectors for testing (final evaluation)
@@ -775,13 +800,13 @@ if [ $stage -eq 8 ]; then
       --prior-scale 0.70 \
       --conf conf/logistic-regression.conf \
       --train-dir $exp_dir/xvectors_enroll \
-      --test-dir $exp_dir/xvectors_eval_30s \
+      --test-dir $exp_dir/xvectors_eval_${ev} \
       --model-dir $exp_dir/classifier \
-      --classification-file $exp_dir/results/classification_30s \
+      --classification-file $exp_dir/results/classification_${ev} \
       --train-utt2lang $enroll_data/utt2lang \
       --test-utt2lang $eval_data/utt2lang \
       --languages conf/test_languages.list \
-      > $exp_dir/classifier/logistic-regression_30s.log
+      > $exp_dir/classifier/logistic-regression_${ev}.log
   fi
 
   echo "Finished stage 8."
@@ -798,10 +823,10 @@ if [ $stage -eq 9 ]; then
   echo "#### STAGE 9: Calculating results. ####"
 
   ./local/compute_results.py \
-    --classification-file $exp_dir/results/classification_30s \
-    --output-file $exp_dir/results/results_30s \
+    --classification-file $exp_dir/results/classification_${ev} \
+    --output-file $exp_dir/results/results_${ev} \
     --language-list "$GP_ENROLL_LANGUAGES" \
-    2>$exp_dir/results/compute_results_30s.log
+    2>$exp_dir/results/compute_results_${ev}.log
 
   echo "Finished stage 9."
 fi
