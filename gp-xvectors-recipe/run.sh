@@ -355,7 +355,6 @@ else
   exit
 fi
 
-
 if [ $stage -eq 1 ]; then
   # NOTE: The wav-dir as it is right now only works in the cluster!
   echo "#### STAGE 1: Organising speakers into sets. ####"

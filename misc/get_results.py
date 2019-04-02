@@ -1,30 +1,6 @@
 import os, sys, shutil, csv, re, pathlib
 from os.path import isdir, join, exists
 
-def calculate_f_score(classification_file, target_lang, beta=1):
-    with open(classification_file, "r") as f:
-        lines = f.readlines()
-    true_pos_tl = 0
-    false_pos_tl = 0
-    true_neg_tl = 0
-    false_neg_tl = 0
-    for line in lines:
-        entry = line.split()
-        target = entry[0][:2]
-        pred = entry[1]
-        if target == target_lang and pred == target_lang:
-            true_pos_tl += 1
-        elif target == target_lang and pred != target_lang:
-            false_neg_tl += 1
-        elif target != target_lang and pred == target_lang:
-            false_pos_tl += 1
-        elif target != target_lang and pred != target_lang:
-            true_neg_tl += 1
-    precision = true_pos_tl / (true_pos_tl + false_pos_tl)
-    recall = true_pos_tl / (true_pos_tl + false_neg_tl)
-    f_beta = (1 + beta**2) * (precision * recall) / ((beta**2 * precision) + recall)
-    return precision, recall, f_beta
-
 
 def parse_no_language(expname):
     pattern = r'ad_.*tr_no_.*'

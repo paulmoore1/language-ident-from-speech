@@ -13,29 +13,16 @@
 # Remember to remove silence removal my dude
 
 #Last aug clean
-./gp-xvectors-recipe/run.sh --config=da_aug_clean_tr_5000 > outputs/da_aug_clean_tr_5000.txt
+./gp-xvectors-recipe/run.sh --config=ad_slavic_tr_no_bg > outputs/ad_slavic_tr_no_bg.txt
+wait
+./gp-xvectors-recipe/run.sh --config=ad_slavic_tr_no_ru > outputs/ad_slavic_tr_no_ru.txt
+wait
+./gp-xvectors-recipe/run.sh --config=ad_slavic_tr_all > outputs/ad_slavic_tr_all.txt
+wait
+./gp-xvectors-recipe/run.sh --config=ad_slavic_tr_all > outputs/ad_slavic_tr_all.txt
 wait
 
-./gp-xvectors-recipe/run.sh --config=ad_all_tr_no_ar > outputs/ad_all_tr_no_ar.txt
-wait
-
-./gp-xvectors-recipe/run.sh --config=ad_all_tr_no_bg > outputs/ad_all_tr_no_bg.txt
-wait
-
-./gp-xvectors-recipe/run.sh --config=ad_all_tr_no_ch > outputs/ad_all_tr_no_ch.txt
-wait
-
-./gp-xvectors-recipe/run.sh --config=ad_all_tr_no_cr > outputs/ad_all_tr_no_cr.txt
-wait
-
-./gp-xvectors-recipe/run.sh --config=ad_all_tr_no_cz > outputs/ad_all_tr_no_cz.txt
-wait
-
-./gp-xvectors-recipe/run.sh --config=ad_all_tr_no_fr > outputs/ad_all_tr_no_fr.txt
-wait
-
-./gp-xvectors-recipe/run.sh --config=ad_all_tr_no_ge > outputs/ad_all_tr_no_ge.txt
-wait
+./linux_run_extra_eval.sh
 
 ./gp-xvectors-recipe/run.sh --config=ad_all_tr_no_ja > outputs/ad_all_tr_no_ja.txt
 wait
