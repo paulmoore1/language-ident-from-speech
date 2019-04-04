@@ -14,6 +14,7 @@ gp-xvectors-recipe/explore_log_regression.sh
 lre_results/*
 .idea/
 .ipynb_checkpoints/
+__pycache__/
 
 outputs
 

@@ -3,6 +3,8 @@ from os.path import isdir, join, exists
 
 
 def parse_no_language(expname):
+    if expname[-2] == "_":
+        expname = expname[:-2]
     pattern = r'ad_.*tr_no_.*'
     if re.match(pattern, expname):
         return expname[-2:].upper()

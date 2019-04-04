@@ -659,13 +659,13 @@ if [ $stage -eq 3 ]; then
 
   # Now, we need to remove features that are too short after removing silence
   # frames.  We want atleast 5s (500 frames) per utterance.
-	#echo "Removing short features..."
-  #min_len=300
-  #mv $nnet_train_data/utt2num_frames $nnet_train_data/utt2num_frames.bak
-  #awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $nnet_train_data/utt2num_frames.bak > $nnet_train_data/utt2num_frames
-  #utils/filter_scp.pl $nnet_train_data/utt2num_frames $nnet_train_data/utt2spk > $nnet_train_data/utt2spk.new
-  #mv $nnet_train_data/utt2spk.new $nnet_train_data/utt2spk
-  #utils/fix_data_dir.sh $nnet_train_data
+	echo "Removing short features..."
+  min_len=300
+  mv $nnet_train_data/utt2num_frames $nnet_train_data/utt2num_frames.bak
+  awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $nnet_train_data/utt2num_frames.bak > $nnet_train_data/utt2num_frames
+  utils/filter_scp.pl $nnet_train_data/utt2num_frames $nnet_train_data/utt2spk > $nnet_train_data/utt2spk.new
+  mv $nnet_train_data/utt2spk.new $nnet_train_data/utt2spk
+  utils/fix_data_dir.sh $nnet_train_data
 
 
   echo "Finished stage 3."

@@ -6,14 +6,16 @@ expt_dirs=$(find $data_dir -maxdepth 1 -mindepth 1 -type d \
 -not -path "*all_preprocessed*")
 for dir in $expt_dirs; do
   if [ ! -f $dir/exp/results/results_30s ]; then
-    echo "No 30s results found for $dir !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    echo "No 30s results found for $dir !"
     continue
   fi
   expname=$(basename $dir)
   if [[ $expname == ad_all_tr* ]]; then
-    GP_EVAL_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN"
+    #GP_EVAL_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU WU VN"
+    continue
   elif [[ $expname == ad_slavic_tr* ]]; then
-    GP_EVAL_LANGUAGES="BG CR CZ PO RU"
+    #GP_EVAL_LANGUAGES="BG CR CZ PL RU"
+    continue
   elif [[ $expname == da_* ]]; then
     GP_EVAL_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TH TU VN"
   elif [[ $expname == lre_* ]]; then
@@ -34,6 +36,6 @@ for dir in $expt_dirs; do
       echo "Error getting extra results"  | mail -v -s "$expname" paulmooreukmkok@gmail.com
     fi
   else
-  echo "Finished already ###################################"
+  echo "#### Finished already ####"
   fi
 done

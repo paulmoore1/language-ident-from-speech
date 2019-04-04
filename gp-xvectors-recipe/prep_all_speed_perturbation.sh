@@ -6,7 +6,7 @@
 # See the file COPYING for the licence associated with this software.
 # Author(s):
 #   Bogdan Vlasenko, February 2016
-#   Sam Sucik, Paul Moore, 2018/2019
+#   Sam Sucik, Paul Moore, 2018/2019 (based on baseline system)
 
 [ -f helper_functions.sh ] && source ./helper_functions.sh \
   || echo "helper_functions.sh not found. Won't be able to set environment variables and similar."
