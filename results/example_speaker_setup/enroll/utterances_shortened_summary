@@ -1,0 +1,17 @@
+Language: AR	Target #frames: 500000	Actual #frames: 500006	Error: 0.0012%
+Language: BG	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: CH	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: CR	Target #frames: 500000	Actual #frames: 500003	Error: 0.0006%
+Language: CZ	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: FR	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: GE	Target #frames: 500000	Actual #frames: 499994	Error: 0.0012%
+Language: JA	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: KO	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: PL	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: PO	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: RU	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: SP	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: SW	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: TH	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%
+Language: TU	Target #frames: 500000	Actual #frames: 500001	Error: 0.0002%
+Language: VN	Target #frames: 500000	Actual #frames: 500000	Error: 0.0%

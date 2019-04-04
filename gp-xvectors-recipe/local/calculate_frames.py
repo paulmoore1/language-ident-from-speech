@@ -1,6 +1,7 @@
 import argparse
 from math import log10, floor
 
+# Calculates the number of frames per iteration to use when allocating examples
 def get_args():
     parser = argparse.ArgumentParser(description="Calculates number of frames per iteration")
     parser.add_argument("--num-train-frames", type=int, required=True,

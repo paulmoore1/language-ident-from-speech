@@ -1,6 +1,7 @@
 import os, sys, shutil, csv, re, pathlib
 from os.path import isdir, join, exists
 
+# This script finds results and stores them in a CSV file
 
 def parse_no_language(expname):
     if expname[-2] == "_":

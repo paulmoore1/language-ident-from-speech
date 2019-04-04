@@ -5,6 +5,8 @@ from math import floor, ceil
 import random
 import argparse, sys
 
+# Splits datasets as best as possible
+
 def load_speaker_data(langs):
     spk_dict = {}
     for L in langs:
@@ -20,7 +22,7 @@ def load_speaker_data(langs):
                 spk_dict[L] = speakers_for_language
         except:
             pass
-            
+
     return spk_dict
 
 def load_all_speakers(langs):
@@ -62,13 +64,13 @@ def load_original_datasets(langs):
         with open("conf/gp_original_eval_spk.list", "r") as spk_file:
             for line in spk_file.readlines():
                 line_split = [x.strip() for x in re.split('\t| ', line)]
-                
+
                 # In case there is no split (lines like "AR TBA")
                 if len(line_split) <= 2:
                     continue
 
                 language = line_split[0]
-                if language in langs:   
+                if language in langs:
                     spk_ids = line_split[1:]
                     for spk_id in spk_ids:
                         datasets_dict[language]["test"].append(spk_id)
@@ -80,10 +82,10 @@ def load_original_datasets(langs):
 
 
 if __name__ == "__main__":
-    num_spks = {"AR": 78, "BG": 77, "CH": 132, "CR": 92, "CZ": 102, "FR": 100, "GE": 77, 
-                "JA": 144, "KO": 100, "PL": 99, "PO": 100, "RU": 115, "SP": 100, 
+    num_spks = {"AR": 78, "BG": 77, "CH": 132, "CR": 92, "CZ": 102, "FR": 100, "GE": 77,
+                "JA": 144, "KO": 100, "PL": 99, "PO": 100, "RU": 115, "SP": 100,
                 "SW": 98, "TA": 47, "TH": 98, "TU": 100, "VN": 129, "WU": 41}
-    all_langs = ["AR", "BG", "CH", "CR", "CZ", "FR", "GE", "JA", "KO", "PL", 
+    all_langs = ["AR", "BG", "CH", "CR", "CZ", "FR", "GE", "JA", "KO", "PL",
                  "PO", "RU", "SP", "SW", "TA", "TH", "TU", "VN", "WU"]
 
 
@@ -95,7 +97,7 @@ if __name__ == "__main__":
 
     print("Partitioning spekaers for languages: {}.".format(", ".join(all_langs)))
 
-    
+
     spk_article_dict = load_speaker_data(all_langs)
     langs_with_spk_data = list(spk_article_dict.keys())
     # print("SPK data exists for these langs: {}".format(langs_with_spk_data))
@@ -114,7 +116,7 @@ if __name__ == "__main__":
         test_set = gp_original_sets[L]["test"]
         available_spks = [spk_id for spk_id in all_spk_lists[L] if \
                           (spk_id not in eval_set and spk_id not in test_set)]
-        
+
         spks_test = test_set
         spks_eval = eval_set
         spks_enroll = []
@@ -130,7 +132,7 @@ if __name__ == "__main__":
             # The most complicated case: 4 non-random sets
             if L in langs_with_spk_data:
                 print("Spk metadata present. Using it for the split.")
-                
+
                 sets_valid = False
                 attempt_counter = 0
                 threshold = 0
@@ -152,7 +154,7 @@ if __name__ == "__main__":
                     for spk_id in spks_test:
                         test_articles = test_articles + spk_article_dict[L].get(spk_id, [])
                     test_articles = set(test_articles)
-                    
+
                     eval_articles = []
                     for spk_id in spks_eval:
                         eval_articles = eval_articles + spk_article_dict[L].get(spk_id, [])
@@ -182,7 +184,7 @@ if __name__ == "__main__":
                         if attempt_counter % max_iter == 0:
                             threshold += 1
                             print("Looking for splits with <= {} overlaps.".format(threshold))
-            
+
             # The easy case: 4 random sets
             else:
                 print("No spk metadata found. Doing random split.")
@@ -194,33 +196,33 @@ if __name__ == "__main__":
                                              and (spk_id not in spks_eval)], num_enroll)
                 spks_train = [spk_id for spk_id in available_spks \
                               if (spk_id not in spks_test) \
-                              and (spk_id not in spks_eval) 
+                              and (spk_id not in spks_eval)
                               and (spk_id not in spks_enroll)]
 
         else:
             num_enroll = int(floor(0.1*num_spks[L]))
             print("Original partitioning found. Creating train/enroll datasets: {} = {} + {}."\
                   .format(len(available_spks), num_enroll, len(available_spks) - num_enroll))
-            
+
             # The complicated case: 2 non-random sets
             if L in langs_with_spk_data:
                 print("Spk metadata present. Using it for the split.")
-                
+
                 sets_valid = False
                 attempt_counter = 0
                 threshold = 0
                 max_iter = 100000
-                
+
                 while not sets_valid:
                     spks_enroll = random.sample(available_spks, num_enroll)
                     spks_train = [spk_id for spk_id in available_spks if spk_id not in spks_enroll]
-                    
+
                     enroll_articles = []
                     for spk_id in spks_enroll:
                         enroll_articles = enroll_articles + spk_article_dict[L].get(spk_id, [])
-                    
+
                     enroll_articles = set(enroll_articles)
-                    
+
                     train_articles = []
                     for spk_id in spks_train:
                         train_articles = train_articles + spk_article_dict[L].get(spk_id, [])

@@ -1,6 +1,6 @@
 #!/bin/bash -u
-
 # Copyright 2012  Arnab Ghoshal
+# Modified 2018-2019 Paul Moore to keep the languages in separate datasets (useful for preprocessing)
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

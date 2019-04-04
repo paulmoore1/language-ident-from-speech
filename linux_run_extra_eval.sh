@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# Script for running extra evaluation experiments (on lengths of 3 and 10 seconds)
 data_dir=~/gp-data
 
 expt_dirs=$(find $data_dir -maxdepth 1 -mindepth 1 -type d \

@@ -10,6 +10,7 @@
 #SBATCH --mail-user=lapilosew2003@gmail.com
 #SBATCH --open-mode=append
 
+# Script for running an experiment in the GPU cluster
 config_file=lre_tr_500_en_5000
 
 export STUDENT_ID=$(whoami)

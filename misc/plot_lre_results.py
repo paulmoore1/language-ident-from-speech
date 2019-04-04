@@ -4,6 +4,7 @@ import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Script for plotting some of the initial results (later was done in results/LRE_Graphing.ipynb)
 # Allow to run with Python 3 or 2.
 def listdir_no_arguments():
     if sys.version_info >= (3, 0):

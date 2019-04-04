@@ -1,31 +1,6 @@
 #!/bin/bash -u
 
-# Copyright 2012  Arnab Ghoshal
-#
-# Copyright 2016 by Idiap Research Institute, http://www.idiap.ch
-#
-# Copyright 2018/2019 by Sam Sucik and Paul Moore
-#
-# See the file COPYING for the licence associated with this software.
-#
-# Author(s):
-#   Bogdan Vlasenko, February 2016
-#   Sam Sucik and Paul Moore, 2018/2019
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#  http://www.apache.org/licenses/LICENSE-2.0
-#
-# THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
-# WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
-# MERCHANTABLITY OR NON-INFRINGEMENT.
-# See the Apache 2 License for the specific language governing permissions and
-# limitations under the License.
-
-
+# Script based on run.sh
 usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n
 \t       This shell script evaluates the performance of a classifier on\n
 \t       utterances of lengths 3 and 10s
@@ -56,9 +31,6 @@ do
   *)  echo "Unknown argument: $1, exiting"; echo -e $usage; exit 1 ;;
   esac
 done
-
-#--home-dir=*)
-#home_dir=`expr "X$1" : '[^=]*=\(.*\)'`; shift ;;
 
 # Run from the home directory
 home_dir=~/language-ident-from-speech/gp-xvectors-recipe
@@ -104,6 +76,7 @@ original_dir=$DATADIR/$use_model_from
 model_dir=$original_dir/exp/classifier
 nnet_dir=$original_dir/nnet
 exp_dir=$original_dir/exp
+test_data=$original_dir/test
 if [ ! -d $model_dir ]; then
   echo "Error: model not found in ${model_dir}"; exit 1
 elif [ ! -d $nnet_dir ]; then
@@ -170,16 +143,20 @@ for evaluation_length in 3 10; do
       $nnet_dir \
       $eval_data \
       $exp_dir/xvectors_eval_${ev} &
+    wait;
+  fi
 
-    # X-vectors for testing (final evaluation)
-    #./local/extract_xvectors.sh \
-    #  --cmd "$extract_cmd --mem 6G" \
-    #  --use-gpu $use_gpu \
-    #  --nj $MAXNUMJOBS \
-    #  --stage 0 \
-    #  $nnet_dir \
-    #  $test_data \
-    #  $exp_dir/xvectors_test &
+  if [ ! -d $exp_dir/xvectors_test ]; then
+  # X-vectors for testing (final evaluation)
+  ./local/extract_xvectors.sh \
+    --cmd "$extract_cmd --mem 6G" \
+    --use-gpu $use_gpu \
+    --nj $nj \
+    --stage 0 \
+    --remove_nonspeech "$remove_nonspeech" \
+    $nnet_dir \
+    $test_data \
+    $exp_dir/xvectors_test &
     wait;
   fi
 
@@ -210,5 +187,23 @@ for evaluation_length in 3 10; do
       --output-file $exp_dir/results/results_${ev} \
       --language-list "$GP_EVAL_LANGUAGES" \
       2>$exp_dir/results/compute_results_${ev}.log
+  fi
+
+  if [ ! -f $exp_dir/results/results_test ]; then
+    # Training the log reg model and classifying test set samples
+    ./local/test_logistic_regression.sh \
+      --test-dir $exp_dir/xvectors_test \
+      --model-dir $model_dir \
+      --classification-file $exp_dir/results/classification_test \
+      --test-utt2lang $test_data/utt2lang \
+      --languages conf/test_languages.list \
+      > $exp_dir/classifier/logistic-regression_test.log
+
+
+    ./local/compute_results.py \
+      --classification-file $exp_dir/results/classification_test \
+      --output-file $exp_dir/results/results_test \
+      --language-list "$GP_TEST_LANGUAGES" \
+      2>$exp_dir/results/compute_results_test.log
   fi
 done

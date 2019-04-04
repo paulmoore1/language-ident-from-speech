@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Use to investigae values for logistic regression.
+# Use to investigate values for logistic regression.
 # Stores results in /expname/results
 
 GP_LANGUAGES="AR BG CH CR CZ FR GE JA KO PL PO RU SP SW TA TH TU WU VN"
@@ -38,7 +38,7 @@ for max_steps in ${max_steps_vals[@]}; do
 
       logistic_regression_conf_text="--max-steps=${max_steps}\n--normalizer=${normalizer}\n--mix-up=${mix_up}\n--power=0.15"
       echo -e $logistic_regression_conf_text > $test_dir/logistic-regression.conf
-      
+
       (
       # Training the log reg model and classifying test set samples
       ./local/run_logistic_regression.sh \

@@ -31,11 +31,8 @@
 usage="+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n
 \t       This shell script runs the GlobalPhone+X-vectors recipe.\n
 \t       Use like this: $0 <options>\n
-\t       --home-dir=DIRECTORY\tMain directory where recipe is stored
 \t       --config=FILE\tConfig file with all kinds of options,\n
 \t       \t\t\tsee conf/exp_default.conf for an example.\n
-\t       \t\t\tNOTE: Where arguments are passed on the command line,\n
-\t       \t\t\tthe values overwrite those found in the config file.\n\n
 \t       If no stage number is provided, either all stages\n
 \t       will be run (--run-all=true) or no stages at all.\n
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -163,8 +160,8 @@ if [ -d $root_data_dir/$exp_name ] && [ $stage -eq 1 ]; then
   fi
 fi
 
-
-:<<"TEMP"
+# This step was removed when running on my local machine
+:<<"EOF"
 if [ ! -d $rirs_dir ]; then
   echo "RIRS data not found. Downloading and unzipping"
   wget --no-check-certificate -P $root_data_dir http://www.openslr.org/resources/28/rirs_noises.zip
@@ -184,7 +181,7 @@ if [ ! -d $musan_dir ]; then
     mv $musan_dir/musan_${name}/utt2dur $musan_dir/musan_${name}/reco2dur
   done
 fi
-TEMP
+EOF
 
 home_prefix=$root_data_dir/$exp_name
 train_data=$home_prefix/train
@@ -557,6 +554,7 @@ if [ $stage -eq 2 ]; then
     rm -rf ${train_data}_reverb
     mv ${train_data}_reverb.new ${train_data}_reverb
 
+    # NB: The MUSAN corpus was later dropped, so the code here was not usually run (used the preprocessed scripts instead)
     # Augment with musan_noise
     steps/data/augment_data_dir.py --utt-suffix "noise" --fg-interval 1 --fg-snrs "15:10:5:0" --fg-noise-dir "${musan_dir}/musan_noise" ${train_data} ${train_data}_noise
     # Augment with musan_music
@@ -657,16 +655,14 @@ if [ $stage -eq 3 ]; then
 	utils/data/get_utt2num_frames.sh $nnet_train_data
   utils/fix_data_dir.sh $nnet_train_data
 
-  # Now, we need to remove features that are too short after removing silence
-  # frames.  We want atleast 5s (500 frames) per utterance.
-	echo "Removing short features..."
-  min_len=300
-  mv $nnet_train_data/utt2num_frames $nnet_train_data/utt2num_frames.bak
-  awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $nnet_train_data/utt2num_frames.bak > $nnet_train_data/utt2num_frames
-  utils/filter_scp.pl $nnet_train_data/utt2num_frames $nnet_train_data/utt2spk > $nnet_train_data/utt2spk.new
-  mv $nnet_train_data/utt2spk.new $nnet_train_data/utt2spk
-  utils/fix_data_dir.sh $nnet_train_data
-
+  # Removes utterances shorter than 3 seconds. Unnecessary when the shortening was done beforehand.
+	#echo "Removing short features..."
+  #min_len=300
+  #mv $nnet_train_data/utt2num_frames $nnet_train_data/utt2num_frames.bak
+  #awk -v min_len=${min_len} '$2 > min_len {print $1, $2}' $nnet_train_data/utt2num_frames.bak > $nnet_train_data/utt2num_frames
+  #utils/filter_scp.pl $nnet_train_data/utt2num_frames $nnet_train_data/utt2spk > $nnet_train_data/utt2spk.new
+  #mv $nnet_train_data/utt2spk.new $nnet_train_data/utt2spk
+  #utils/fix_data_dir.sh $nnet_train_data
 
   echo "Finished stage 3."
 
@@ -677,9 +673,7 @@ if [ $stage -eq 3 ]; then
   fi
 fi
 
-# NOTE main things we need to work on are the num-repeats and num-jobs parameters
-# Runtime: ~8.5 hours
-# TO-DO: Find out the runtime without using GPUs.
+# Runtime: ~24 hours with 7 epochs
 if [ $stage -ge 4 ] && [ $stage -le 6 ]; then
   echo "#### STAGE 4: Training the X-vector DNN. ####"
   if [ ! -z "$use_dnn_egs_from" ]; then
@@ -830,7 +824,7 @@ if [ $stage -eq 9 ]; then
   echo "Finished stage 9."
 fi
 if [ $(ls $exp_dir/results | wc -l) -eq 3 ]; then
-  echo "The experiment $exp_name finished correctly" | mail -v -s "$exp_name" paulmooreukmkok@gmail.com
+  echo "The experiment $exp_name finished correctly" #| mail -v -s "$exp_name" myemail@gmail.com
 else
-  echo "The experiment $exp_name did not finish correctly" | mail -v -s "$exp_name" paulmooreukmkok@gmail.com
+  echo "The experiment $exp_name did not finish correctly" #| mail -v -s "$exp_name" myemail@gmail.com
 fi

@@ -1,0 +1,185 @@
+Frames file found. Parsing...
+Getting utterances for AR
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Attempt #6/20
+Attempt #7/20
+Attempt #8/20
+Attempt #9/20
+Attempt #10/20
+Attempt #11/20
+Attempt #12/20
+Attempt #13/20
+Attempt #14/20
+Attempt #15/20
+Attempt #16/20
+Attempt #17/20
+Attempt #18/20
+Attempt #19/20
+Attempt #20/20
+Getting utterances for BG
+Attempt #1/20
+Correct solution found!
+Getting utterances for CH
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Correct solution found!
+Getting utterances for CR
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Attempt #6/20
+Attempt #7/20
+Attempt #8/20
+Attempt #9/20
+Attempt #10/20
+Attempt #11/20
+Attempt #12/20
+Attempt #13/20
+Attempt #14/20
+Attempt #15/20
+Attempt #16/20
+Attempt #17/20
+Attempt #18/20
+Attempt #19/20
+Attempt #20/20
+Getting utterances for CZ
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Correct solution found!
+Getting utterances for FR
+Attempt #1/20
+Correct solution found!
+Getting utterances for GE
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Attempt #6/20
+Attempt #7/20
+Attempt #8/20
+Attempt #9/20
+Attempt #10/20
+Attempt #11/20
+Attempt #12/20
+Attempt #13/20
+Attempt #14/20
+Attempt #15/20
+Attempt #16/20
+Attempt #17/20
+Attempt #18/20
+Attempt #19/20
+Attempt #20/20
+Getting utterances for JA
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Correct solution found!
+Getting utterances for KO
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Correct solution found!
+Getting utterances for PL
+Attempt #1/20
+Correct solution found!
+Getting utterances for PO
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Attempt #6/20
+Attempt #7/20
+Attempt #8/20
+Attempt #9/20
+Attempt #10/20
+Correct solution found!
+Getting utterances for RU
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Correct solution found!
+Getting utterances for SP
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Attempt #6/20
+Attempt #7/20
+Attempt #8/20
+Attempt #9/20
+Attempt #10/20
+Attempt #11/20
+Attempt #12/20
+Attempt #13/20
+Attempt #14/20
+Attempt #15/20
+Attempt #16/20
+Attempt #17/20
+Attempt #18/20
+Attempt #19/20
+Correct solution found!
+Getting utterances for SW
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Correct solution found!
+No utterances found for lanuage: TA
+Getting utterances for TH
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Attempt #6/20
+Correct solution found!
+Getting utterances for TU
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Attempt #6/20
+Attempt #7/20
+Attempt #8/20
+Attempt #9/20
+Attempt #10/20
+Attempt #11/20
+Attempt #12/20
+Attempt #13/20
+Attempt #14/20
+Attempt #15/20
+Attempt #16/20
+Attempt #17/20
+Attempt #18/20
+Attempt #19/20
+Attempt #20/20
+No utterances found for lanuage: WU
+Getting utterances for VN
+Attempt #1/20
+Attempt #2/20
+Attempt #3/20
+Attempt #4/20
+Attempt #5/20
+Attempt #6/20
+Attempt #7/20
+Correct solution found!
+Finished, summary of results stored in: /home/paul/gp-data/da_aug_rirs_tr_500/enroll/utterances_shortened_summary
+Removing utt2len file since it's unnecessary
+Utt2len file not found in /home/paul/gp-data/da_aug_rirs_tr_500/enroll/utt2len - this doesn't matter

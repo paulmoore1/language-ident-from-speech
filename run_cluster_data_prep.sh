@@ -10,6 +10,7 @@
 #SBATCH --mail-user=lapilosew2003@gmail.com
 #SBATCH --open-mode=append
 
+# Script for preprocessing all features in the cluster.
 export STUDENT_ID=$(whoami)
 export HOME_DIR=/home/${STUDENT_ID}/language-ident-from-speech/gp-xvectors-recipe
 

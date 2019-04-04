@@ -1,3 +1,4 @@
+# Script to fix .scp files when the .ark files were moved
 # Will remove unnecessary folders like the separate ones for each language.
 # Will also fix split enroll/test/validation data if it exists.
 # NB - feats/vad needs to be recalculated - recombing isn't possible

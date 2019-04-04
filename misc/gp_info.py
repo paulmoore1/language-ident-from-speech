@@ -1,7 +1,7 @@
 import os, sys, csv
 from os.path import join, exists
 
-
+# Script for extracting speaker metadata from GlobalPhone, storing it in a CSV file
 def parse_speaker(speaker):
     lines = []
     file_read = False

@@ -1,6 +1,7 @@
 import os, sys, re
 from os.path import join, exists, isdir
 
+# Script to find how many frames there are for each language, and how long they are in hours
 def get_num_frames(file_path, lang, filter=False):
     if not exists(file_path):
         print("Filepath for {} not found: {}".format(lang, file_path))

@@ -7,6 +7,7 @@ from collections import OrderedDict
 from sklearn.metrics import confusion_matrix
 from sklearn.preprocessing import normalize
 
+# Script to plot the confusion matrix for a language.
 def make_stats(classification_file, languages):
     with open(classification_file, "r") as f:
         # From lines like "GE001_33 KO" make simple pairs (true, predicted) like [GE, KO]

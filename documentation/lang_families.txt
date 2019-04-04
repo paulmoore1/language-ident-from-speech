@@ -1,9 +1,9 @@
-UkArabic - Afro-Asiatic; Semitic; West Semitic; Central Semitic
+Arabic - Afro-Asiatic; Semitic; West Semitic; Central Semitic
 Bulgarian - Indo-European; Balto-Slavic; Slavic; S Slavic; Eastern South Slavic
 Mandarin - Sino-Tibetan; Sinitic
 Croatian - Indo-European; Balto-Slavic; Slavic; S Slavic; Western; Serbo-Croatian....
 Czech - Indo-European; Balto-Slavic; Slavic; W Slavic; Czech-Slovak
-French - Indo-European; Italic; Romance; Western Romance; Gallo-Romance; Oïl
+French - Indo-European; Italic; Romance; Western Romance; Gallo-Romance; Oï¿½l
 German - Indo-European; Germanic; West Germanic; High German
 Hausa - Afro-Asiatic; Chadic; West Chadic; Hausa-Gwandara
 Japanese - Japonic

@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 """
-A very simple error calculator.
-Takes the scores file as input, prints the error rate for each language.
-For each utterance, classifies it as the most likely of all the languages scores
+Computes the accuracy and c_primary scores for a classification file.
 """
 import argparse
 import numpy as np

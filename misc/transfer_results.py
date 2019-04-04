@@ -1,5 +1,6 @@
 import os, sys, shutil
 
+# Script to transfer results from the cluster to local DICE.
 # Allow to run with Python 3 or 2.
 def listdir_no_arguments():
     if sys.version_info >= (3, 0):

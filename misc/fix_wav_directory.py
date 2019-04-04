@@ -1,5 +1,6 @@
 import argparse, fileinput, os
 
+# Script for fixing the wav.scp files
 def get_args():
     parser = argparse.ArgumentParser(description="Replace all wav.scp and wav.scp.bak files with the corrected versions")
     parser.add_argument("--wav-dir", type=str, required=True,
