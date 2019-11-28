@@ -27,7 +27,7 @@ MarkupSafe==1.0
 mistune==0.8.3
 nbconvert==5.4.0
 nbformat==4.4.0
-notebook==5.7.0
+notebook==5.7.8
 numpy==1.15.2
 pandocfilters==1.4.2
 parso==0.3.1
@@ -46,7 +46,7 @@ Send2Trash==1.5.0
 simplegeneric==0.8.1
 six==1.11.0
 tensorboard==1.11.0
-tensorflow==1.11.0
+tensorflow==1.12.2
 termcolor==1.1.0
 terminado==0.8.1
 testpath==0.4.1
@@ -54,5 +54,5 @@ tornado==5.1.1
 traitlets==4.3.2
 wcwidth==0.1.7
 webencodings==0.5.1
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 widgetsnbextension==3.4.2
